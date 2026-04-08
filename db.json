@@ -1,0 +1,467 @@
+{
+  "members": [
+    {
+      "id": 1,
+      "name": "강민지",
+      "monthlyBudget": 650000,
+      "targetStockId": 1,
+      "targetQuantity": 10,
+      "ageBand": "TWENTIES"
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "일반식사",
+      "imageUrl": "/images/categories/meal.png"
+    },
+    {
+      "id": 2,
+      "name": "카페/음료",
+      "imageUrl": "/images/categories/cafe.png"
+    },
+    {
+      "id": 3,
+      "name": "배달/야식",
+      "imageUrl": "/images/categories/delivery.png"
+    },
+    {
+      "id": 4,
+      "name": "쇼핑",
+      "imageUrl": "/images/categories/shopping.png"
+    },
+    {
+      "id": 5,
+      "name": "취미/여가",
+      "imageUrl": "/images/categories/hobby.png"
+    },
+    {
+      "id": 6,
+      "name": "편의점/간식",
+      "imageUrl": "/images/categories/convenience.png"
+    },
+    {
+      "id": 7,
+      "name": "교통",
+      "imageUrl": "/images/categories/transport.png"
+    },
+    {
+      "id": 8,
+      "name": "뷰티/자기관리",
+      "imageUrl": "/images/categories/beauty.png"
+    },
+    {
+      "id": 9,
+      "name": "구독/디지털",
+      "imageUrl": "/images/categories/digital.png"
+    }
+  ],
+  "stocks": [
+    {
+      "id": 1,
+      "name": "카카오"
+    },
+    {
+      "id": 2,
+      "name": "삼성전자"
+    },
+    {
+      "id": 3,
+      "name": "케이뱅크"
+    },
+    {
+      "id": 4,
+      "name": "KB금융"
+    },
+    {
+      "id": 5,
+      "name": "TIGER200"
+    }
+  ],
+  "prices": [
+    {
+      "id": 1,
+      "stockId": 1,
+      "recordedAt": "2026-04-08T09:00:00",
+      "price": 47900
+    },
+    {
+      "id": 2,
+      "stockId": 2,
+      "recordedAt": "2026-04-08T09:00:00",
+      "price": 210500
+    },
+    {
+      "id": 3,
+      "stockId": 3,
+      "recordedAt": "2026-04-08T09:00:00",
+      "price": 6220
+    },
+    {
+      "id": 4,
+      "stockId": 4,
+      "recordedAt": "2026-04-08T09:00:00",
+      "price": 156000
+    },
+    {
+      "id": 5,
+      "stockId": 5,
+      "recordedAt": "2026-04-08T09:00:00",
+      "price": 88995
+    }
+  ],
+  "expenses": [
+    {
+      "id": 1,
+      "memberId": 1,
+      "categoryId": 2,
+      "amount": 4800,
+      "memo": "출근 전 아메리카노",
+      "spentAt": "2026-03-02T08:40:00"
+    },
+    {
+      "id": 2,
+      "memberId": 1,
+      "categoryId": 1,
+      "amount": 11000,
+      "memo": "점심 식사",
+      "spentAt": "2026-03-02T12:15:00"
+    },
+    {
+      "id": 3,
+      "memberId": 1,
+      "categoryId": 7,
+      "amount": 1450,
+      "memo": "버스",
+      "spentAt": "2026-03-03T08:20:00"
+    },
+    {
+      "id": 4,
+      "memberId": 1,
+      "categoryId": 1,
+      "amount": 13000,
+      "memo": "저녁 식사",
+      "spentAt": "2026-03-04T19:00:00"
+    },
+    {
+      "id": 5,
+      "memberId": 1,
+      "categoryId": 2,
+      "amount": 5600,
+      "memo": "카페 라떼",
+      "spentAt": "2026-03-05T15:10:00"
+    },
+    {
+      "id": 6,
+      "memberId": 1,
+      "categoryId": 4,
+      "amount": 42000,
+      "memo": "봄 셔츠 구매",
+      "spentAt": "2026-03-06T20:30:00"
+    },
+    {
+      "id": 7,
+      "memberId": 1,
+      "categoryId": 1,
+      "amount": 9500,
+      "memo": "김밥",
+      "spentAt": "2026-03-08T12:10:00"
+    },
+    {
+      "id": 8,
+      "memberId": 1,
+      "categoryId": 5,
+      "amount": 18000,
+      "memo": "영화 관람",
+      "spentAt": "2026-03-09T19:40:00"
+    },
+    {
+      "id": 9,
+      "memberId": 1,
+      "categoryId": 7,
+      "amount": 1250,
+      "memo": "지하철",
+      "spentAt": "2026-03-10T08:10:00"
+    },
+    {
+      "id": 10,
+      "memberId": 1,
+      "categoryId": 3,
+      "amount": 14500,
+      "memo": "늦은 밤 치킨 배달",
+      "spentAt": "2026-03-11T20:00:00"
+    },
+    {
+      "id": 11,
+      "memberId": 1,
+      "categoryId": 2,
+      "amount": 4900,
+      "memo": "콜드브루",
+      "spentAt": "2026-03-12T10:20:00"
+    },
+    {
+      "id": 12,
+      "memberId": 1,
+      "categoryId": 6,
+      "amount": 6800,
+      "memo": "편의점 간식",
+      "spentAt": "2026-03-13T22:10:00"
+    },
+    {
+      "id": 13,
+      "memberId": 1,
+      "categoryId": 1,
+      "amount": 12000,
+      "memo": "점심 도시락",
+      "spentAt": "2026-03-15T12:05:00"
+    },
+    {
+      "id": 14,
+      "memberId": 1,
+      "categoryId": 7,
+      "amount": 1450,
+      "memo": "버스 환승",
+      "spentAt": "2026-03-16T08:45:00"
+    },
+    {
+      "id": 15,
+      "memberId": 1,
+      "categoryId": 4,
+      "amount": 58000,
+      "memo": "운동화",
+      "spentAt": "2026-03-17T18:20:00"
+    },
+    {
+      "id": 16,
+      "memberId": 1,
+      "categoryId": 1,
+      "amount": 10500,
+      "memo": "햄버거 세트",
+      "spentAt": "2026-03-18T13:00:00"
+    },
+    {
+      "id": 17,
+      "memberId": 1,
+      "categoryId": 5,
+      "amount": 24000,
+      "memo": "전시회 티켓",
+      "spentAt": "2026-03-20T16:00:00"
+    },
+    {
+      "id": 18,
+      "memberId": 1,
+      "categoryId": 2,
+      "amount": 5300,
+      "memo": "아이스티",
+      "spentAt": "2026-03-21T14:35:00"
+    },
+    {
+      "id": 19,
+      "memberId": 1,
+      "categoryId": 3,
+      "amount": 17000,
+      "memo": "주말 야식 배달",
+      "spentAt": "2026-03-22T19:30:00"
+    },
+    {
+      "id": 20,
+      "memberId": 1,
+      "categoryId": 7,
+      "amount": 1250,
+      "memo": "지하철",
+      "spentAt": "2026-03-24T08:15:00"
+    },
+    {
+      "id": 21,
+      "memberId": 1,
+      "categoryId": 1,
+      "amount": 12500,
+      "memo": "회사 앞 백반",
+      "spentAt": "2026-03-25T12:10:00"
+    },
+    {
+      "id": 22,
+      "memberId": 1,
+      "categoryId": 8,
+      "amount": 27000,
+      "memo": "네일 케어",
+      "spentAt": "2026-03-26T20:10:00"
+    },
+    {
+      "id": 23,
+      "memberId": 1,
+      "categoryId": 2,
+      "amount": 4700,
+      "memo": "테이크아웃 커피",
+      "spentAt": "2026-03-27T09:00:00"
+    },
+    {
+      "id": 24,
+      "memberId": 1,
+      "categoryId": 3,
+      "amount": 15500,
+      "memo": "마라탕 배달",
+      "spentAt": "2026-03-28T18:45:00"
+    },
+    {
+      "id": 25,
+      "memberId": 1,
+      "categoryId": 6,
+      "amount": 8300,
+      "memo": "다이소 + 간식",
+      "spentAt": "2026-03-29T17:20:00"
+    },
+    {
+      "id": 26,
+      "memberId": 1,
+      "categoryId": 9,
+      "amount": 9900,
+      "memo": "음악 스트리밍 결제",
+      "spentAt": "2026-03-30T00:10:00"
+    },
+    {
+      "id": 36,
+      "memberId": 1,
+      "categoryId": 4,
+      "amount": 60000,
+      "memo": "온라인 쇼핑 추가 결제",
+      "spentAt": "2026-03-14T20:30:00"
+    },
+    {
+      "id": 37,
+      "memberId": 1,
+      "categoryId": 5,
+      "amount": 36000,
+      "memo": "주말 공연 관람",
+      "spentAt": "2026-03-19T20:10:00"
+    },
+    {
+      "id": 38,
+      "memberId": 1,
+      "categoryId": 3,
+      "amount": 29000,
+      "memo": "주말 야식 배달 추가 주문",
+      "spentAt": "2026-03-23T21:15:00"
+    },
+    {
+      "id": 27,
+      "memberId": 1,
+      "categoryId": 2,
+      "amount": 4500,
+      "memo": "아메리카노",
+      "spentAt": "2026-04-01T09:05:00"
+    },
+    {
+      "id": 28,
+      "memberId": 1,
+      "categoryId": 1,
+      "amount": 12000,
+      "memo": "점심 식사",
+      "spentAt": "2026-04-01T12:20:00"
+    },
+    {
+      "id": 29,
+      "memberId": 1,
+      "categoryId": 7,
+      "amount": 1400,
+      "memo": "버스",
+      "spentAt": "2026-04-02T08:40:00"
+    },
+    {
+      "id": 30,
+      "memberId": 1,
+      "categoryId": 4,
+      "amount": 39000,
+      "memo": "무선 마우스",
+      "spentAt": "2026-04-03T19:10:00"
+    },
+    {
+      "id": 31,
+      "memberId": 1,
+      "categoryId": 1,
+      "amount": 13500,
+      "memo": "저녁 식사",
+      "spentAt": "2026-04-04T18:50:00"
+    },
+    {
+      "id": 32,
+      "memberId": 1,
+      "categoryId": 2,
+      "amount": 5800,
+      "memo": "카페 라떼",
+      "spentAt": "2026-04-05T14:30:00"
+    },
+    {
+      "id": 33,
+      "memberId": 1,
+      "categoryId": 5,
+      "amount": 22000,
+      "memo": "영화",
+      "spentAt": "2026-04-06T20:10:00"
+    },
+    {
+      "id": 34,
+      "memberId": 1,
+      "categoryId": 6,
+      "amount": 8900,
+      "memo": "편의점 야식",
+      "spentAt": "2026-04-07T23:05:00"
+    },
+    {
+      "id": 35,
+      "memberId": 1,
+      "categoryId": 7,
+      "amount": 1250,
+      "memo": "지하철",
+      "spentAt": "2026-04-08T08:15:00"
+    }
+  ],
+  "reports": [
+    {
+      "id": 1,
+      "memberId": 1,
+      "targetMonth": "2026-03",
+      "memberName": "강민지",
+      "ageBand": "TWENTIES",
+      "stockId": 1,
+      "stockName": "카카오",
+      "stockPriceSnapshot": 44000,
+      "monthlyBudget": 650000,
+      "monthlyExpenseTotal": 465200,
+      "savedAmount": 184800,
+      "securedQuantity": 4.2,
+      "targetQuantity": 10,
+      "progressRate": 42,
+      "peerPercentile": 74,
+      "successCount": 24,
+      "summaryComment": "3월에는 쇼핑, 취미/여가, 배달/야식처럼 변동 폭이 큰 소비가 크게 늘어 예산 소진 속도가 빨라졌어요.",
+      "opportunityMessage": "이번 달 아낀 금액으로 카카오를 4.2주 더 확보할 수 있었어요.",
+      "topCategories": [
+        {
+          "rank": 1,
+          "categoryId": 4,
+          "categoryName": "쇼핑",
+          "categoryImageUrl": "/images/categories/shopping.png",
+          "amount": 160000,
+          "additionalQuantity": 3.64
+        },
+        {
+          "rank": 2,
+          "categoryId": 5,
+          "categoryName": "취미/여가",
+          "categoryImageUrl": "/images/categories/hobby.png",
+          "amount": 78000,
+          "additionalQuantity": 1.77
+        },
+        {
+          "rank": 3,
+          "categoryId": 3,
+          "categoryName": "배달/야식",
+          "categoryImageUrl": "/images/categories/delivery.png",
+          "amount": 76000,
+          "additionalQuantity": 1.73
+        }
+      ]
+    }
+  ]
+}

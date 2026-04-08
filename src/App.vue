@@ -37,7 +37,7 @@ import { RouterView, RouterLink } from 'vue-router'
   height: 932px;
   margin: 0 auto;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
   background-color: #ffffff; /* 배경색은 내용에 맞춰 조절 */
   
   /* [선택사항] 폰 느낌을 내기 위한 그림자나 테두리 */
