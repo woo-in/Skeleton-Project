@@ -21,6 +21,7 @@
     "apexcharts": "^5.10.0",
     "axios": "^1.8.4",
     "dayjs": "^1.11.13",
+    "motion": "^12.38.0",
     "lucide-vue-next": "^1.0.0",
     "pinia": "^3.0.1",
     "tailwindcss": "^4.2.2",
