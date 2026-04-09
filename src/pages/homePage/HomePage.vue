@@ -2,6 +2,8 @@
 import { computed, ref } from 'vue'
 import dayjs from 'dayjs'
 import { toast } from 'vue3-toastify'
+import HoneyPot from '@/components/HoneyPot.vue'
+import { useHoneyPot } from '@/composables/useHoneyPot'
 
 const weekdays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
 
@@ -196,6 +198,7 @@ const historyItems = [
 const calendarTitle = computed(
   () => `${currentMonth.value.year()}년 ${currentMonth.value.month() + 1}월`,
 )
+const { displayPercentage, fillPercentage, guidelinePercentage } = useHoneyPot(800000, 555000, 360000)
 const visibleHistoryCount = ref(3)
 const recentItems = computed(() => historyItems.slice(0, visibleHistoryCount.value))
 const canLoadMoreHistory = computed(() => visibleHistoryCount.value < historyItems.length)
@@ -270,7 +273,15 @@ function loadMoreHistory() {
         <section class="hero-section">
           <p class="page-title">내 주식 어디갔어?</p>
 
-          <div class="bee-slot" aria-hidden="true"></div>
+          <div class="bee-slot" aria-hidden="true">
+            <div class="honey-pot-stage">
+              <HoneyPot
+                :display-value="displayPercentage"
+                :fill-percentage="fillPercentage"
+                :guideline-percentage="guidelinePercentage"
+              />
+            </div>
+          </div>
 
           <div class="balance-copy">
             <p class="balance-label">이번 달 생활비 남음</p>
@@ -430,8 +441,21 @@ function loadMoreHistory() {
 }
 
 .bee-slot {
-  height: 18.75rem;
-  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 16.75rem;
+  margin-top: 0.5rem;
+  overflow: visible;
+}
+
+.honey-pot-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  transform: translateX(0.25rem) scale(0.88);
+  transform-origin: center top;
 }
 
 .balance-copy {
@@ -874,7 +898,12 @@ function loadMoreHistory() {
   }
 
   .bee-slot {
-    height: 14rem;
+    height: 13.5rem;
+    margin-top: 0.3rem;
+  }
+
+  .honey-pot-stage {
+    transform: translateX(0.1rem) scale(0.74);
   }
 
   .balance-label {
