@@ -58,7 +58,26 @@ onMounted(() => {
         maintainAspectRatio: false,
         plugins: {
           legend: { display: false }, // 상단 범례 숨김
-          tooltip: { enabled: false } // 툴팁 숨김
+          tooltip: { 
+            enabled: true, // 💡 툴팁 활성화
+            backgroundColor: 'rgba(75, 68, 51, 0.9)', // 툴팁 배경색 설정
+            padding: 10,
+            displayColors: false, // 툴팁 내 컬러 박스 숨김
+            titleFont: { size: 13, family: 'Pretendard Variable' },
+            bodyFont: { size: 14, family: 'Pretendard Variable', weight: 'bold' },
+            callbacks: {
+              // 툴팁에 표시될 텍스트 커스텀 (예: 15 -> 15만 원)
+              label: function(context) {
+                return context.parsed.y + '만 원'; 
+              }
+            }
+          }
+        },
+        // 점에 마우스를 올리기 쉽게 호버 영역을 넓혀줍니다
+        interaction: {
+          mode: 'nearest',
+          axis: 'x',
+          intersect: false
         },
         scales: {
           x: {
@@ -72,7 +91,7 @@ onMounted(() => {
             }
           },
           y: {
-            display: false, // y축 숫자와 가로선 모두 숨김 (디자인과 동일하게)
+            display: false, // y축 숫자와 가로선 모두 숨김
             min: 0,
             max: 100 // 차트 상하 여백 확보
           }
