@@ -216,13 +216,16 @@ const registerUser = async () => {
     });
 
     if (response.ok) {
-      alert('회원가입이 완료되었습니다!');
+
+      router.push('/setup');
       // 성공 시 폼 초기화
       userId.value = '';
       name.value = '';
       birthdate.value = '';
       password.value = '';
       passwordConfirm.value = '';
+
+
     } else {
       alert('회원가입 처리 중 오류가 발생했습니다.');
     }
