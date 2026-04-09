@@ -328,7 +328,9 @@ const handleSave = () => {
               <button @click="toggleCategory" class="field-button" type="button">
                 <div class="field-left">
                   <div class="field-icon">
-                    <img :src="currentCategoryIcon" alt="카테고리" class="w-6 h-6 object-contain" />
+                    <span class="category-image-mask" aria-hidden="true">
+                      <img :src="currentCategoryIcon" alt="카테고리" class="category-image" />
+                    </span>
                   </div>
                   <span class="field-label">카테고리</span>
                 </div>
@@ -354,7 +356,9 @@ const handleSave = () => {
                       type="button"
                     >
                       <span class="dropdown-icon">
-                        <img :src="cat.icon" :alt="cat.name" class="w-5 h-5 object-contain" />
+                        <span class="category-image-mask category-image-mask--sm" aria-hidden="true">
+                          <img :src="cat.icon" :alt="cat.name" class="category-image" />
+                        </span>
                       </span>
                       {{ cat.name }}
                     </button>
@@ -486,35 +490,39 @@ const handleSave = () => {
                   <div class="time-wheel-layout">
                     <div class="time-wheel-column">
                       <span class="time-wheel-unit">시</span>
-                      <div ref="hourWheelRef" class="time-wheel-list">
-                        <button
-                          v-for="hour in hourOptions"
-                          :key="hour.value"
-                          type="button"
-                          class="wheel-option"
-                          :class="{ 'is-selected': hour.isSelected }"
-                          :data-selected="hour.isSelected"
-                          @click="selectHour(hour.value)"
-                        >
-                          {{ hour.label }}
-                        </button>
+                      <div class="time-wheel-track">
+                        <div ref="hourWheelRef" class="time-wheel-list">
+                          <button
+                            v-for="hour in hourOptions"
+                            :key="hour.value"
+                            type="button"
+                            class="wheel-option"
+                            :class="{ 'is-selected': hour.isSelected }"
+                            :data-selected="hour.isSelected"
+                            @click="selectHour(hour.value)"
+                          >
+                            {{ hour.label }}
+                          </button>
+                        </div>
                       </div>
                     </div>
 
                     <div class="time-wheel-column">
                       <span class="time-wheel-unit">분</span>
-                      <div ref="minuteWheelRef" class="time-wheel-list">
-                        <button
-                          v-for="minute in minuteOptions"
-                          :key="minute.value"
-                          type="button"
-                          class="wheel-option"
-                          :class="{ 'is-selected': minute.isSelected }"
-                          :data-selected="minute.isSelected"
-                          @click="selectMinute(minute.value)"
-                        >
-                          {{ minute.label }}
-                        </button>
+                      <div class="time-wheel-track">
+                        <div ref="minuteWheelRef" class="time-wheel-list">
+                          <button
+                            v-for="minute in minuteOptions"
+                            :key="minute.value"
+                            type="button"
+                            class="wheel-option"
+                            :class="{ 'is-selected': minute.isSelected }"
+                            :data-selected="minute.isSelected"
+                            @click="selectMinute(minute.value)"
+                          >
+                            {{ minute.label }}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -726,6 +734,7 @@ const handleSave = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-width: 0;
   padding: 1rem;
   background-color: var(--color-surface-container-low);
   border-radius: 1rem;
@@ -750,6 +759,7 @@ const handleSave = () => {
   display: flex;
   align-items: center;
   gap: 1rem;
+  min-width: 0;
 }
 
 .field-icon {
@@ -777,7 +787,10 @@ const handleSave = () => {
 
 .field-right {
   display: flex;
+  flex: 1;
+  min-width: 0;
   align-items: center;
+  justify-content: flex-end;
   gap: 0.5rem;
   color: var(--color-on-surface-variant); /* kb-brown-light 수정 */
 }
@@ -841,6 +854,30 @@ const handleSave = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.category-image-mask {
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: rgba(255, 188, 80, 0.16);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.category-image-mask--sm {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.category-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.12);
 }
 
 .picker-panel {
@@ -942,12 +979,20 @@ const handleSave = () => {
 }
 
 .display-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  max-width: min(100%, 9.5rem);
+  min-width: 0;
   background-color: #ffffff;
   padding: 0.5rem 1rem;
   border-radius: 0.75rem;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   font-size: 0.875rem;
   font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: transform 0.1s;
   user-select: none;
 }
@@ -958,6 +1003,11 @@ const handleSave = () => {
   justify-content: space-between;
   gap: 0.75rem;
   margin-bottom: 0.9rem;
+}
+
+.time-wheel-header > div {
+  flex: 1;
+  min-width: 0;
 }
 
 .time-wheel-caption {
@@ -973,6 +1023,9 @@ const handleSave = () => {
   font-weight: 800;
   color: var(--color-secondary);
   letter-spacing: -0.03em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .time-wheel-done {
@@ -997,6 +1050,8 @@ const handleSave = () => {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.75rem;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .time-wheel-column {
@@ -1004,13 +1059,19 @@ const handleSave = () => {
   border-radius: 1rem;
   background: rgba(255, 188, 80, 0.08);
   padding: 0.65rem 0.55rem;
+  min-width: 0;
+  overflow: hidden;
 }
 
-.time-wheel-column::after {
+.time-wheel-track {
+  position: relative;
+}
+
+.time-wheel-track::after {
   content: '';
   position: absolute;
-  left: 0.55rem;
-  right: 0.55rem;
+  left: 0;
+  right: 0;
   top: 50%;
   height: 2.75rem;
   transform: translateY(-50%);
@@ -1034,12 +1095,14 @@ const handleSave = () => {
   z-index: 1;
   max-height: 11.5rem;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 4rem 0;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
   scroll-snap-type: y proximity;
   scrollbar-width: none;
+  overscroll-behavior: contain;
 }
 
 .time-wheel-list::-webkit-scrollbar {
@@ -1047,6 +1110,7 @@ const handleSave = () => {
 }
 
 .wheel-option {
+  width: 100%;
   min-height: 2.75rem;
   border-radius: 0.9rem;
   display: flex;
@@ -1055,6 +1119,8 @@ const handleSave = () => {
   color: rgba(86, 72, 56, 0.55);
   font-size: 1rem;
   font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
   letter-spacing: -0.02em;
   transition:
     transform 0.15s ease,

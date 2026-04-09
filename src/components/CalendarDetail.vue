@@ -175,11 +175,13 @@ const getCategoryIcon = (category: string) => {
               <div
                 class="w-12 h-12 rounded-xl bg-surface-container-lowest border border-outline-variant flex items-center justify-center"
               >
-                <img
-                  :src="getCategoryIcon(exp.category)"
-                  :alt="exp.category"
-                  class="w-6 h-6 object-contain"
-                />
+                <span class="category-image-mask" aria-hidden="true">
+                  <img
+                    :src="getCategoryIcon(exp.category)"
+                    :alt="exp.category"
+                    class="category-image"
+                  />
+                </span>
               </div>
 
               <div class="flex-1">
@@ -261,5 +263,24 @@ const getCategoryIcon = (category: string) => {
   -webkit-mask-size: contain;
   mask-repeat: no-repeat;
   -webkit-mask-repeat: no-repeat;
+}
+
+.category-image-mask {
+  width: 1.95rem;
+  height: 1.95rem;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: rgba(255, 188, 80, 0.16);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.category-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.12);
 }
 </style>
