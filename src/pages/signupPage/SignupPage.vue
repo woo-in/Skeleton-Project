@@ -191,7 +191,6 @@ const registerUser = async () => {
       return;
     }
 
-
     // 4. 나이대(AgeBand) 계산
     const ageBand = calculateAgeBand(birthdate.value);
 
