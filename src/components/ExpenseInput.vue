@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import dayjs from 'dayjs'
 import { ChevronDown, ChevronLeft, ChevronRight, Info, X } from 'lucide-vue-next'
 
@@ -73,6 +73,8 @@ const amountError = ref('')
 const date = ref(props.selectedDate)
 const time = ref(getLocalTime())
 const currentCalendarMonth = ref(dayjs(props.selectedDate || dayjs().format('YYYY-MM-DD')).startOf('month'))
+const hourWheelRef = ref<HTMLElement | null>(null)
+const minuteWheelRef = ref<HTMLElement | null>(null)
 
 // ==========================================
 // 4. Watchers
@@ -137,16 +139,30 @@ const calendarDays = computed(() => {
   })
 })
 
-const timeSlots = computed(() =>
-  Array.from({ length: 48 }, (_, index) => {
-    const hour = String(Math.floor(index / 2)).padStart(2, '0')
-    const minute = index % 2 === 0 ? '00' : '30'
-    const value = `${hour}:${minute}`
+const selectedHour = computed(() => time.value.split(':')[0] || '00')
+
+const selectedMinute = computed(() => time.value.split(':')[1] || '00')
+
+const hourOptions = computed(() =>
+  Array.from({ length: 24 }, (_, index) => {
+    const value = String(index).padStart(2, '0')
 
     return {
       value,
-      label: formatDisplayTime(value),
-      isSelected: value === time.value,
+      label: value,
+      isSelected: value === selectedHour.value,
+    }
+  }),
+)
+
+const minuteOptions = computed(() =>
+  Array.from({ length: 60 }, (_, index) => {
+    const value = String(index).padStart(2, '0')
+
+    return {
+      value,
+      label: value,
+      isSelected: value === selectedMinute.value,
     }
   }),
 )
@@ -197,10 +213,14 @@ const toggleDatePicker = () => {
   isDatePickerOpen.value = !isDatePickerOpen.value
 }
 
-const toggleTimePicker = () => {
+const toggleTimePicker = async () => {
   isCategoryOpen.value = false
   isDatePickerOpen.value = false
   isTimePickerOpen.value = !isTimePickerOpen.value
+
+  if (isTimePickerOpen.value) {
+    await syncTimeWheelPosition()
+  }
 }
 
 const changeCalendarMonth = (step: number) => {
@@ -213,9 +233,43 @@ const selectDateFromCalendar = (isoDate: string) => {
   isDatePickerOpen.value = false
 }
 
-const selectTimeSlot = (value: string) => {
-  time.value = value
+const updateTimeValue = (nextHour: string, nextMinute: string) => {
+  time.value = `${nextHour}:${nextMinute}`
+}
+
+const selectHour = async (value: string) => {
+  updateTimeValue(value, selectedMinute.value)
+  await syncTimeWheelPosition()
+}
+
+const selectMinute = async (value: string) => {
+  updateTimeValue(selectedHour.value, value)
+  await syncTimeWheelPosition()
+}
+
+const closeTimePicker = () => {
   isTimePickerOpen.value = false
+}
+
+const scrollWheelToSelected = (container: HTMLElement | null) => {
+  if (!container) return
+
+  const selectedOption = container.querySelector<HTMLElement>('[data-selected="true"]')
+  if (!selectedOption) return
+
+  const offset =
+    selectedOption.offsetTop - container.clientHeight / 2 + selectedOption.clientHeight / 2
+
+  container.scrollTo({
+    top: Math.max(offset, 0),
+    behavior: 'smooth',
+  })
+}
+
+const syncTimeWheelPosition = async () => {
+  await nextTick()
+  scrollWheelToSelected(hourWheelRef.value)
+  scrollWheelToSelected(minuteWheelRef.value)
 }
 
 const handleSave = () => {
@@ -419,17 +473,50 @@ const handleSave = () => {
 
               <Transition name="fade-slide">
                 <div v-if="isTimePickerOpen" class="picker-panel">
-                  <div class="time-slot-grid">
-                    <button
-                      v-for="slot in timeSlots"
-                      :key="slot.value"
-                      type="button"
-                      class="time-slot-button"
-                      :class="{ 'is-selected': slot.isSelected }"
-                      @click="selectTimeSlot(slot.value)"
-                    >
-                      {{ slot.label }}
+                  <div class="time-wheel-header">
+                    <div>
+                      <p class="time-wheel-caption">시간 선택</p>
+                      <p class="time-wheel-value">{{ formatDisplayTime(time) }}</p>
+                    </div>
+                    <button type="button" class="time-wheel-done" @click="closeTimePicker">
+                      완료
                     </button>
+                  </div>
+
+                  <div class="time-wheel-layout">
+                    <div class="time-wheel-column">
+                      <span class="time-wheel-unit">시</span>
+                      <div ref="hourWheelRef" class="time-wheel-list">
+                        <button
+                          v-for="hour in hourOptions"
+                          :key="hour.value"
+                          type="button"
+                          class="wheel-option"
+                          :class="{ 'is-selected': hour.isSelected }"
+                          :data-selected="hour.isSelected"
+                          @click="selectHour(hour.value)"
+                        >
+                          {{ hour.label }}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="time-wheel-column">
+                      <span class="time-wheel-unit">분</span>
+                      <div ref="minuteWheelRef" class="time-wheel-list">
+                        <button
+                          v-for="minute in minuteOptions"
+                          :key="minute.value"
+                          type="button"
+                          class="wheel-option"
+                          :class="{ 'is-selected': minute.isSelected }"
+                          :data-selected="minute.isSelected"
+                          @click="selectMinute(minute.value)"
+                        >
+                          {{ minute.label }}
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </Transition>
@@ -865,33 +952,124 @@ const handleSave = () => {
   user-select: none;
 }
 
-.time-slot-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.55rem;
-  max-height: 15rem;
-  overflow-y: auto;
+.time-wheel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
 }
 
-.time-slot-button {
-  min-height: 2.65rem;
-  border-radius: 0.9rem;
-  padding: 0.55rem 0.4rem;
-  background: rgba(255, 188, 80, 0.08);
-  color: var(--color-secondary);
-  font-size: 0.83rem;
+.time-wheel-caption {
+  margin: 0;
+  font-size: 0.72rem;
   font-weight: 700;
+  color: var(--color-on-surface-variant);
+}
+
+.time-wheel-value {
+  margin: 0.25rem 0 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-secondary);
+  letter-spacing: -0.03em;
+}
+
+.time-wheel-done {
+  min-width: 3.5rem;
+  height: 2rem;
+  padding: 0 0.85rem;
+  border-radius: 9999px;
+  background: rgba(255, 188, 80, 0.18);
+  color: var(--color-secondary);
+  font-size: 0.78rem;
+  font-weight: 800;
   transition:
     transform 0.15s ease,
-    background-color 0.15s ease,
-    color 0.15s ease;
+    background-color 0.15s ease;
 }
 
-.time-slot-button.is-selected {
-  background: var(--color-primary);
+.time-wheel-done:active {
+  transform: scale(0.97);
 }
 
-.time-slot-button:active {
+.time-wheel-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.time-wheel-column {
+  position: relative;
+  border-radius: 1rem;
+  background: rgba(255, 188, 80, 0.08);
+  padding: 0.65rem 0.55rem;
+}
+
+.time-wheel-column::after {
+  content: '';
+  position: absolute;
+  left: 0.55rem;
+  right: 0.55rem;
+  top: 50%;
+  height: 2.75rem;
+  transform: translateY(-50%);
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(209, 198, 184, 0.55);
+  pointer-events: none;
+}
+
+.time-wheel-unit {
+  display: inline-flex;
+  margin-bottom: 0.55rem;
+  padding-left: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-on-surface-variant);
+}
+
+.time-wheel-list {
+  position: relative;
+  z-index: 1;
+  max-height: 11.5rem;
+  overflow-y: auto;
+  padding: 4rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  scroll-snap-type: y proximity;
+  scrollbar-width: none;
+}
+
+.time-wheel-list::-webkit-scrollbar {
+  display: none;
+}
+
+.wheel-option {
+  min-height: 2.75rem;
+  border-radius: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(86, 72, 56, 0.55);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  transition:
+    transform 0.15s ease,
+    color 0.15s ease,
+    opacity 0.15s ease;
+  scroll-snap-align: center;
+}
+
+.wheel-option.is-selected {
+  color: var(--color-secondary);
+  font-size: 1.08rem;
+  font-weight: 800;
+}
+
+.wheel-option:active {
   transform: scale(0.97);
 }
 
