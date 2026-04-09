@@ -1,46 +1,47 @@
 <template>
   <div class="iphone-pro-max">
-  <header>
-    <nav>
-      <RouterLink to="/signup">Sign Up/</RouterLink>
-      <RouterLink to="/login">Login/</RouterLink>
-      <RouterLink to="/setting">Setting</RouterLink>
-    </nav>
-  </header>
-
-  <main class="app-main">
-    <RouterView />
-  </main>
-
+    <main class="app-content">
+      <RouterView />
+    </main>
   </div>
 </template>
 
 <script setup>
 import { RouterView } from 'vue-router'
-// 전역적으로 쓰일 컴포넌트(네비게이션 바 등)가 있다면 여기서 import 하세요.
 </script>
 
 <style>
-.iphone-pro-max {
-  width: 430px;
-  height: 932px;
-  margin: 0 auto;
-  position: relative;
-  overflow-y: auto;
-  background-color: #ffffff; /* 배경색은 내용에 맞춰 조절 */
-
-  /* [선택사항] 폰 느낌을 내기 위한 그림자나 테두리 */
-  box-shadow: 0 0 20px rgba(0,0,0,0.1);
-  border: 1px solid #ddd;
+html,
+body,
+#app {
+  min-height: 100%;
 }
 
-/* PC 배경색을 지정하고 싶을 때 */
 body {
-  background-color: #f5f5f5;
   margin: 0;
-  display: flex;
-  align-items: center; /* 세로 중앙 정렬 원할 때 */
-  justify-content: center;
   min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+#app {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iphone-pro-max {
+  --device-width: 430px;
+  --device-height: 932px;
+  width: min(100vw, var(--device-width));
+  height: min(100vh, var(--device-height));
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.app-content {
+  height: 100%;
+  overflow-y: auto;
 }
 </style>
