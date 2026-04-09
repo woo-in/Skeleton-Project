@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+/*
 function hasSession() {
   try {
     return Boolean(JSON.parse(localStorage.getItem('userSession') || 'null'))
@@ -7,13 +8,16 @@ function hasSession() {
     return false
   }
 }
+*/
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      redirect: () => (hasSession() ? '/home' : '/login'),
+      // Dev only: open the home page while auth flow is still in progress.
+      redirect: '/home',
+      // redirect: () => (hasSession() ? '/home' : '/login'),
     },
 
     {
@@ -46,16 +50,17 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to) => {
-  const isAuthenticated = hasSession()
-
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    return '/login'
-  }
-
-  if (to.meta.guestOnly && isAuthenticated) {
-    return '/home'
-  }
-})
+// Dev only: temporarily disable route guards until auth flow is finalized.
+// router.beforeEach((to) => {
+//   const isAuthenticated = hasSession()
+//
+//   if (to.meta.requiresAuth && !isAuthenticated) {
+//     return '/login'
+//   }
+//
+//   if (to.meta.guestOnly && isAuthenticated) {
+//     return '/home'
+//   }
+// })
 
 export default router
