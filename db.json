@@ -419,9 +419,9 @@
   "reports": [
     {
       "id": 1,
-      "memberId": 1,
+      "memberId": "S0U5oduKb5A",
       "targetMonth": "2026-03",
-      "memberName": "강민지",
+      "memberName": "정우인",
       "ageBand": "TWENTIES",
       "stockId": 1,
       "stockName": "카카오",

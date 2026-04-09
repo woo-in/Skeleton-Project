@@ -16,6 +16,11 @@ const router = createRouter({
       // 이 부분은 나중에 필요할 때 파일을 만들면 됩니다.
       component: () => import('../views/AboutView.vue'),
     },
+    {
+      path: '/report',
+      name: 'report',
+      component: () => import('@/pages/reportPage/ReportPage.vue'),
+    }
   ],
 })
 
