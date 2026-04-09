@@ -3,6 +3,8 @@ import { computed, ref } from 'vue'
 import dayjs from 'dayjs'
 import { toast } from 'vue3-toastify'
 import HoneyPot from '@/components/HoneyPot.vue'
+import CalendarDetail from '@/components/CalendarDetail.vue'
+import ExpenseInput from '@/components/ExpenseInput.vue'
 import { useHoneyPot } from '@/composables/useHoneyPot'
 
 const weekdays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
@@ -31,6 +33,51 @@ const calendarAccentMap = {
 
 const currentMonth = ref(dayjs('2024-05-01'))
 const selectedDate = ref(dayjs('2024-05-03'))
+const isCalendarDetailOpen = ref(false)
+const isExpenseInputOpen = ref(false)
+const reopenCalendarDetail = ref(false)
+const expenseEntries = ref([
+  {
+    id: 1,
+    category: '카페/음료',
+    amount: 4800,
+    date: '2024-05-02',
+    time: '08:40',
+    memo: '출근 전 아메리카노',
+  },
+  {
+    id: 2,
+    category: '일반식사',
+    amount: 11000,
+    date: '2024-05-02',
+    time: '12:15',
+    memo: '점심 식사',
+  },
+  {
+    id: 3,
+    category: '카페/음료',
+    amount: 5400,
+    date: '2024-05-03',
+    time: '09:10',
+    memo: '아이스 라떼',
+  },
+  {
+    id: 4,
+    category: '일반식사',
+    amount: 10200,
+    date: '2024-05-03',
+    time: '12:20',
+    memo: '회사 앞 점심',
+  },
+  {
+    id: 5,
+    category: '쇼핑',
+    amount: 10000,
+    date: '2024-05-03',
+    time: '19:40',
+    memo: '생활용품 구매',
+  },
+])
 
 const historyItems = [
   {
@@ -202,6 +249,21 @@ const { displayPercentage, fillPercentage, guidelinePercentage } = useHoneyPot(8
 const visibleHistoryCount = ref(3)
 const recentItems = computed(() => historyItems.slice(0, visibleHistoryCount.value))
 const canLoadMoreHistory = computed(() => visibleHistoryCount.value < historyItems.length)
+const selectedDateKey = computed(() => selectedDate.value.format('YYYY-MM-DD'))
+const selectedDayExpenses = computed(() =>
+  expenseEntries.value.filter((expense) => expense.date === selectedDateKey.value),
+)
+const calendarDailyReport = computed(() => {
+  const stockPrice = 47900
+  const totalSpent = selectedDayExpenses.value.reduce((sum, expense) => sum + expense.amount, 0)
+
+  return {
+    securedQuantity: Number((totalSpent / stockPrice).toFixed(2)),
+    stockName: '카카오',
+    savedAmount: Math.max(0, stockPrice - totalSpent),
+    progressRate: Math.min(100, Math.round((totalSpent / stockPrice) * 100)),
+  }
+})
 
 const calendarDays = computed(() => {
   const monthStart = currentMonth.value.startOf('month')
@@ -263,6 +325,53 @@ function handleStockClick() {
 
 function loadMoreHistory() {
   visibleHistoryCount.value = Math.min(historyItems.length, visibleHistoryCount.value + 10)
+}
+
+function openCalendarDetail(isoDate) {
+  selectDate(isoDate)
+  isCalendarDetailOpen.value = true
+}
+
+function closeCalendarDetail() {
+  isCalendarDetailOpen.value = false
+}
+
+function showExpenseInput() {
+  reopenCalendarDetail.value = false
+  isExpenseInputOpen.value = true
+}
+
+function openExpenseInputFromCalendar() {
+  reopenCalendarDetail.value = true
+  isCalendarDetailOpen.value = false
+  isExpenseInputOpen.value = true
+}
+
+function closeExpenseInput() {
+  isExpenseInputOpen.value = false
+
+  if (reopenCalendarDetail.value) {
+    isCalendarDetailOpen.value = true
+    reopenCalendarDetail.value = false
+  }
+}
+
+function handleExpenseSave(payload) {
+  expenseEntries.value = [
+    {
+      id: Date.now(),
+      amount: payload.amount,
+      category: payload.category,
+      date: payload.date,
+      time: payload.time,
+      memo: payload.memo || '직접 입력',
+    },
+    ...expenseEntries.value,
+  ]
+
+  toast.success('지출이 추가됐어요.', {
+    autoClose: 1600,
+  })
 }
 </script>
 
@@ -341,7 +450,7 @@ function loadMoreHistory() {
                   'is-today': day.isToday,
                 }"
                 :aria-pressed="day.isSelected"
-                @click="selectDate(day.isoDate)"
+                @click="openCalendarDetail(day.isoDate)"
               >
                 <span class="calendar-day">{{ day.label }}</span>
                 <span v-if="day.dotTone" class="calendar-dot" :class="`tone-${day.dotTone}`"></span>
@@ -390,9 +499,25 @@ function loadMoreHistory() {
           </button>
         </section>
 
-        <button class="floating-action" type="button" aria-label="추가" @click="handleAddClick">
+        <button class="floating-action" type="button" aria-label="추가" @click="showExpenseInput">
           <span class="floating-action-icon" aria-hidden="true"></span>
         </button>
+
+        <CalendarDetail
+          :is-open="isCalendarDetailOpen"
+          :selected-date="selectedDateKey"
+          :day-expenses="selectedDayExpenses"
+          :daily-report="calendarDailyReport"
+          @close="closeCalendarDetail"
+          @add-expense="openExpenseInputFromCalendar"
+        />
+
+        <ExpenseInput
+          :is-open="isExpenseInputOpen"
+          :selected-date="selectedDateKey"
+          @close="closeExpenseInput"
+          @save="handleExpenseSave"
+        />
       </div>
     </div>
   </div>
