@@ -1,1 +1,12 @@
 @import 'tailwindcss';
+
+/*Tailwind v4 테마 설정 (이게 있어야 클래스색상이 적용됩니다) */
+@theme {
+  --color-primary: #ffbc50;
+  --color-secondary: #4a443f;
+  --color-surface-container-low: #f3f3f4;
+  --color-surface-container-lowest: #ffffff;
+  --color-on-surface-variant: #79747e;
+  --color-outline-variant: #d0c5ba;
+  --color-error: #ba1a1a;
+}
