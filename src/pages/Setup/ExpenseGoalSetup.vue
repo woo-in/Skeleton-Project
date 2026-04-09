@@ -29,12 +29,12 @@ const isStockListOpen = ref(false)
 const showErrors = ref(false)
 
 const popularStocks = [
-  { name: '케이뱅크', ticker: 'KBNK', price: 6080 },
-  { name: '카카오', ticker: 'KAKAO', price: 47500 },
-  { name: '삼성전자', ticker: 'SAMSUNG', price: 204500 },
-  { name: 'KB금융', ticker: 'KBFG', price: 155900 },
-  { name: '타이거200', ticker: 'TIGER', price: 87700 },
-  { name: '현대차', ticker: 'HYUNDAI', price: 501000 },
+  { name: '케이뱅크', ticker: 'KBK', price: 6080 },
+  { name: '카카오', ticker: 'KKO', price: 47500 },
+  { name: '삼성전자', ticker: 'SMS', price: 204500 },
+  { name: 'KB금융', ticker: 'KBF', price: 155900 },
+  { name: '타이거200', ticker: 'TG2', price: 87700 },
+  { name: '현대차', ticker: 'HDY', price: 501000 },
 ]
 
 // Get User ID from session
