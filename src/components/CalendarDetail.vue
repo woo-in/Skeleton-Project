@@ -209,22 +209,42 @@ const getCategoryIcon = (category: string) => {
 </template>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s;
+.slide-up-enter-active {
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  /* opacity 0.55s ease-out; */
 }
+
+.slide-up-leave-active {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  /* opacity 0.3s ease-in; */
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateX(-50%) translateY(120%);
+}
+
+.slide-up-enter-to,
+.slide-up-leave-from {
+  transform: translateX(-50%) translateY(0);
+  /* opacity: 1; */
+}
+.fade-enter-active {
+  transition: opacity 0.15s ease-out;
+}
+
+.fade-leave-active {
+  transition: opacity 0.12s ease-in;
+}
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
 }
 
-.slide-up-enter-active,
-.slide-up-leave-active {
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.slide-up-enter-from,
-.slide-up-leave-to {
-  transform: translateY(100%);
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
 }
 
 .honey-pot-mask {
