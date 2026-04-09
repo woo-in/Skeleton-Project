@@ -10,7 +10,7 @@
           <div class="container-2">
             <div class="div-wrapper"><div class="text-wrapper">지난달 투자 리포트</div></div>
             <div class="heading">
-              <div class="text-wrapper-2">절약 목표를 달성했어요! 👏</div>
+              <div class="text-wrapper-2">절약 목표를 <br>달성했어요! 👏</div>
             </div>
           </div>
           <div class="overlay-border"><div class="text-wrapper-3">ACHIEVED</div></div>
@@ -40,7 +40,12 @@
             </div>
             <div class="container-7"><div class="text-wrapper-9">{{ report.progressRate }}%</div></div>
           </div>
-          <div class="overlay"><div class="background-shadow"></div></div>
+          <div class="overlay">
+    <div 
+      class="background-shadow" 
+      :style="{ width: currentWidth + '%' }"
+    ></div>
+  </div>
           <div class="container-9">
             <p class="p">{{ report.successCount }}명이 함께 이 목표를 향해 달리고 있어요</p>
           </div>
@@ -48,15 +53,25 @@
       </div>
     </div>
 
-   
-
   </div>
 </template>
 
 <script setup>
+import {ref, onMounted} from 'vue';
 
-defineProps({
+
+const props = defineProps({
   report: Object
+});
+
+const currentWidth = ref(0);
+
+onMounted(() => {
+  // 화면이 뜨고 아주 살짝(0.1초) 뒤에 목표치로 숫자를 바꿔줍니다.
+  // 이렇게 해야 브라우저가 '0에서 시작해서 커졌네!' 하고 애니메이션을 작동시킵니다.
+  setTimeout(() => {
+    currentWidth.value = props.report.progressRate;
+  }, 100);
 });
 
 </script>
@@ -136,8 +151,7 @@ defineProps({
   position: relative;
   display: flex;
   align-items: center;
-  width: 103.27px;
-  height: 20px;
+  
   margin-top: -1.00px;
   font-family: "Pretendard Variable-Regular", Helvetica;
   font-weight: 400;
@@ -146,6 +160,7 @@ defineProps({
   letter-spacing: 0;
   line-height: 20px;
   white-space: nowrap;
+  word-break: keep-all;
 }
 
 .hero-goal-section .heading {
@@ -265,18 +280,14 @@ defineProps({
 }
 
 .hero-goal-section .heading-2 {
-  height: 45px;
-  position: relative;
-  align-self: stretch;
+  display: flex;
+  align-items: baseline; /* 큰 글자와 작은 글자의 아래쪽 선을 딱 맞춰줍니다 */
+  gap: 8px; /* 🚨 두 글자 사이의 간격입니다. 너무 붙어있으면 숫자를 늘리세요! */
   width: 100%;
 }
 
 .hero-goal-section .text-wrapper-6 {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 159px;
-  height: 45px;
+  
   font-family: "Manrope-ExtraBold", Helvetica;
   font-weight: 800;
   font-size: 36px;
@@ -289,11 +300,7 @@ defineProps({
 }
 
 .hero-goal-section .text-wrapper-7 {
-  position: absolute;
-  top: 14px;
-  left: 163px;
-  width: 60px;
-  height: 28px;
+  
   display: flex;
   align-items: center;
   opacity: 0.8;
@@ -416,7 +423,7 @@ defineProps({
 
 .hero-goal-section .background-shadow {
   position: relative;
-  width: 82.00%;
+  
   height: calc(100% - 1px);
   top: 1px;
   background-color: #4b4433;

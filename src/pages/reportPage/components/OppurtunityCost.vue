@@ -18,10 +18,8 @@
 
     <p class="op-cost__desc">
       지난달 지출이 가장 높았던 항목들이에요.<br />
-      조금만 더 줄이면 투자금이 이만큼 늘어납니다.
+      이 돈들을 주식으로 환산하면 이만큼입니다.
     </p>
-
-    
 
     <ul class="op-cost__list" v-if="report">
   <li 
