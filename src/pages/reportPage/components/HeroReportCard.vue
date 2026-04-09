@@ -1,0 +1,464 @@
+<template>
+  <div v-if="report">
+    
+    <div class="hero-goal-section">
+      <div class="icon" aria-hidden="true">
+        <span class="icon-emoji">✨</span>
+      </div>
+      <div class="container">
+        <div class="div">
+          <div class="container-2">
+            <div class="div-wrapper"><div class="text-wrapper">지난달 투자 리포트</div></div>
+            <div class="heading">
+              <div class="text-wrapper-2">절약 목표를 <br>달성했어요! 👏</div>
+            </div>
+          </div>
+          <div class="overlay-border"><div class="text-wrapper-3">ACHIEVED</div></div>
+        </div>
+        <div class="container-3">
+          <div class="container-4">
+            <div class="text-wrapper-4">지난달</div>
+            <div class="horizontal-border">
+              <div class="text-wrapper-5">{{ report.savedAmount.toLocaleString() }}원</div>
+            </div>
+            <div class="text-wrapper-4">아껴서</div>
+          </div>
+          <div class="heading-2">
+            <div class="text-wrapper-6">+{{ report.stockName }} {{ report.securedQuantity }}</div>
+            <div class="text-wrapper-7">주 확보</div>
+          </div>
+        </div>
+        <div class="goal-progress-card">
+          <div class="container-5">
+            <div class="container-6">
+              <div class="container-7">
+                <span class="img" aria-hidden="true">🎯</span>
+              </div>
+              <div class="container-8">
+                <div class="text-wrapper-8">{{ report.stockName }} {{ report.targetQuantity }}주 채우기 목표</div>
+              </div>
+            </div>
+            <div class="container-7"><div class="text-wrapper-9">{{ report.progressRate }}%</div></div>
+          </div>
+          <div class="overlay">
+    <div 
+      class="background-shadow" 
+      :style="{ width: currentWidth + '%' }"
+    ></div>
+  </div>
+          <div class="container-9">
+            <p class="p">{{ report.successCount }}명이 함께 이 목표를 향해 달리고 있어요</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</template>
+
+<script setup>
+import {ref, onMounted} from 'vue';
+
+
+const props = defineProps({
+  report: Object
+});
+
+const currentWidth = ref(0);
+
+onMounted(() => {
+  // 화면이 뜨고 아주 살짝(0.1초) 뒤에 목표치로 숫자를 바꿔줍니다.
+  // 이렇게 해야 브라우저가 '0에서 시작해서 커졌네!' 하고 애니메이션을 작동시킵니다.
+  setTimeout(() => {
+    currentWidth.value = props.report.progressRate;
+  }, 100);
+});
+
+</script>
+
+
+<style scoped>
+.hero-goal-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 32px;
+  position: relative;
+  background-color: #ffbc50;
+  border-radius: 32px;
+  overflow: hidden;
+}
+
+.hero-goal-section .icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 135px;
+  height: 135px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.25;
+}
+
+.hero-goal-section .icon-emoji {
+  font-size: 56px;
+  line-height: 1;
+}
+
+.hero-goal-section .container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  align-self: stretch;
+  width: 100%;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.hero-goal-section .div {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  align-self: stretch;
+  width: 100%;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.hero-goal-section .container-2 {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.hero-goal-section .div-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+  width: 100%;
+  opacity: 0.8;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.hero-goal-section .text-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  
+  margin-top: -1.00px;
+  font-family: "Pretendard Variable-Regular", Helvetica;
+  font-weight: 400;
+  color: #4b4433;
+  font-size: 14px;
+  letter-spacing: 0;
+  line-height: 20px;
+  white-space: nowrap;
+  word-break: keep-all;
+}
+
+.hero-goal-section .heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 0 0 auto;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+}
+
+.hero-goal-section .text-wrapper-2 {
+  position: relative;
+  width: 191.17px;
+  height: 64px;
+  margin-top: -1.00px;
+  font-family: "Pretendard Variable-Regular", Helvetica;
+  font-weight: 400;
+  color: #4b4433;
+  font-size: 24px;
+  letter-spacing: -0.60px;
+  line-height: 32px;
+}
+
+.hero-goal-section .overlay-border {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 4px 12px;
+  position: relative;
+  flex: 0 0 auto;
+  background-color: #4b44331a;
+  border-radius: 9999px;
+  border: 1px solid;
+  border-color: #4b443333;
+  backdrop-filter: blur(6px) brightness(100%);
+  -webkit-backdrop-filter: blur(6px) brightness(100%);
+}
+
+.hero-goal-section .text-wrapper-3 {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 57.91px;
+  height: 15px;
+  font-family: "Pretendard Variable-Regular", Helvetica;
+  font-weight: 400;
+  color: #4b4433;
+  font-size: 10px;
+  letter-spacing: 1.00px;
+  line-height: 15px;
+  white-space: nowrap;
+}
+
+.hero-goal-section .container-3 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  align-self: stretch;
+  width: 100%;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.hero-goal-section .container-4 {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  width: 100%;
+  opacity: 0.9;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.hero-goal-section .text-wrapper-4 {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 39.81px;
+  height: 20px;
+  margin-top: -1.00px;
+  font-family: "Pretendard Variable-Regular", Helvetica;
+  font-weight: 400;
+  color: #4b4433;
+  font-size: 14px;
+  letter-spacing: 0;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.hero-goal-section .horizontal-border {
+  position: relative;
+  width: 67.56px;
+  height: 17px;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-color: #4b443366;
+}
+
+.hero-goal-section .text-wrapper-5 {
+  position: absolute;
+  top: -2px;
+  left: 0;
+  width: 68px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  font-family: "Pretendard Variable-Regular", Helvetica;
+  font-weight: 400;
+  color: #4b4433;
+  font-size: 14px;
+  letter-spacing: 0;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.hero-goal-section .heading-2 {
+  display: flex;
+  align-items: baseline; /* 큰 글자와 작은 글자의 아래쪽 선을 딱 맞춰줍니다 */
+  gap: 8px; /* 🚨 두 글자 사이의 간격입니다. 너무 붙어있으면 숫자를 늘리세요! */
+  width: 100%;
+}
+
+.hero-goal-section .text-wrapper-6 {
+  
+  font-family: "Manrope-ExtraBold", Helvetica;
+  font-weight: 800;
+  font-size: 36px;
+  letter-spacing: -0.90px;
+  line-height: 45px;
+  display: flex;
+  align-items: center;
+  color: #4b4433;
+  white-space: nowrap;
+}
+
+.hero-goal-section .text-wrapper-7 {
+  
+  display: flex;
+  align-items: center;
+  opacity: 0.8;
+  font-family: "WenQuanYi Zen Hei-Medium", Helvetica;
+  font-weight: 500;
+  color: #4b4433;
+  font-size: 20px;
+  letter-spacing: -0.90px;
+  line-height: 28px;
+  white-space: nowrap;
+}
+
+.hero-goal-section .goal-progress-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 28px 20px 20px;
+  position: relative;
+  align-self: center;
+  width: calc(100% - 24px);
+  max-width: 100%;
+  flex: 0 0 auto;
+  background-color: #ffffff4c;
+  border-radius: 16px;
+  border: 1px solid;
+  border-color: #ffffff66;
+  backdrop-filter: blur(12px) brightness(100%);
+  -webkit-backdrop-filter: blur(12px) brightness(100%);
+  box-sizing: border-box;
+}
+
+.hero-goal-section .container-5 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  align-self: stretch;
+  width: 100%;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.hero-goal-section .container-6 {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.hero-goal-section .container-7 {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.hero-goal-section .img {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.hero-goal-section .container-8 {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  opacity: 0.8;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.hero-goal-section .text-wrapper-8 {
+  position: relative;
+  width: 95.5px;
+  height: 16px;
+  margin-top: -1.00px;
+  font-family: "Pretendard Variable-Regular", Helvetica;
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: -0.60px;
+  line-height: 16px;
+  display: flex;
+  align-items: center;
+  color: #4b4433;
+  white-space: nowrap;
+}
+
+.hero-goal-section .text-wrapper-9 {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 38.3px;
+  height: 28px;
+  margin-top: -1.00px;
+  font-family: "Manrope-ExtraBold", Helvetica;
+  font-weight: 800;
+  color: #4b4433;
+  font-size: 18px;
+  letter-spacing: 0;
+  line-height: 28px;
+  white-space: nowrap;
+}
+
+.hero-goal-section .overlay {
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  height: 11px;
+  background-color: #4b44331a;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.hero-goal-section .background-shadow {
+  position: relative;
+  
+  height: calc(100% - 1px);
+  top: 1px;
+  background-color: #4b4433;
+  border-radius: 9999px;
+  box-shadow: 0px 0px 8px #4b443333;
+}
+
+.hero-goal-section .container-9 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: stretch;
+  width: 100%;
+  opacity: 0.8;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.hero-goal-section .p {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 196.47px;
+  height: 17px;
+  margin-top: -1.00px;
+  font-family: "Pretendard Variable-Regular", Helvetica;
+  font-weight: 400;
+  color: #4b4433;
+  font-size: 11px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: 16.5px;
+  white-space: nowrap;
+}
+
+</style>
+

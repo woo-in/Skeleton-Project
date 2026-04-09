@@ -53,6 +53,11 @@ const router = createRouter({
       name: 'setup',
       component: Setup,
     },
+    {
+      path: '/report',
+      name: 'report',
+      component: () => import('@/pages/reportPage/ReportPage.vue'),
+    }
   ],
 })
 
