@@ -9,6 +9,7 @@ function hasSession() {
   }
 }
 */
+import Setup from '@/pages/Setup/ExpenseGoalSetup.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,6 +47,11 @@ const router = createRouter({
       name: 'setting',
       component: () => import('@/pages/settingPage/SettingPage.vue'),
       meta: { requiresAuth: true },
+    },
+    {
+      path: '/setup',
+      name: 'setup',
+      component: Setup,
     },
   ],
 })
