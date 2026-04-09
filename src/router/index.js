@@ -1,20 +1,57 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue' // 곧 만들 파일입니다
+
+/*
+function hasSession() {
+  try {
+    return Boolean(JSON.parse(localStorage.getItem('userSession') || 'null'))
+  } catch {
+    return false
+  }
+}
+*/
+import Setup from '@/pages/Setup/ExpenseGoalSetup.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
+      // Dev only: open the home page while auth flow is still in progress.
+      redirect: '/home',
+      // redirect: () => (hasSession() ? '/home' : '/login'),
+    },
+
+    {
+      path: '/home',
       name: 'home',
-      component: HomeView,
+      component: () => import('@/pages/homePage/HomePage.vue'),
+      meta: { requiresAuth: true },
+    },
+
+    {
+      path: '/signup',
+      name: 'signup',
+      component: () => import('@/pages/signupPage/SignupPage.vue'),
+      meta: { guestOnly: true },
+    },
+
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/pages/loginPage/LoginPage.vue'),
+      meta: { guestOnly: true },
+    },
+
+    {
+      path: '/setting',
+      name: 'setting',
+      component: () => import('@/pages/settingPage/SettingPage.vue'),
+      meta: { requiresAuth: true },
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // 이 부분은 나중에 필요할 때 파일을 만들면 됩니다.
-      component: () => import('../views/AboutView.vue'),
+      path: '/setup',
+      name: 'setup',
+      component: Setup,
     },
     {
       path: '/report',
@@ -23,5 +60,18 @@ const router = createRouter({
     }
   ],
 })
+
+// Dev only: temporarily disable route guards until auth flow is finalized.
+// router.beforeEach((to) => {
+//   const isAuthenticated = hasSession()
+//
+//   if (to.meta.requiresAuth && !isAuthenticated) {
+//     return '/login'
+//   }
+//
+//   if (to.meta.guestOnly && isAuthenticated) {
+//     return '/home'
+//   }
+// })
 
 export default router
