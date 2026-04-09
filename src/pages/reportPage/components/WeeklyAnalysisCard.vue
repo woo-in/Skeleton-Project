@@ -1,318 +1,180 @@
 <template>
-<div class="section-weekly">
-      <div class="heading"><div class="text-wrapper">지난달 요일별 분석</div></div>
-      <div class="container">
-        <div class="horizontal-divider"></div>
-        <div class="div"></div>
-        <div class="horizontal-divider-2"></div>
-        <div class="container-wrapper">
-          <div class="container-2"><div class="text-wrapper-2">월</div></div>
-        </div>
-        <div class="container-wrapper">
-          <div class="container-2"><div class="text-wrapper-2">화</div></div>
-        </div>
-        <div class="container-3">
-          <div class="horizontal-divider-3"></div>
-          <div class="container-2"><div class="text-wrapper-3">수</div></div>
-        </div>
-        <div class="container-wrapper">
-          <div class="container-2"><div class="text-wrapper-2">목</div></div>
-        </div>
-        <div class="container-wrapper">
-          <div class="container-2"><div class="text-wrapper-2">금</div></div>
-        </div>
-        <div class="container-wrapper">
-          <div class="container-2"><div class="text-wrapper-2">토</div></div>
-        </div>
-        <div class="container-wrapper">
-          <div class="container-2"><div class="text-wrapper-2">일</div></div>
-        </div>
+  <div class="section-weekly">
+    <div class="heading">
+      <h2 class="text-wrapper">지난달 요일별 분석</h2>
+    </div>
+
+    <div class="chart-container">
+      <canvas ref="chartCanvas"></canvas>
+    </div>
+
+    <div class="overlay">
+      <div class="background-border">
+        <span class="icon" aria-hidden="true">📈</span> 
       </div>
-      <div class="overlay">
-        <div class="background-border">
-          <span class="icon" aria-hidden="true">💡</span>
-        </div>
-        <div class="container-4">
-          <div class="div-wrapper">
-            <p class="p">
-              <span class="span">지난달 </span> <span class="text-wrapper-4">수요일 지출이 가장 적었네요.</span>
-            </p>
-          </div>
-          <div class="element-wrapper">
-            <p class="element">
-              <span class="span">평소보다 </span>
-              <span class="text-wrapper-4">42% 더</span>
-              <span class="span"> 아꼈습니다!<br />칭찬해요 👏</span>
-            </p>
-          </div>
-        </div>
+      <div class="container-4">
+        <p class="p">
+          <span>지난달 </span> 
+          <strong>수요일 지출이 가장 적었네요.</strong>
+        </p>
+        <p class="element">
+          <span>평소보다 </span> 
+          <strong>42% 더</strong> 
+          <span>아꼈습니다!<br />칭찬해요 👏</span>
+        </p>
       </div>
     </div>
+  </div>
 </template>
 
+<script setup>
+import { ref, onMounted } from 'vue';
+import Chart from 'chart.js/auto';
+
+// canvas 엘리먼트를 참조하기 위한 ref
+const chartCanvas = ref(null);
+
+onMounted(() => {
+  if (chartCanvas.value) {
+    new Chart(chartCanvas.value, {
+      type: 'line',
+      data: {
+        labels: ['월', '화', '수', '목', '금', '토', '일'],
+        datasets: [{
+          label: '지출',
+          // 수요일(15)이 가장 낮도록 목업 데이터 구성
+          data: [60, 45, 15, 35, 40, 75, 90], 
+          borderColor: '#7a1e1e', // 짙은 붉은색 라인
+          backgroundColor: '#7a1e1e',
+          borderWidth: 2,
+          pointBackgroundColor: '#7a1e1e',
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          tension: 0 // 0으로 설정하여 선을 직선으로 꺾이게 함
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }, // 상단 범례 숨김
+          tooltip: { 
+            enabled: true, // 💡 툴팁 활성화
+            backgroundColor: 'rgba(75, 68, 51, 0.9)', // 툴팁 배경색 설정
+            padding: 10,
+            displayColors: false, // 툴팁 내 컬러 박스 숨김
+            titleFont: { size: 13, family: 'Pretendard Variable' },
+            bodyFont: { size: 14, family: 'Pretendard Variable', weight: 'bold' },
+            callbacks: {
+              // 툴팁에 표시될 텍스트 커스텀 (예: 15 -> 15만 원)
+              label: function(context) {
+                return context.parsed.y + '만 원'; 
+              }
+            }
+          }
+        },
+        // 점에 마우스를 올리기 쉽게 호버 영역을 넓혀줍니다
+        interaction: {
+          mode: 'nearest',
+          axis: 'x',
+          intersect: false
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false, // x축 배경 세로선 숨김
+              drawBorder: false
+            },
+            ticks: {
+              color: '#7d7569',
+              font: { size: 12 }
+            }
+          },
+          y: {
+            display: false, // y축 숫자와 가로선 모두 숨김
+            min: 0,
+            max: 100 // 차트 상하 여백 확보
+          }
+        },
+        layout: {
+          padding: { left: 10, right: 10, top: 10, bottom: 0 }
+        }
+      }
+    });
+  }
+});
+</script>
 
 <style scoped>
+/* 전체 컨테이너 */
 .section-weekly {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 32px;
-  padding: 32px;
-  position: relative;
-  align-self: stretch;
-  width: 100%;
-  box-sizing: border-box;
+  gap: 24px;
+  padding: 24px 20px;
   background-color: #ffffff;
-  border-radius: 32px;
-  border: 1px solid;
-  border-color: #e6e8eb;
+  border-radius: 24px;
+  border: 1px solid #e6e8eb;
+  font-family: "Pretendard Variable", Pretendard, -apple-system, sans-serif;
+  max-width: 360px; /* 화면 비율에 맞게 조절하세요 */
 }
 
-.section-weekly .heading {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  position: relative;
-  align-self: stretch;
-  width: 100%;
-  flex: 0 0 auto;
-}
-
-.section-weekly .text-wrapper {
-  display: flex;
-  align-items: center;
-  align-self: stretch;
+/* 제목 */
+.heading .text-wrapper {
+  margin: 0;
   color: #1a1a1a;
   font-size: 18px;
+  font-weight: 600;
   letter-spacing: -0.45px;
-  line-height: 28px;
-  position: relative;
-  margin-top: -1.00px;
-  font-family: "Pretendard Variable-Regular", Helvetica;
-  font-weight: 400;
 }
 
-.section-weekly .container {
-  display: flex;
-  height: 192px;
-  align-items: flex-end;
-  justify-content: space-between;
-  padding: 0px 8.02px 0px 8px;
+/* 차트 높이 고정 */
+.chart-container {
   position: relative;
-  align-self: stretch;
+  height: 180px;
   width: 100%;
 }
 
-.section-weekly .horizontal-divider {
-  position: absolute;
-  width: 100%;
-  height: calc(100% - 191px);
-  top: 4px;
-  left: 0;
-  border-top-width: 1px;
-  border-top-style: solid;
-  border-color: #4b4433;
-  opacity: 0.05;
-}
-
-.section-weekly .div {
-  position: absolute;
-  width: 100%;
-  height: calc(100% - 191px);
-  top: 96px;
-  left: 0;
-  border-top-width: 1px;
-  border-top-style: solid;
-  border-color: #4b4433;
-  opacity: 0.05;
-}
-
-.section-weekly .horizontal-divider-2 {
-  position: absolute;
-  width: 100%;
-  height: calc(100% - 191px);
-  top: 187px;
-  left: 0;
-  border-top-width: 1px;
-  border-top-style: solid;
-  border-color: #4b4433;
-  opacity: 0.05;
-}
-
-.section-weekly .container-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 11px 0px 0px;
-  position: relative;
-  flex: 1;
-  flex-grow: 1;
-  margin-left: 0;
-}
-
-.section-weekly .container-2 {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-start;
-  position: relative;
-  flex: 0 0 auto;
-}
-
-.section-weekly .text-wrapper-2 {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 9.52px;
-  height: 17px;
-  margin-top: -1.00px;
-  font-family: "Pretendard Variable-Regular", Helvetica;
-  font-weight: 400;
-  color: #7d7569;
-  font-size: 11px;
-  letter-spacing: 0;
-  line-height: 16.5px;
-  white-space: nowrap;
-}
-
-.section-weekly .container-3 {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 11px;
-  position: relative;
-  flex: 1;
-  flex-grow: 1;
-  margin-left: 0;
-}
-
-.section-weekly .horizontal-divider-3 {
-  position: relative;
-  max-width: 28px;
-  width: 28px;
-  height: 1px;
-  background-color: #ffffff01;
-  border-radius: 12px 12px 0px 0px;
-  box-shadow: 0px 4px 12px #ffbc504c;
-}
-
-.section-weekly .text-wrapper-3 {
-  display: flex;
-  align-items: center;
-  width: 9.52px;
-  height: 17px;
-  color: #4b4433;
-  font-size: 11px;
-  letter-spacing: 0;
-  line-height: 16.5px;
-  white-space: nowrap;
-  position: relative;
-  margin-top: -1.00px;
-  font-family: "Pretendard Variable-Regular", Helvetica;
-  font-weight: 400;
-}
-
-.section-weekly .overlay {
+/* 하단 알림 박스 */
+.overlay {
   display: flex;
   align-items: flex-start;
   gap: 16px;
   padding: 20px;
-  position: relative;
-  align-self: center;
-  width: 100%;
-  max-width: 100%;
-  flex: 0 0 auto;
-  background-color: #ffbc501a;
+  background-color: #fff8f0; /* 부드러운 살구색 배경 */
   border-radius: 16px;
-  box-sizing: border-box;
 }
 
-.section-weekly .background-border {
+.background-border {
   display: flex;
   width: 40px;
   height: 40px;
   align-items: center;
   justify-content: center;
-  position: relative;
   background-color: #ffffff;
-  border-radius: 9999px;
-  border: 1px solid;
-  border-color: #ffbc5033;
-  box-shadow: 0px 1px 2px #0000000d;
+  border-radius: 50%;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
 }
 
-.section-weekly .icon {
-  position: relative;
-  width: 18px;
-  height: 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  line-height: 1;
+.icon {
+  font-size: 18px;
 }
 
-.section-weekly .container-4 {
-  position: relative;
-  width: 180px;
-  height: 95px;
-}
-
-.section-weekly .div-wrapper {
+.container-4 {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  align-items: flex-start;
-  position: absolute;
-  top: -1px;
-  left: 0;
+  gap: 6px;
 }
 
-.section-weekly .p {
-  width: 170.42px;
-  height: 46px;
+.container-4 p {
+  margin: 0;
   color: #4b4433;
   font-size: 14px;
-  letter-spacing: 0;
-  line-height: 14px;
-  position: relative;
-  margin-top: -1.00px;
-  font-family: "Pretendard Variable-Regular", Helvetica;
-  font-weight: 400;
+  line-height: 1.5;
 }
 
-.section-weekly .span {
-  line-height: 22.8px;
+.container-4 strong {
+  font-weight: 600;
 }
-
-.section-weekly .text-wrapper-4 {
-  font-family: "Pretendard Variable-Regular", Helvetica;
-  font-weight: 400;
-  color: #4b4433;
-  font-size: 14px;
-  letter-spacing: 0;
-}
-
-.section-weekly .element-wrapper {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  align-items: flex-start;
-  position: absolute;
-  top: 49px;
-  left: 0;
-}
-
-.section-weekly .element {
-  width: 166.11px;
-  height: 46px;
-  color: #4b4433;
-  font-size: 14px;
-  letter-spacing: 0;
-  line-height: 14px;
-  position: relative;
-  margin-top: -1.00px;
-  font-family: "Pretendard Variable-Regular", Helvetica;
-  font-weight: 400;
-}
-
 </style>

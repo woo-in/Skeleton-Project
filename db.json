@@ -1,6 +1,19 @@
 {
   "members": [
     {
+
+      "userId": "jinsh",
+      "name": "진승환",
+      "birthdate": "20020918",
+      "password": "abcd1234!",
+      "monthlyBudget": 0,
+      "targetStockId": null,
+      "targetQuantity": 0,
+      "ageBand": "TWENTIES",
+      "id": 1
+    },
+    {
+
       "userId": "ming0409",
       "name": "강민지",
       "birthdate": "19990606",
@@ -423,8 +436,17 @@
   "reports": [
     {
       "id": 1,
-      "memberId": "S0U5oduKb5A",
+      "memberId": 1,
       "targetMonth": "2026-03",
+      "dailyExpenses": [
+        { "day": "월", "amount": 25000 },
+        { "day": "화", "amount": 40000 },
+        { "day": "수", "amount": 12000},
+        { "day": "목", "amount": 20000 },
+        { "day": "금", "amount": 80000 },
+        { "day": "토", "amount": 30000 },
+        { "day": "일", "amount": 100000 }
+      ],
       "memberName": "정우인",
       "ageBand": "TWENTIES",
       "stockId": 1,
