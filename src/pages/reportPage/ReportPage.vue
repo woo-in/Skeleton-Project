@@ -23,19 +23,57 @@ const BASEURI = '/api/reports';
 
 const reportData = ref(null);
 
-const currentUser = {
-  id: "S0U5oduKb5A", // 테스트하고 싶은 memberId
-  name: "정우인"
-};
+// const currentUser = {
+//   id: "S0U5oduKb5A", // 테스트하고 싶은 memberId
+//   name: "정우인"
+// };
 
+
+
+// onMounted(async () => {
+//   // 1. 가장 먼저 로그인 세션 확인
+//   const sessionStr = localStorage.getItem('userSession');
+
+//   // 2. 비로그인 상태 방어 (Early Return)
+//   if (!sessionStr) {
+//     console.log("로그인 안된 상태! 리포트 데이터를 불러오지 않습니다.");
+//     reportData.value = null;
+//     return; // 더 이상 아래 코드를 실행하지 않고 여기서 종료
+//   }
+
+//   // 3. 로그인 상태라면 유저 정보 파싱
+//   const currentUser = JSON.parse(sessionStr); 
+//   console.log("현재 로그인한 유저: ", currentUser.name);
+
+//   // 4. API 통신
+//   try {
+//     // 이제 currentUser가 확실히 존재하므로 안전하게 .id에 접근 가능
+//     const response = await axios.get(`${BASEURI}?memberId=${currentUser.id}`);
+    
+//     // 필터링 결과 처리
+//     if (response.data && response.data.length > 0) {
+//       reportData.value = response.data[0];
+//     } else {
+//       console.log("해당 유저의 리포트가 없습니다.");
+//       reportData.value = null;
+//     }
+//   } catch (error) {
+//     console.error("API 통신 중 에러가 발생했습니다:", error);
+//   }
+// });
 onMounted(async () => {
   try {
-    // 2. 하드코딩된 '1' 대신 변수를 넣고, json-server 문법에 맞게 ?memberId= 를 붙여줍니다.
-    const response = await axios.get(`${BASEURI}?memberId=${currentUser.id}`);
+    // 무조건 id가 1인 유저의 리포트를 가져오도록 하드코딩
+    const targetId = 1; 
+    console.log(`테스트 모드: memberId=${targetId}의 리포트를 요청합니다.`);
+
+    // API 통신 (currentUser.id 대신 targetId 사용)
+    const response = await axios.get(`${BASEURI}?memberId=${targetId}`);
     
-    // 3. 필터링 결과는 배열로 오기 때문에, 데이터가 있다면 첫 번째[0] 요소를 꺼내 담아줍니다.
+    // 필터링 결과 처리
     if (response.data && response.data.length > 0) {
       reportData.value = response.data[0];
+      console.log("리포트 데이터 로드 성공:", reportData.value);
     } else {
       console.log("해당 유저의 리포트가 없습니다.");
       reportData.value = null;
@@ -44,8 +82,6 @@ onMounted(async () => {
     console.error("API 통신 중 에러가 발생했습니다:", error);
   }
 });
-
-
 </script>
 
 <style scoped>
