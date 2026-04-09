@@ -1,6 +1,7 @@
 {
   "members": [
     {
+
       "userId": "jinsh",
       "name": "진승환",
       "birthdate": "20020918",
@@ -10,8 +11,21 @@
       "targetQuantity": 0,
       "ageBand": "TWENTIES",
       "id": 1
+    },
+    {
+
+      "userId": "ming0409",
+      "name": "강민지",
+      "birthdate": "19990606",
+      "password": "qwer1234!",
+      "monthlyBudget": 650000,
+      "targetStockId": 1,
+      "targetQuantity": 10,
+      "ageBand": "TWENTIES",
+      "id": "G7HJF8xE0TY"
     }
   ],
+  
   "categories": [
     {
       "id": 1,
