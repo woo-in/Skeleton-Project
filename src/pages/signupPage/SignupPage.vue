@@ -216,10 +216,8 @@ const registerUser = async () => {
     });
 
     if (response.ok) {
-
-      // 성공 시 /setup 으로 redirect
-      router.push('setup');
-
+      alert('회원가입이 완료되었습니다!');
+      // 성공 시 폼 초기화
       userId.value = '';
       name.value = '';
       birthdate.value = '';
