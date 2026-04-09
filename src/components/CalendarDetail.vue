@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { Plus } from 'lucide-vue-next'
 
 interface Expense {
   id: number // DB에 맞춰 expenseId를 id로 변경
@@ -57,19 +58,20 @@ const getCategoryIcon = (category: string) => {
 </script>
 
 <template>
-  <Transition name="fade">
-    <div
-      v-if="isOpen"
-      class="fixed inset-0 bg-secondary/30 backdrop-blur-[2px] z-[55]"
-      @click="emit('close')"
-    ></div>
-  </Transition>
+  <Teleport to="body">
+    <Transition name="fade">
+      <div
+        v-if="isOpen"
+        class="fixed inset-0 bg-secondary/30 backdrop-blur-[2px] z-[55]"
+        @click="emit('close')"
+      ></div>
+    </Transition>
 
-  <Transition name="slide-up">
-    <div
-      v-if="isOpen"
-      class="fixed inset-x-0 bottom-0 z-[60] bg-surface-container-lowest rounded-t-[2.5rem] shadow-[0_-12px_60px_rgba(45,41,38,0.15)] h-[85vh] overflow-y-auto flex flex-col border-t border-outline-variant max-w-md mx-auto"
-    >
+    <Transition name="slide-up">
+      <div
+        v-if="isOpen"
+        class="calendar-detail-sheet fixed bottom-0 left-1/2 z-[60] flex h-[85vh] w-full max-w-md flex-col overflow-y-auto rounded-t-[2.5rem] border-t border-outline-variant bg-surface-container-lowest shadow-[0_-12px_60px_rgba(45,41,38,0.15)]"
+      >
       <div
         class="w-full flex justify-center py-4 shrink-0 sticky top-0 bg-surface-container-lowest z-10"
       >
@@ -97,7 +99,7 @@ const getCategoryIcon = (category: string) => {
             @click="emit('add-expense')"
             class="bg-primary text-on-primary w-12 h-12 rounded-2xl active:scale-95 transition-transform flex items-center justify-center shadow-lg shadow-primary/30"
           >
-            <span class="material-symbols-outlined text-[26px] font-bold">add</span>
+            <Plus :size="24" :stroke-width="2.5" aria-hidden="true" />
           </button>
         </div>
 
@@ -204,11 +206,16 @@ const getCategoryIcon = (category: string) => {
           </div>
         </section>
       </div>
-    </div>
-  </Transition>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
 <style scoped>
+.calendar-detail-sheet {
+  transform: translateX(-50%) translateY(var(--calendar-detail-offset, 0));
+}
+
 .slide-up-enter-active {
   transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   /* opacity 0.55s ease-out; */
@@ -221,12 +228,12 @@ const getCategoryIcon = (category: string) => {
 
 .slide-up-enter-from,
 .slide-up-leave-to {
-  transform: translateX(-50%) translateY(120%);
+  --calendar-detail-offset: 120%;
 }
 
 .slide-up-enter-to,
 .slide-up-leave-from {
-  transform: translateX(-50%) translateY(0);
+  --calendar-detail-offset: 0;
   /* opacity: 1; */
 }
 .fade-enter-active {

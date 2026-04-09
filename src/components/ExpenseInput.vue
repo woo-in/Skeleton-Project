@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
+import dayjs from 'dayjs'
+import { ChevronDown, ChevronLeft, ChevronRight, Info, X } from 'lucide-vue-next'
 
 // ==========================================
 // 1. 타입 정의 (DB 카테고리와 완벽 일치)
@@ -56,6 +58,8 @@ const getLocalTime = () => {
   return now.toTimeString().slice(0, 5)
 }
 
+const CALENDAR_WEEKDAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
+
 // ==========================================
 // 3. 상태 관리 (State)
 // ==========================================
@@ -63,9 +67,14 @@ const amount = ref('0')
 const category = ref<Category>('일반식사')
 const memo = ref('')
 const isCategoryOpen = ref(false)
+const isDatePickerOpen = ref(false)
+const isTimePickerOpen = ref(false)
 const amountError = ref('')
 const date = ref(props.selectedDate)
 const time = ref(getLocalTime())
+const currentCalendarMonth = ref(dayjs(props.selectedDate || dayjs().format('YYYY-MM-DD')).startOf('month'))
+const hourWheelRef = ref<HTMLElement | null>(null)
+const minuteWheelRef = ref<HTMLElement | null>(null)
 
 // ==========================================
 // 4. Watchers
@@ -80,7 +89,10 @@ watch(
       category.value = '일반식사'
       memo.value = ''
       isCategoryOpen.value = false
+      isDatePickerOpen.value = false
+      isTimePickerOpen.value = false
       amountError.value = ''
+      currentCalendarMonth.value = dayjs(props.selectedDate).startOf('month')
     }
   },
 )
@@ -89,6 +101,7 @@ watch(
   () => props.selectedDate,
   (newDate) => {
     date.value = newDate
+    currentCalendarMonth.value = dayjs(newDate).startOf('month')
   },
 )
 
@@ -98,6 +111,61 @@ watch(
 const currentCategoryIcon = computed(() => {
   return CATEGORIES.find((c) => c.name === category.value)?.icon || '/images/categories/meal.png'
 })
+
+const calendarMonthLabel = computed(() => currentCalendarMonth.value.format('YYYY. MM'))
+
+const calendarDays = computed(() => {
+  const monthStart = currentCalendarMonth.value.startOf('month')
+  const monthEnd = currentCalendarMonth.value.endOf('month')
+  const startOffset = monthStart.day()
+  const endOffset = 6 - monthEnd.day()
+  const calendarStart = monthStart.subtract(startOffset, 'day')
+  const calendarEnd = monthEnd.add(endOffset, 'day')
+  const totalDays = calendarEnd.diff(calendarStart, 'day') + 1
+  const totalCells = totalDays <= 35 ? 35 : 42
+
+  return Array.from({ length: totalCells }, (_, index) => {
+    const nextDate = calendarStart.add(index, 'day')
+    const isoDate = nextDate.format('YYYY-MM-DD')
+
+    return {
+      key: `${isoDate}-${index}`,
+      isoDate,
+      label: nextDate.date(),
+      inCurrentMonth: nextDate.month() === currentCalendarMonth.value.month(),
+      isSelected: isoDate === date.value,
+      isToday: nextDate.isSame(dayjs(), 'day'),
+    }
+  })
+})
+
+const selectedHour = computed(() => time.value.split(':')[0] || '00')
+
+const selectedMinute = computed(() => time.value.split(':')[1] || '00')
+
+const hourOptions = computed(() =>
+  Array.from({ length: 24 }, (_, index) => {
+    const value = String(index).padStart(2, '0')
+
+    return {
+      value,
+      label: value,
+      isSelected: value === selectedHour.value,
+    }
+  }),
+)
+
+const minuteOptions = computed(() =>
+  Array.from({ length: 60 }, (_, index) => {
+    const value = String(index).padStart(2, '0')
+
+    return {
+      value,
+      label: value,
+      isSelected: value === selectedMinute.value,
+    }
+  }),
+)
 
 // ==========================================
 // 6. Methods
@@ -125,6 +193,83 @@ const formatDisplayTime = (timeStr: string) => {
   const period = hour >= 12 ? '오후' : '오전'
   const displayHour = hour % 12 || 12
   return `${period} ${displayHour}:${m}`
+}
+
+const selectCategory = (value: Category) => {
+  category.value = value
+  isCategoryOpen.value = false
+}
+
+const toggleCategory = () => {
+  isDatePickerOpen.value = false
+  isTimePickerOpen.value = false
+  isCategoryOpen.value = !isCategoryOpen.value
+}
+
+const toggleDatePicker = () => {
+  isCategoryOpen.value = false
+  isTimePickerOpen.value = false
+  currentCalendarMonth.value = dayjs(date.value).startOf('month')
+  isDatePickerOpen.value = !isDatePickerOpen.value
+}
+
+const toggleTimePicker = async () => {
+  isCategoryOpen.value = false
+  isDatePickerOpen.value = false
+  isTimePickerOpen.value = !isTimePickerOpen.value
+
+  if (isTimePickerOpen.value) {
+    await syncTimeWheelPosition()
+  }
+}
+
+const changeCalendarMonth = (step: number) => {
+  currentCalendarMonth.value = currentCalendarMonth.value.add(step, 'month').startOf('month')
+}
+
+const selectDateFromCalendar = (isoDate: string) => {
+  date.value = isoDate
+  currentCalendarMonth.value = dayjs(isoDate).startOf('month')
+  isDatePickerOpen.value = false
+}
+
+const updateTimeValue = (nextHour: string, nextMinute: string) => {
+  time.value = `${nextHour}:${nextMinute}`
+}
+
+const selectHour = async (value: string) => {
+  updateTimeValue(value, selectedMinute.value)
+  await syncTimeWheelPosition()
+}
+
+const selectMinute = async (value: string) => {
+  updateTimeValue(selectedHour.value, value)
+  await syncTimeWheelPosition()
+}
+
+const closeTimePicker = () => {
+  isTimePickerOpen.value = false
+}
+
+const scrollWheelToSelected = (container: HTMLElement | null) => {
+  if (!container) return
+
+  const selectedOption = container.querySelector<HTMLElement>('[data-selected="true"]')
+  if (!selectedOption) return
+
+  const offset =
+    selectedOption.offsetTop - container.clientHeight / 2 + selectedOption.clientHeight / 2
+
+  container.scrollTo({
+    top: Math.max(offset, 0),
+    behavior: 'smooth',
+  })
+}
+
+const syncTimeWheelPosition = async () => {
+  await nextTick()
+  scrollWheelToSelected(hourWheelRef.value)
+  scrollWheelToSelected(minuteWheelRef.value)
 }
 
 const handleSave = () => {
@@ -163,7 +308,7 @@ const handleSave = () => {
           <div class="sheet-header">
             <h2 class="sheet-title">지출 내역 입력</h2>
             <button @click="emit('close')" class="close-button">
-              <span class="material-symbols-outlined" style="font-size: 20px">close</span>
+              <X :size="20" aria-hidden="true" />
             </button>
           </div>
 
@@ -180,7 +325,7 @@ const handleSave = () => {
 
           <div class="form-fields">
             <div class="field-container">
-              <button @click="isCategoryOpen = !isCategoryOpen" class="field-button" type="button">
+              <button @click="toggleCategory" class="field-button" type="button">
                 <div class="field-left">
                   <div class="field-icon">
                     <img :src="currentCategoryIcon" alt="카테고리" class="w-6 h-6 object-contain" />
@@ -189,13 +334,12 @@ const handleSave = () => {
                 </div>
                 <div class="field-right">
                   <span class="field-value">{{ category }}</span>
-                  <span
-                    class="material-symbols-outlined chevron"
+                  <ChevronDown
+                    aria-hidden="true"
+                    :size="20"
+                    class="chevron"
                     :class="{ 'rotate-180': isCategoryOpen }"
-                    style="font-size: 20px"
-                  >
-                    expand_more
-                  </span>
+                  />
                 </div>
               </button>
 
@@ -205,10 +349,7 @@ const handleSave = () => {
                     <button
                       v-for="cat in CATEGORIES"
                       :key="cat.name"
-                      @click="
-                        category = cat.name
-                        isCategoryOpen = false
-                      "
+                      @click="selectCategory(cat.name)"
                       class="dropdown-item"
                       type="button"
                     >
@@ -222,44 +363,163 @@ const handleSave = () => {
               </Transition>
             </div>
 
-            <div class="field-row">
-              <div class="field-left">
-                <div class="field-icon">
-                  <img src="/images/action/date.png" alt="날짜" class="w-6 h-6 object-contain" />
+            <div class="field-container field-container--stack">
+              <div
+                class="field-row field-row--picker"
+                role="button"
+                tabindex="0"
+                @click="toggleDatePicker"
+                @keydown.enter.prevent="toggleDatePicker"
+                @keydown.space.prevent="toggleDatePicker"
+              >
+                <div class="field-left">
+                  <div class="field-icon">
+                    <img src="/images/action/date.png" alt="날짜" class="w-6 h-6 object-contain" />
+                  </div>
+                  <span class="field-label">날짜</span>
                 </div>
-                <span class="field-label">날짜</span>
-              </div>
-              <div class="field-input-wrapper">
-                <input
-                  type="date"
-                  v-model="date"
-                  class="hidden-input"
-                  style="color-scheme: light"
-                />
-                <div class="display-box">
-                  {{ formatDisplayDate(date) }}
+                <div class="field-right">
+                  <div class="display-box">
+                    {{ formatDisplayDate(date) }}
+                  </div>
+                  <ChevronDown
+                    aria-hidden="true"
+                    :size="20"
+                    class="chevron"
+                    :class="{ 'rotate-180': isDatePickerOpen }"
+                  />
                 </div>
               </div>
+
+              <Transition name="fade-slide">
+                <div v-if="isDatePickerOpen" class="picker-panel">
+                  <div class="picker-panel-header">
+                    <button
+                      type="button"
+                      class="picker-nav-button"
+                      aria-label="이전 달"
+                      @click="changeCalendarMonth(-1)"
+                    >
+                      <ChevronLeft :size="18" aria-hidden="true" />
+                    </button>
+                    <p class="picker-panel-title">{{ calendarMonthLabel }}</p>
+                    <button
+                      type="button"
+                      class="picker-nav-button"
+                      aria-label="다음 달"
+                      @click="changeCalendarMonth(1)"
+                    >
+                      <ChevronRight :size="18" aria-hidden="true" />
+                    </button>
+                  </div>
+
+                  <div class="calendar-weekdays">
+                    <span
+                      v-for="weekday in CALENDAR_WEEKDAYS"
+                      :key="weekday"
+                      class="calendar-weekday"
+                    >
+                      {{ weekday }}
+                    </span>
+                  </div>
+
+                  <div class="calendar-grid">
+                    <button
+                      v-for="day in calendarDays"
+                      :key="day.key"
+                      type="button"
+                      class="calendar-day-button"
+                      :class="{
+                        'is-muted': !day.inCurrentMonth,
+                        'is-selected': day.isSelected,
+                        'is-today': day.isToday,
+                      }"
+                      @click="selectDateFromCalendar(day.isoDate)"
+                    >
+                      {{ day.label }}
+                    </button>
+                  </div>
+                </div>
+              </Transition>
             </div>
 
-            <div class="field-row">
-              <div class="field-left">
-                <div class="field-icon">
-                  <img src="/images/action/time.png" alt="시간" class="w-6 h-6 object-contain" />
+            <div class="field-container field-container--stack">
+              <div
+                class="field-row field-row--picker"
+                role="button"
+                tabindex="0"
+                @click="toggleTimePicker"
+                @keydown.enter.prevent="toggleTimePicker"
+                @keydown.space.prevent="toggleTimePicker"
+              >
+                <div class="field-left">
+                  <div class="field-icon">
+                    <img src="/images/action/time.png" alt="시간" class="w-6 h-6 object-contain" />
+                  </div>
+                  <span class="field-label">시간</span>
                 </div>
-                <span class="field-label">시간</span>
-              </div>
-              <div class="field-input-wrapper">
-                <input
-                  type="time"
-                  v-model="time"
-                  class="hidden-input"
-                  style="color-scheme: light"
-                />
-                <div class="display-box">
-                  {{ formatDisplayTime(time) }}
+                <div class="field-right">
+                  <div class="display-box">
+                    {{ formatDisplayTime(time) }}
+                  </div>
+                  <ChevronDown
+                    aria-hidden="true"
+                    :size="20"
+                    class="chevron"
+                    :class="{ 'rotate-180': isTimePickerOpen }"
+                  />
                 </div>
               </div>
+
+              <Transition name="fade-slide">
+                <div v-if="isTimePickerOpen" class="picker-panel">
+                  <div class="time-wheel-header">
+                    <div>
+                      <p class="time-wheel-caption">시간 선택</p>
+                      <p class="time-wheel-value">{{ formatDisplayTime(time) }}</p>
+                    </div>
+                    <button type="button" class="time-wheel-done" @click="closeTimePicker">
+                      완료
+                    </button>
+                  </div>
+
+                  <div class="time-wheel-layout">
+                    <div class="time-wheel-column">
+                      <span class="time-wheel-unit">시</span>
+                      <div ref="hourWheelRef" class="time-wheel-list">
+                        <button
+                          v-for="hour in hourOptions"
+                          :key="hour.value"
+                          type="button"
+                          class="wheel-option"
+                          :class="{ 'is-selected': hour.isSelected }"
+                          :data-selected="hour.isSelected"
+                          @click="selectHour(hour.value)"
+                        >
+                          {{ hour.label }}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="time-wheel-column">
+                      <span class="time-wheel-unit">분</span>
+                      <div ref="minuteWheelRef" class="time-wheel-list">
+                        <button
+                          v-for="minute in minuteOptions"
+                          :key="minute.value"
+                          type="button"
+                          class="wheel-option"
+                          :class="{ 'is-selected': minute.isSelected }"
+                          :data-selected="minute.isSelected"
+                          @click="selectMinute(minute.value)"
+                        >
+                          {{ minute.label }}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Transition>
             </div>
 
             <div class="memo-section">
@@ -278,7 +538,7 @@ const handleSave = () => {
           </div>
 
           <div class="notice-box">
-            <span class="material-symbols-outlined notice-icon" style="font-size: 20px">info</span>
+            <Info :size="18" class="notice-icon" aria-hidden="true" />
             <p class="notice-text">
               지출 등록 시
               <span class="notice-highlight">투자 가능 금액</span>과
@@ -454,6 +714,12 @@ const handleSave = () => {
   position: relative;
 }
 
+.field-container--stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .field-button,
 .field-row {
   width: 100%;
@@ -469,6 +735,15 @@ const handleSave = () => {
 .field-button:hover,
 .field-row:hover {
   background-color: var(--color-surface-container-low);
+}
+
+.field-row--picker {
+  cursor: pointer;
+}
+
+.field-row--picker:focus-visible {
+  outline: 2px solid rgba(255, 188, 80, 0.5);
+  outline-offset: 2px;
 }
 
 .field-left {
@@ -568,24 +843,102 @@ const handleSave = () => {
   justify-content: center;
 }
 
-.field-input-wrapper {
-  position: relative;
-  color: var(--color-on-surface-variant); /* kb-brown-light 수정 */
+.picker-panel {
+  border: 1px solid rgba(209, 198, 184, 0.7);
+  background: #fffdf8;
+  border-radius: 1rem;
+  box-shadow:
+    0 14px 28px -18px rgba(42, 34, 24, 0.28),
+    0 8px 12px -10px rgba(42, 34, 24, 0.16);
+  padding: 0.9rem;
 }
 
-.hidden-input {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.001;
-  border: none;
+.picker-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.picker-panel-title {
+  margin: 0;
+  color: var(--color-secondary);
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.picker-nav-button {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-secondary);
+  background: rgba(255, 188, 80, 0.14);
+  transition:
+    transform 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.picker-nav-button:hover {
+  background: rgba(255, 188, 80, 0.22);
+}
+
+.picker-nav-button:active {
+  transform: scale(0.96);
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.calendar-weekday {
+  text-align: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--color-on-surface-variant);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.25rem;
+}
+
+.calendar-day-button {
+  aspect-ratio: 1;
+  border-radius: 0.9rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--color-secondary);
   background: transparent;
-  color: transparent;
-  appearance: none;
-  -webkit-appearance: none;
-  cursor: pointer;
-  z-index: 20;
+  transition:
+    transform 0.15s ease,
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.calendar-day-button.is-muted {
+  color: rgba(112, 99, 84, 0.42);
+}
+
+.calendar-day-button.is-today {
+  box-shadow: inset 0 0 0 1px rgba(255, 188, 80, 0.5);
+}
+
+.calendar-day-button.is-selected {
+  background: var(--color-primary);
+  color: var(--color-secondary);
+}
+
+.calendar-day-button:active {
+  transform: scale(0.95);
 }
 
 .display-box {
@@ -596,6 +949,128 @@ const handleSave = () => {
   font-size: 0.875rem;
   font-weight: 600;
   transition: transform 0.1s;
+  user-select: none;
+}
+
+.time-wheel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.time-wheel-caption {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-on-surface-variant);
+}
+
+.time-wheel-value {
+  margin: 0.25rem 0 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-secondary);
+  letter-spacing: -0.03em;
+}
+
+.time-wheel-done {
+  min-width: 3.5rem;
+  height: 2rem;
+  padding: 0 0.85rem;
+  border-radius: 9999px;
+  background: rgba(255, 188, 80, 0.18);
+  color: var(--color-secondary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  transition:
+    transform 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.time-wheel-done:active {
+  transform: scale(0.97);
+}
+
+.time-wheel-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.time-wheel-column {
+  position: relative;
+  border-radius: 1rem;
+  background: rgba(255, 188, 80, 0.08);
+  padding: 0.65rem 0.55rem;
+}
+
+.time-wheel-column::after {
+  content: '';
+  position: absolute;
+  left: 0.55rem;
+  right: 0.55rem;
+  top: 50%;
+  height: 2.75rem;
+  transform: translateY(-50%);
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(209, 198, 184, 0.55);
+  pointer-events: none;
+}
+
+.time-wheel-unit {
+  display: inline-flex;
+  margin-bottom: 0.55rem;
+  padding-left: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-on-surface-variant);
+}
+
+.time-wheel-list {
+  position: relative;
+  z-index: 1;
+  max-height: 11.5rem;
+  overflow-y: auto;
+  padding: 4rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  scroll-snap-type: y proximity;
+  scrollbar-width: none;
+}
+
+.time-wheel-list::-webkit-scrollbar {
+  display: none;
+}
+
+.wheel-option {
+  min-height: 2.75rem;
+  border-radius: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(86, 72, 56, 0.55);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  transition:
+    transform 0.15s ease,
+    color 0.15s ease,
+    opacity 0.15s ease;
+  scroll-snap-align: center;
+}
+
+.wheel-option.is-selected {
+  color: var(--color-secondary);
+  font-size: 1.08rem;
+  font-weight: 800;
+}
+
+.wheel-option:active {
+  transform: scale(0.97);
 }
 
 .display-box:active {
@@ -758,5 +1233,24 @@ const handleSave = () => {
 .fade-enter-to,
 .fade-leave-from {
   opacity: 1;
+}
+
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition:
+    opacity 0.16s ease,
+    transform 0.16s ease;
+}
+
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+.fade-slide-enter-to,
+.fade-slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
 }
 </style>
