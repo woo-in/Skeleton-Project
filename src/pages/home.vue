@@ -389,24 +389,31 @@ function loadMoreHistory() {
 
 <style scoped>
 .home-screen {
-  min-height: 100svh;
-  padding-inline: 1rem;
+  --radius-card: 1.1rem;
+  --radius-control: 0.85rem;
+  --radius-accent: 0.95rem;
+  min-height: 100%;
   overflow-x: hidden;
-  background: linear-gradient(180deg, rgba(255, 250, 241, 0.95) 0%, rgba(249, 244, 236, 0.96) 100%);
+  background: linear-gradient(180deg, #fcf3df 0%, #f5e7cf 58%, #ebd8bf 100%);
 }
 
 .phone-shell {
-  width: min(100%, 26.875rem);
+  width: 100%;
   margin: 0 auto;
-  min-height: 100svh;
-  background: #ffffff;
+  min-height: 100%;
+  background: #f9f8f6;
 }
 
 .home-page {
   position: relative;
   width: 100%;
+  min-height: 100%;
   margin: 0 auto;
-  padding: 1.875rem 1.2rem 3.75rem;
+  box-sizing: border-box;
+  padding-top: calc(1.875rem + env(safe-area-inset-top, 0px));
+  padding-right: calc(1.2rem + env(safe-area-inset-right, 0px));
+  padding-bottom: calc(8rem + env(safe-area-inset-bottom, 0px));
+  padding-left: calc(1.2rem + env(safe-area-inset-left, 0px));
   color: #1d1814;
 }
 
@@ -458,12 +465,12 @@ function loadMoreHistory() {
 .stock-card,
 .calendar-card,
 .history-card {
-  border: 1px solid rgba(232, 221, 205, 0.72);
-  border-radius: 1.85rem;
-  background: rgba(255, 253, 248, 0.96);
-  box-shadow:
-    0 18px 36px rgba(102, 81, 56, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  border-radius: var(--radius-card);
+}
+
+.calendar-card,
+.history-card {
+  background: #ffffff;
 }
 
 .stock-card {
@@ -473,7 +480,7 @@ function loadMoreHistory() {
   gap: 1rem;
   margin-top: 2.1rem;
   padding: 1.35rem 1.4rem;
-  background: linear-gradient(180deg, rgba(255, 249, 234, 0.98) 0%, rgba(255, 246, 226, 0.98) 100%);
+  background: #fff4dd;
 }
 
 .stock-badge {
@@ -481,9 +488,8 @@ function loadMoreHistory() {
   place-items: center;
   width: 3.75rem;
   height: 3.75rem;
-  border-radius: 50%;
-  border: 1px solid rgba(240, 221, 180, 0.8);
-  background: #fffdf7;
+  border-radius: var(--radius-accent);
+  background: #fff8e8;
   font-size: 1.1rem;
   font-weight: 800;
   letter-spacing: -0.05em;
@@ -496,7 +502,7 @@ function loadMoreHistory() {
 .stock-label {
   margin: 0 0 0.35rem;
   color: #8a8179;
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   letter-spacing: -0.03em;
 }
 
@@ -513,7 +519,7 @@ function loadMoreHistory() {
   width: 3rem;
   height: 3rem;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-control);
   background: rgba(120, 97, 66, 0.08);
   cursor: pointer;
   transition:
@@ -571,7 +577,7 @@ function loadMoreHistory() {
   width: 2.25rem;
   height: 2.25rem;
   border: 0;
-  border-radius: 999px;
+  border-radius: 0.7rem;
   background: transparent;
   color: #30241a;
   font-size: 2rem;
@@ -617,14 +623,13 @@ function loadMoreHistory() {
   flex-direction: column;
   gap: 0.35rem;
   border: 0;
-  border-radius: 1.35rem;
+  border-radius: var(--radius-control);
   background: transparent;
   color: inherit;
   cursor: pointer;
   transition:
     transform 140ms ease,
-    background-color 140ms ease,
-    box-shadow 140ms ease;
+    background-color 140ms ease;
 }
 
 .calendar-day-button:hover {
@@ -641,19 +646,18 @@ function loadMoreHistory() {
   place-items: center;
   width: 2.55rem;
   height: 2.55rem;
-  border-radius: 1.15rem;
+  border-radius: 0.8rem;
   font-size: 1.48rem;
   font-weight: 700;
   letter-spacing: -0.05em;
 }
 
 .calendar-day-button.is-selected .calendar-day {
-  background: linear-gradient(180deg, #ffc756 0%, #ffbf38 100%);
-  box-shadow: 0 10px 20px rgba(255, 191, 56, 0.32);
+  background: #ffbf38;
 }
 
 .calendar-day-button.is-today:not(.is-selected) .calendar-day {
-  box-shadow: inset 0 0 0 1.5px rgba(255, 191, 56, 0.38);
+  background: rgba(255, 191, 56, 0.16);
 }
 
 .calendar-dot {
@@ -682,14 +686,19 @@ function loadMoreHistory() {
   margin-top: 2.3rem;
 }
 
+.history-section .section-heading {
+  justify-content: flex-start;
+  padding-left: 0.55rem;
+}
+
 .section-heading p,
 .section-heading a {
   margin: 0;
   letter-spacing: -0.04em;
 }
 
-.section-heading p {
-  font-size: 2rem;
+.history-section .section-heading p {
+  font-size: 1.45rem;
   font-weight: 700;
 }
 
@@ -741,8 +750,8 @@ function loadMoreHistory() {
   place-items: center;
   width: 4.1rem;
   height: 4.1rem;
-  border-radius: 1.2rem;
-  background: linear-gradient(180deg, #f3e7d2 0%, #f8eedf 100%);
+  border-radius: 0.95rem;
+  background: #f5ead8;
 }
 
 .history-icon svg {
@@ -789,31 +798,36 @@ function loadMoreHistory() {
 }
 
 .floating-action {
-  position: relative;
+  position: fixed;
   display: grid;
   place-items: center;
-  width: 5rem;
-  height: 5rem;
-  margin: 1.9rem 0 0 auto;
+  width: 3.75rem;
+  height: 3.75rem;
+  right: calc(
+    (100vw - min(100vw, var(--device-width))) / 2 + 2.4rem + env(safe-area-inset-right, 0px)
+  );
+  bottom: calc(
+    (100vh - min(100vh, var(--device-height))) / 2 + 1.6rem + env(safe-area-inset-bottom, 0px)
+  );
+  margin: 0;
   border: 0;
-  border-radius: 50%;
+  border-radius: 1.35rem;
   background: #5b4939;
-  box-shadow: 0 18px 28px rgba(91, 73, 57, 0.24);
   color: #ffc341;
   font-size: 3rem;
   line-height: 1;
   cursor: pointer;
+  z-index: 20;
   transition:
     transform 140ms ease,
-    box-shadow 140ms ease,
     background-color 140ms ease;
 }
 
 .floating-action-icon {
   position: relative;
   display: block;
-  width: 2rem;
-  height: 2rem;
+  width: 1.45rem;
+  height: 1.45rem;
 }
 
 .floating-action-icon::before,
@@ -828,18 +842,18 @@ function loadMoreHistory() {
 }
 
 .floating-action-icon::before {
-  width: 0.25rem;
-  height: 2rem;
+  width: 0.22rem;
+  height: 1.45rem;
 }
 
 .floating-action-icon::after {
-  width: 2rem;
-  height: 0.25rem;
+  width: 1.45rem;
+  height: 0.22rem;
 }
 
 .floating-action:hover {
   transform: translateY(-2px);
-  box-shadow: 0 22px 34px rgba(91, 73, 57, 0.28);
+  background: #524131;
 }
 
 .floating-action:focus-visible {
@@ -847,21 +861,12 @@ function loadMoreHistory() {
   outline-offset: 4px;
 }
 
-@media (min-width: 431px) {
-  .phone-shell {
-    box-shadow:
-      0 20px 48px rgba(90, 71, 48, 0.08),
-      0 0 0 1px rgba(231, 220, 205, 0.46);
-  }
-}
-
 @media (max-width: 480px) {
-  .home-screen {
-    padding-inline: 0;
-  }
-
   .home-page {
-    padding: 1.55rem 0.95rem 3rem;
+    padding-top: calc(1.55rem + env(safe-area-inset-top, 0px));
+    padding-right: calc(0.95rem + env(safe-area-inset-right, 0px));
+    padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px));
+    padding-left: calc(0.95rem + env(safe-area-inset-left, 0px));
   }
 
   .page-title {
@@ -881,9 +886,16 @@ function loadMoreHistory() {
   }
 
   .stock-value,
-  .section-heading p,
   .calendar-title {
     font-size: 1.55rem;
+  }
+
+  .history-section .section-heading {
+    padding-left: 0.4rem;
+  }
+
+  .history-section .section-heading p {
+    font-size: 1.22rem;
   }
 
   .calendar-card {
@@ -915,23 +927,29 @@ function loadMoreHistory() {
   }
 
   .floating-action {
-    width: 4.4rem;
-    height: 4.4rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    right: calc(
+      (100vw - min(100vw, var(--device-width))) / 2 + 1.3rem + env(safe-area-inset-right, 0px)
+    );
+    bottom: calc(
+      (100vh - min(100vh, var(--device-height))) / 2 + 1.55rem + env(safe-area-inset-bottom, 0px)
+    );
   }
 
   .floating-action-icon {
-    width: 1.75rem;
-    height: 1.75rem;
+    width: 1.3rem;
+    height: 1.3rem;
   }
 
   .floating-action-icon::before {
-    width: 0.22rem;
-    height: 1.75rem;
+    width: 0.2rem;
+    height: 1.3rem;
   }
 
   .floating-action-icon::after {
-    width: 1.75rem;
-    height: 0.22rem;
+    width: 1.3rem;
+    height: 0.2rem;
   }
 }
 </style>
