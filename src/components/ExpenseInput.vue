@@ -2,23 +2,22 @@
 import { ref, computed, watch } from 'vue'
 
 // ==========================================
-// 1. 타입 정의
+// 1. 타입 정의 (DB 카테고리와 완벽 일치)
 // ==========================================
 export type Category =
-  | '식비'
-  | '배달'
-  | '카페&디저트'
+  | '일반식사'
+  | '카페/음료'
+  | '배달/야식'
   | '쇼핑'
-  | '편의점'
-  | '택시'
-  | '술/유흥'
-  | '취미'
-  | '여행'
-  | '기타 소액 소비'
+  | '취미/여가'
+  | '편의점/간식'
+  | '교통'
+  | '뷰티/자기관리'
+  | '구독/디지털'
 
 interface Props {
-  isOpen: boolean // 바텀 시트 열림/닫힘 상태
-  selectedDate: string // 달력 등에서 선택된 날짜 (YYYY-MM-DD)
+  isOpen: boolean
+  selectedDate: string
 }
 
 const props = defineProps<Props>()
@@ -38,31 +37,30 @@ const emit = defineEmits<{
 }>()
 
 // ==========================================
-// 2. 상수 및 초기화 로직 (구글 머티리얼 심볼 매핑)
+// 2. 카테고리 & 아이콘 매핑 (public 경로 사용)
 // ==========================================
 const CATEGORIES: { name: Category; icon: string }[] = [
-  { name: '식비', icon: 'restaurant' },
-  { name: '배달', icon: 'local_shipping' },
-  { name: '카페&디저트', icon: 'local_cafe' },
-  { name: '쇼핑', icon: 'shopping_bag' },
-  { name: '편의점', icon: 'storefront' },
-  { name: '택시', icon: 'local_taxi' },
-  { name: '술/유흥', icon: 'wine_bar' },
-  { name: '취미', icon: 'sports_esports' },
-  { name: '여행', icon: 'flight' },
-  { name: '기타 소액 소비', icon: 'toll' },
+  { name: '일반식사', icon: '/images/categories/meal.png' },
+  { name: '카페/음료', icon: '/images/categories/cafe.png' },
+  { name: '배달/야식', icon: '/images/categories/delivery.png' },
+  { name: '쇼핑', icon: '/images/categories/shopping.png' },
+  { name: '취미/여가', icon: '/images/categories/hobby.png' },
+  { name: '편의점/간식', icon: '/images/categories/convenience.png' },
+  { name: '교통', icon: '/images/categories/transport.png' },
+  { name: '뷰티/자기관리', icon: '/images/categories/beauty.png' },
+  { name: '구독/디지털', icon: '/images/categories/digital.png' },
 ]
 
 const getLocalTime = () => {
   const now = new Date()
-  return now.toTimeString().slice(0, 5) // HH:MM 형식으로 반환
+  return now.toTimeString().slice(0, 5)
 }
 
 // ==========================================
 // 3. 상태 관리 (State)
 // ==========================================
 const amount = ref('0')
-const category = ref<Category>('식비')
+const category = ref<Category>('일반식사')
 const memo = ref('')
 const isCategoryOpen = ref(false)
 const amountError = ref('')
@@ -70,7 +68,7 @@ const date = ref(props.selectedDate)
 const time = ref(getLocalTime())
 
 // ==========================================
-// 4. Watchers (상태 변화 감지)
+// 4. Watchers
 // ==========================================
 watch(
   () => props.isOpen,
@@ -79,7 +77,7 @@ watch(
       date.value = props.selectedDate
       time.value = getLocalTime()
       amount.value = '0'
-      category.value = '식비'
+      category.value = '일반식사'
       memo.value = ''
       isCategoryOpen.value = false
       amountError.value = ''
@@ -95,14 +93,14 @@ watch(
 )
 
 // ==========================================
-// 5. Computed (계산된 속성)
+// 5. Computed
 // ==========================================
 const currentCategoryIcon = computed(() => {
-  return CATEGORIES.find((c) => c.name === category.value)?.icon || 'restaurant'
+  return CATEGORIES.find((c) => c.name === category.value)?.icon || '/images/categories/meal.png'
 })
 
 // ==========================================
-// 6. 이벤트 핸들러 (Methods)
+// 6. Methods
 // ==========================================
 const handleAmountChange = (e: Event) => {
   const target = e.target as HTMLInputElement
@@ -113,7 +111,6 @@ const handleAmountChange = (e: Event) => {
     amount.value = '0'
     return
   }
-
   amount.value = new Intl.NumberFormat().format(parseInt(value, 10))
 }
 
@@ -146,7 +143,6 @@ const handleSave = () => {
     time: time.value,
     memo: memo.value.trim(),
   })
-
   emit('close')
 }
 </script>
@@ -187,9 +183,7 @@ const handleSave = () => {
               <button @click="isCategoryOpen = !isCategoryOpen" class="field-button" type="button">
                 <div class="field-left">
                   <div class="field-icon">
-                    <span class="material-symbols-outlined" style="font-size: 20px">{{
-                      currentCategoryIcon
-                    }}</span>
+                    <img :src="currentCategoryIcon" alt="카테고리" class="w-6 h-6 object-contain" />
                   </div>
                   <span class="field-label">카테고리</span>
                 </div>
@@ -219,9 +213,7 @@ const handleSave = () => {
                       type="button"
                     >
                       <span class="dropdown-icon">
-                        <span class="material-symbols-outlined" style="font-size: 18px">{{
-                          cat.icon
-                        }}</span>
+                        <img :src="cat.icon" :alt="cat.name" class="w-5 h-5 object-contain" />
                       </span>
                       {{ cat.name }}
                     </button>
@@ -233,9 +225,7 @@ const handleSave = () => {
             <div class="field-row">
               <div class="field-left">
                 <div class="field-icon">
-                  <span class="material-symbols-outlined" style="font-size: 20px"
-                    >calendar_month</span
-                  >
+                  <img src="/images/action/date.png" alt="날짜" class="w-6 h-6 object-contain" />
                 </div>
                 <span class="field-label">날짜</span>
               </div>
@@ -255,7 +245,7 @@ const handleSave = () => {
             <div class="field-row">
               <div class="field-left">
                 <div class="field-icon">
-                  <span class="material-symbols-outlined" style="font-size: 20px">schedule</span>
+                  <img src="/images/action/time.png" alt="시간" class="w-6 h-6 object-contain" />
                 </div>
                 <span class="field-label">시간</span>
               </div>
@@ -275,7 +265,7 @@ const handleSave = () => {
             <div class="memo-section">
               <div class="memo-header">
                 <div class="memo-icon">
-                  <span class="material-symbols-outlined" style="font-size: 20px">article</span>
+                  <img src="/images/action/memo.png" alt="메모" class="w-6 h-6 object-contain" />
                 </div>
                 <span class="field-label">메모</span>
               </div>
@@ -308,7 +298,7 @@ const handleSave = () => {
 
 <style scoped>
 /* ==========================================
-   1. 레이아웃 & 배경 (Backdrop & Bottom Sheet)
+   1. 레이아웃 & 배경
    ========================================== */
 .backdrop {
   position: fixed;
@@ -356,7 +346,7 @@ const handleSave = () => {
 }
 
 /* ==========================================
-   2. 컨텐츠 & 헤더 (Content & Header)
+   2. 컨텐츠 & 헤더 
    ========================================== */
 .sheet-content {
   padding: 0 1.5rem 7rem 1.5rem;
@@ -372,7 +362,7 @@ const handleSave = () => {
 .sheet-title {
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--color-kb-brown);
+  color: var(--color-secondary); /* kb-brown 수정 */
 }
 
 .close-button {
@@ -380,7 +370,7 @@ const handleSave = () => {
   right: 0;
   top: 0;
   padding: 0.25rem;
-  color: var(--color-kb-brown-light);
+  color: var(--color-on-surface-variant); /* kb-brown-light 수정 */
   border-radius: 9999px;
   transition: background-color 0.2s;
   display: flex;
@@ -399,14 +389,14 @@ const handleSave = () => {
   margin: 0 auto 1.5rem;
   padding: 0.5rem 0.875rem;
   background-color: rgba(255, 188, 80, 0.16);
-  color: var(--color-kb-brown);
+  color: var(--color-secondary); /* kb-brown 수정 */
   border-radius: 9999px;
   font-size: 0.8125rem;
   font-weight: 700;
 }
 
 /* ==========================================
-   3. 폼 입력 영역 (Amount & Form Fields)
+   3. 폼 입력 영역 
    ========================================== */
 .amount-section {
   text-align: center;
@@ -417,7 +407,7 @@ const handleSave = () => {
   display: block;
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--color-kb-brown-light);
+  color: var(--color-on-surface-variant); /* kb-brown-light 수정 */
   margin-bottom: 0.5rem;
 }
 
@@ -429,10 +419,9 @@ const handleSave = () => {
 }
 
 .amount-input {
-  font-family: var(--font-manrope);
   font-size: 2.25rem;
   font-weight: 800;
-  color: var(--color-kb-brown);
+  color: var(--color-secondary); /* kb-brown 수정 */
   background: transparent;
   border: none;
   text-align: center;
@@ -444,7 +433,7 @@ const handleSave = () => {
 .amount-currency {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-kb-brown-light);
+  color: var(--color-on-surface-variant); /* kb-brown-light 수정 */
 }
 
 .amount-underline {
@@ -497,7 +486,7 @@ const handleSave = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-kb-brown);
+  color: var(--color-secondary); /* kb-brown 수정 */
   transition: transform 0.2s;
 }
 
@@ -508,14 +497,14 @@ const handleSave = () => {
 
 .field-label {
   font-weight: 700;
-  color: var(--color-kb-brown);
+  color: var(--color-secondary); /* kb-brown 수정 */
 }
 
 .field-right {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--color-kb-brown-light);
+  color: var(--color-on-surface-variant); /* kb-brown-light 수정 */
 }
 
 .field-value {
@@ -560,7 +549,7 @@ const handleSave = () => {
   padding: 1rem 1.5rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--color-kb-brown);
+  color: var(--color-secondary); /* kb-brown 수정 */
   transition: background-color 0.2s;
   text-align: left;
 }
@@ -570,7 +559,7 @@ const handleSave = () => {
 }
 
 .dropdown-icon {
-  color: var(--color-kb-brown-light);
+  color: var(--color-on-surface-variant); /* kb-brown-light 수정 */
   background-color: var(--color-surface-container-low);
   padding: 0.5rem;
   border-radius: 0.5rem;
@@ -581,7 +570,7 @@ const handleSave = () => {
 
 .field-input-wrapper {
   position: relative;
-  color: var(--color-kb-brown-light);
+  color: var(--color-on-surface-variant); /* kb-brown-light 수정 */
 }
 
 .hidden-input {
@@ -614,7 +603,7 @@ const handleSave = () => {
 }
 
 /* ==========================================
-   4. 메모 및 안내 (Memo & Notice)
+   4. 메모 및 안내 
    ========================================== */
 .memo-section {
   display: flex;
@@ -638,7 +627,7 @@ const handleSave = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-kb-brown);
+  color: var(--color-secondary); /* kb-brown 수정 */
 }
 
 .memo-input {
@@ -651,7 +640,7 @@ const handleSave = () => {
   font-weight: 500;
   min-height: 6.25rem;
   resize: none;
-  color: var(--color-kb-brown);
+  color: var(--color-secondary); /* kb-brown 수정 */
   transition: all 0.2s;
   outline: none;
 }
@@ -675,7 +664,7 @@ const handleSave = () => {
 }
 
 .notice-icon {
-  color: var(--color-kb-brown);
+  color: var(--color-secondary); /* kb-brown 수정 */
   flex-shrink: 0;
   display: flex;
   align-items: flex-start;
@@ -683,17 +672,17 @@ const handleSave = () => {
 
 .notice-text {
   font-size: 0.8125rem;
-  color: var(--color-kb-brown-light);
+  color: var(--color-on-surface-variant); /* kb-brown-light 수정 */
   line-height: 1.6;
 }
 
 .notice-highlight {
-  color: var(--color-kb-brown);
+  color: var(--color-secondary); /* kb-brown 수정 */
   font-weight: 700;
 }
 
 /* ==========================================
-   5. 하단 액션 & 트랜지션 (Save Action & Animations)
+   5. 하단 액션 & 트랜지션
    ========================================== */
 .save-area {
   position: absolute;
@@ -706,7 +695,7 @@ const handleSave = () => {
 }
 
 .amount-error {
-  color: #dc2626;
+  color: var(--color-error); /* error 색상으로 수정 */
   font-size: 0.875rem;
   font-weight: 600;
   text-align: center;
@@ -716,8 +705,8 @@ const handleSave = () => {
 .save-button {
   width: 100%;
   height: 3.5rem;
-  background-color: var(--color-kb-yellow);
-  color: var(--color-kb-brown);
+  background-color: var(--color-primary); /* kb-yellow 수정 */
+  color: var(--color-secondary); /* kb-brown 수정 */
   border-radius: 0.5rem;
   font-weight: 800;
   font-size: 1.125rem;
