@@ -131,7 +131,9 @@ const getCategoryIcon = (category: string) => {
                   <p class="text-[32px] font-extrabold text-secondary font-headline leading-tight">
                     {{ dailyReport.stockName }} {{ dailyReport.securedQuantity }}주
                   </p>
-                  <p class="text-lg font-bold text-secondary font-headline">확보했습니다</p>
+                  <p class="text-lg font-bold text-secondary font-headline">
+                    {{ dailyReport.isSaved ? '확보했습니다' : '잃었습니다' }}
+                  </p>
                 </div>
               </div>
             </div>

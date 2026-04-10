@@ -253,8 +253,9 @@ const todayExpenseTotal = computed(() =>
     .reduce((sum, expense) => sum + expense.amount, 0),
 )
 const todayExpenseStockQuantity = computed(() => {
-  if (!targetStockPrice.value) return '0.0'
-  return (todayExpenseTotal.value / targetStockPrice.value).toFixed(1)
+  if (!targetStockPrice.value) return '0.00'
+  const diffFromAverage = budgetStore.dailyAverage - todayExpenseTotal.value
+  return (diffFromAverage / targetStockPrice.value).toFixed(2)
 })
 
 const calendarDays = computed(() => {
