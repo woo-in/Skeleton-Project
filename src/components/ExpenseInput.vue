@@ -576,24 +576,23 @@ const handleSave = () => {
    ========================================== */
 .backdrop {
   position: fixed;
-  inset: 0;
+  top: calc((100vh - min(100vh, 932px)) / 2);
+  left: 50%;
+  width: min(100vw, 430px);
+  height: min(100vh, 932px);
   background-color: rgba(0, 0, 0, 0.4);
-  z-index: 40;
+  z-index: 80;
   backdrop-filter: blur(4px);
-  max-width: 450px;
-  margin: 0 auto;
-  left: 0;
-  right: 0;
+  transform: translateX(-50%);
 }
 
 .bottom-sheet {
   position: fixed;
-  bottom: 0;
+  bottom: calc((100vh - min(100vh, 932px)) / 2);
   left: 50%;
   transform: translateX(-50%);
-  width: 100%;
-  max-width: 450px;
-  z-index: 50;
+  width: min(100vw, 430px);
+  z-index: 90;
   background-color: #ffffff;
   border-top-left-radius: 2rem;
   border-top-right-radius: 2rem;
