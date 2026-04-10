@@ -184,9 +184,6 @@ const registerUser = async () => {
     const checkResponse = await fetch(`http://localhost:3000/members?userId=${userId.value}`);
     const existingUsers = await checkResponse.json();
 
-    console.log('ㅎㅇ');
-
-
     if (existingUsers.length > 0) {
       alert('이미 사용 중인 아이디입니다.');
       return;
