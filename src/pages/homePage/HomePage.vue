@@ -78,6 +78,7 @@ const todayExpenseStockQuantity = computed(() => {
   if (!targetStockPrice.value) return '0.00'
   return (todayExpenseTotal.value / targetStockPrice.value).toFixed(2)
 })
+const hasTodayExpense = computed(() => todayExpenseTotal.value > 0)
 const recentItems = computed(() =>
   budgetStore.recentExpenses.slice(0, visibleHistoryCount.value).map((expense) => ({
     id: expense.id,
@@ -252,10 +253,11 @@ async function handleExpenseSave(payload) {
           </div>
           <div class="stock-copy">
             <p class="stock-label">오늘 지출 주식 환산</p>
-            <p class="stock-value">
+            <p v-if="hasTodayExpense" class="stock-value">
               {{ targetStockName || '주식' }}
               {{ todayExpenseStockQuantity }}주
             </p>
+            <p v-else class="stock-value stock-value--empty">오늘 지출이 아직 없습니다!</p>
           </div>
         </section>
 
