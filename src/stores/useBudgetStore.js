@@ -108,6 +108,30 @@ export const useBudgetStore = defineStore('budget', {
       return (date) => this.expensesByDate[date] ?? []
     },
 
+    getExpensesByMonth() {
+      return (monthKey) =>
+        this.expenses.filter(
+          (expense) => typeof expense.date === 'string' && expense.date.startsWith(monthKey),
+        )
+    },
+
+    getMonthlyExpenseTotal() {
+      return (monthKey) =>
+        this.getExpensesByMonth(monthKey).reduce((sum, expense) => sum + expense.amount, 0)
+    },
+
+    getMonthlyRemainingBudget(state) {
+      return (monthKey) => state.budget - this.getMonthlyExpenseTotal(monthKey)
+    },
+
+    getMonthlyFillPercentage(state) {
+      return (monthKey) => {
+        if (state.budget <= 0) return 0
+        const ratio = (this.getMonthlyRemainingBudget(monthKey) / state.budget) * 100
+        return Math.min(Math.max(ratio, 0), 100)
+      }
+    },
+
     remainingBudget(state) {
       return state.budget - this.totalExpense
     },

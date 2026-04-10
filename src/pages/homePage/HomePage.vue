@@ -28,8 +28,6 @@ const budgetStore = useBudgetStore()
 // storeToRefs를 써야 반응형이 유지되어서 꿀단지가 부드럽게 움직입니다!
 const {
   expenses,
-  remainingBudget,
-  fillPercentage,
   guidelinePercentage,
   targetStockName,
   targetStockTicker,
@@ -59,11 +57,18 @@ onMounted(async () => {
 })
 
 const visibleHistoryCount = ref(INITIAL_HISTORY_COUNT)
+const currentMonthKey = computed(() => currentMonth.value.format('YYYY-MM'))
 const selectedDateKey = computed(() => selectedDate.value.format('YYYY-MM-DD'))
 const todayDateKey = computed(() => dayjs().format('YYYY-MM-DD'))
 const expenseDateSet = computed(() => new Set(expenses.value.map((expense) => expense.date)))
 const selectedDayExpenses = computed(() => budgetStore.getExpensesByDate(selectedDateKey.value))
 const calendarDailyReport = computed(() => budgetStore.getDailyReport(selectedDateKey.value))
+const monthlyRemainingBudget = computed(() =>
+  budgetStore.getMonthlyRemainingBudget(currentMonthKey.value),
+)
+const monthlyFillPercentage = computed(() =>
+  budgetStore.getMonthlyFillPercentage(currentMonthKey.value),
+)
 const todayExpenseTotal = computed(() =>
   budgetStore
     .getExpensesByDate(todayDateKey.value)
@@ -227,17 +232,17 @@ async function handleExpenseSave(payload) {
           <div class="bee-slot" aria-hidden="true">
             <div class="honey-pot-stage">
               <HoneyPot
-                :display-value="Math.floor(fillPercentage)"
-                :fill-percentage="fillPercentage"
+                :display-value="Math.floor(monthlyFillPercentage)"
+                :fill-percentage="monthlyFillPercentage"
                 :guideline-percentage="guidelinePercentage"
               />
             </div>
           </div>
 
           <div class="balance-copy">
-            <p class="balance-label">이번 달 생활비 남음</p>
-            <p class="balance-amount">₩{{ remainingBudget.toLocaleString() }}</p>
-            <p class="balance-hint">빨간 선은 목표 주식 가격</p>
+            <p class="balance-label">이 달 생활비 남음</p>
+            <p class="balance-amount">₩{{ monthlyRemainingBudget.toLocaleString() }}</p>
+            <p class="balance-hint">빨간 선은 목표 주식 총 금액</p>
             <p class="balance-hint">꿀단지는 현재 남은 생활비를 비율을 보여줘요</p>
           </div>
         </section>
@@ -247,7 +252,7 @@ async function handleExpenseSave(payload) {
             {{ targetStockTicker || '주식' }}
           </div>
           <div class="stock-copy">
-            <p class="stock-label">오늘 쓴 돈으로 살 수 있었던 주식</p>
+            <p class="stock-label">일평균 대비 오늘의 주식 환산</p>
             <p class="stock-value">
               {{ targetStockName || '주식' }}
               {{ todayExpenseStockQuantity }}주
