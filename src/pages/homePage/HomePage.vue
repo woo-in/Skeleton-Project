@@ -213,6 +213,7 @@ const {
   fillPercentage,
   guidelinePercentage,
   targetStockName,
+  targetStockTicker,
   targetStockPrice,
 } = storeToRefs(budgetStore)
 
@@ -382,7 +383,7 @@ async function handleExpenseSave(payload) {
 
         <section class="stock-card">
           <div class="stock-badge">
-            {{ targetStockName ? targetStockName.substring(0, 3) : '주식' }}
+            {{ targetStockTicker || '주식' }}
           </div>
           <div class="stock-copy">
             <p class="stock-label">오늘 쓴 돈으로 살 수 있었던 주식</p>

@@ -73,23 +73,33 @@
   "stocks": [
     {
       "id": 1,
-      "name": "카카오"
+      "name": "카카오",
+      "ticker": "KAK",
+      "realTicker": "035720"
     },
     {
       "id": 2,
-      "name": "삼성전자"
+      "name": "삼성전자",
+      "ticker": "SAM",
+      "realTicker": "005930"
     },
     {
       "id": 3,
-      "name": "케이뱅크"
+      "name": "케이뱅크",
+      "ticker": "KBN",
+      "realTicker": null
     },
     {
       "id": 4,
-      "name": "KB금융"
+      "name": "KB금융",
+      "ticker": "KBF",
+      "realTicker": "105560"
     },
     {
       "id": 5,
-      "name": "TIGER200"
+      "name": "TIGER200",
+      "ticker": "TIG",
+      "realTicker": "102110"
     }
   ],
   "prices": [
