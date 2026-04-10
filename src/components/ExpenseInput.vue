@@ -2,8 +2,7 @@
 import { ref, computed, watch, nextTick } from 'vue'
 import dayjs from 'dayjs'
 import { ChevronDown, ChevronLeft, ChevronRight, Info, X } from 'lucide-vue-next'
-import { useBudgetStore } from '@/stores/useBudgetStore'
-const budgetStore = useBudgetStore()
+
 // ==========================================
 // 1. 타입 정의 (DB 카테고리와 완벽 일치)
 // ==========================================

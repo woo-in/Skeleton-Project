@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router' // 화면 이동을 위해 추가
-import { useBudgetStore } from '@/stores/useBudgetStore' // 방금 만든 Pinia 스토어 추가
+import { useRouter } from 'vue-router'
+import { useBudgetStore } from '@/stores/useBudgetStore'
 import {
   X,
   Wallet,
@@ -15,13 +15,11 @@ import {
   Coins,
 } from 'lucide-vue-next'
 import { Motion } from '@motionone/vue'
-// 추가
-const router = useRouter()
-const budgetStore = useBudgetStore() // 스토어 인스턴스 생성
 
+const router = useRouter()
+const budgetStore = useBudgetStore()
 
 const lastMonthExpense = ref('')
-const router = useRouter()
 const onExpenseInput = (e) => {
   const value = e.target.value.replace(/[^0-9]/g, '')
   lastMonthExpense.value = value
@@ -34,14 +32,7 @@ const targetQuantity = ref('')
 const isStockListOpen = ref(false)
 const showErrors = ref(false)
 
-const popularStocks = [
-  { name: '케이뱅크', ticker: 'KBK', price: 6080 },
-  { name: '카카오', ticker: 'KKO', price: 47500 },
-  { name: '삼성전자', ticker: 'SMS', price: 204500 },
-  { name: 'KB금융', ticker: 'KBF', price: 155900 },
-  { name: '타이거200', ticker: 'TG2', price: 87700 },
-  { name: '현대차', ticker: 'HDY', price: 501000 },
-]
+const popularStocks = computed(() => budgetStore.stockOptions)
 
 // Get User ID from session
 const getUserId = () => {
@@ -57,15 +48,20 @@ const getUserId = () => {
   return null
 }
 
-const userId = getUserId() || 'testUser' // Hardcoded for testing
+const userId = getUserId()
 
-// 화면 로드 시 Pinia에 저장된 값이 있다면 불러오기 (localStorage 대체)
-onMounted(() => {
+onMounted(async () => {
+  try {
+    await budgetStore.initializeBudgetState(userId)
+  } catch (error) {
+    console.error('Failed to initialize budget store:', error)
+  }
+
   if (budgetStore.budget > 0) {
     lastMonthExpense.value = String(budgetStore.budget)
     targetQuantity.value = String(budgetStore.targetQuantity)
 
-    const stock = popularStocks.find((s) => s.name === budgetStore.targetStockName)
+    const stock = popularStocks.value.find((s) => s.id === budgetStore.targetStockId)
     if (stock) {
       selectedStock.value = stock
       targetStock.value = stock.name
@@ -113,54 +109,22 @@ const setTargetStock = (stock) => {
   isStockListOpen.value = false
 }
 
-// 🚀 핵심 로직: Pinia에 데이터 저장 후 홈 화면으로 이동
 const handleStartSaving = async () => {
- 
   showErrors.value = true
- 
+
   if (!lastMonthExpense.value || !selectedStock.value || !targetQuantity.value) {
     return
   }
 
-
-  /*
-  if (!userId) {
-    alert('로그인이 필요합니다.')
-    return
-  }
-  */
-
   try {
-    // 1. Save to json-server
-    const response = await fetch(`/members/${userId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        monthlyBudget: parseInt(lastMonthExpense.value),
-        targetStockId: selectedStock.value.ticker,
-        targetQuantity: parseFloat(targetQuantity.value),
-      }),
+    await budgetStore.updateGoalSetup({
+      monthlyBudget: Number(lastMonthExpense.value),
+      targetStockId: selectedStock.value.id,
+      targetQuantity: Number(targetQuantity.value),
     })
-    // 3. 서버 저장 성공 시에만 다음 단계 진행
-    if (response.ok) {
-      // Pinia Store 업데이트
-      budgetStore.setGoalSetup(
-        Number(lastMonthExpense.value),
-        selectedStock.value.name,
-        selectedStock.value.price,
-        Number(targetQuantity.value),
-      )
 
-      alert('설정이 저장되었습니다!')
-      
-      // 4. 모든 저장이 완료된 후 메인 홈 화면으로 이동
-      router.push('/home')
-    } else {
-      alert('서버 저장 중 오류가 발생했습니다.')
-    }
-   
+    alert('설정이 저장되었습니다!')
+    router.push('/home')
   } catch (error) {
     console.error('Failed to save settings to server:', error)
     alert('서버와 통신하는 중 문제가 발생했습니다. json-server가 켜져 있는지 확인해주세요.')

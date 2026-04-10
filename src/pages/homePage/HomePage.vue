@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import dayjs from 'dayjs'
 import { toast } from 'vue3-toastify'
 import HoneyPot from '@/components/HoneyPot.vue'
@@ -32,53 +32,11 @@ const calendarAccentMap = {
   '2024-05-30': 'warm',
 }
 
-const currentMonth = ref(dayjs('2024-05-01'))
-const selectedDate = ref(dayjs('2024-05-03'))
+const currentMonth = ref(dayjs().startOf('month'))
+const selectedDate = ref(dayjs())
 const isCalendarDetailOpen = ref(false)
 const isExpenseInputOpen = ref(false)
 const reopenCalendarDetail = ref(false)
-const expenseEntries = ref([
-  {
-    id: 1,
-    category: '카페/음료',
-    amount: 4800,
-    date: '2024-05-02',
-    time: '08:40',
-    memo: '출근 전 아메리카노',
-  },
-  {
-    id: 2,
-    category: '일반식사',
-    amount: 11000,
-    date: '2024-05-02',
-    time: '12:15',
-    memo: '점심 식사',
-  },
-  {
-    id: 3,
-    category: '카페/음료',
-    amount: 5400,
-    date: '2024-05-03',
-    time: '09:10',
-    memo: '아이스 라떼',
-  },
-  {
-    id: 4,
-    category: '일반식사',
-    amount: 10200,
-    date: '2024-05-03',
-    time: '12:20',
-    memo: '회사 앞 점심',
-  },
-  {
-    id: 5,
-    category: '쇼핑',
-    amount: 10000,
-    date: '2024-05-03',
-    time: '19:40',
-    memo: '생활용품 구매',
-  },
-])
 
 const historyItems = [
   {
@@ -250,40 +208,43 @@ const budgetStore = useBudgetStore()
 
 // storeToRefs를 써야 반응형이 유지되어서 꿀단지가 부드럽게 움직입니다!
 const {
-  budget,
+  expenses,
   remainingBudget,
   fillPercentage,
   guidelinePercentage,
   targetStockName,
   targetStockPrice,
 } = storeToRefs(budgetStore)
+
+const getSessionMemberId = () => {
+  try {
+    return JSON.parse(localStorage.getItem('userSession') || 'null')?.id ?? null
+  } catch {
+    return null
+  }
+}
+
+onMounted(async () => {
+  try {
+    await budgetStore.initializeBudgetState(getSessionMemberId())
+    const latestExpenseDate = budgetStore.recentExpenses[0]?.date
+
+    if (latestExpenseDate) {
+      selectedDate.value = dayjs(latestExpenseDate)
+      currentMonth.value = selectedDate.value.startOf('month')
+    }
+  } catch (error) {
+    console.error('Failed to initialize budget store:', error)
+  }
+})
+
 const visibleHistoryCount = ref(3)
 const recentItems = computed(() => historyItems.slice(0, visibleHistoryCount.value))
 const canLoadMoreHistory = computed(() => visibleHistoryCount.value < historyItems.length)
 const selectedDateKey = computed(() => selectedDate.value.format('YYYY-MM-DD'))
-const selectedDayExpenses = computed(() =>
-  expenseEntries.value.filter((expense) => expense.date === selectedDateKey.value),
-)
-// 4. 하드코딩된 calendarDailyReport를 스토어 데이터 기반으로 변경
-const calendarDailyReport = computed(() => {
-  // 스토어에서 설정한 주식 가격 가져오기 (0으로 나누기 방지 위해 최소값 1)
-  const stockPrice = targetStockPrice.value || 1
-
-  // 오늘 쓴 돈 합계
-  const totalSpent = selectedDayExpenses.value.reduce((sum, expense) => sum + expense.amount, 0)
-
-  // 전월 일일 평균 지출액 (30일 기준)
-  const dailyAverage = Math.floor(budget.value / 30)
-  const diffFromAverage = dailyAverage - totalSpent
-
-  return {
-    securedQuantity: Number((totalSpent / stockPrice).toFixed(2)),
-    stockName: targetStockName.value || '주식', // 스토어에 저장된 주식명
-    savedAmount: Math.abs(diffFromAverage), // UI에 보여줄 절댓값
-    isSaved: diffFromAverage >= 0, // 평균보다 아꼈는지 여부
-    progressRate: Math.min(100, Math.round((totalSpent / stockPrice) * 100)),
-  }
-})
+const expenseDateSet = computed(() => new Set(expenses.value.map((expense) => expense.date)))
+const selectedDayExpenses = computed(() => budgetStore.getExpensesByDate(selectedDateKey.value))
+const calendarDailyReport = computed(() => budgetStore.getDailyReport(selectedDateKey.value))
 
 const calendarDays = computed(() => {
   const monthStart = currentMonth.value.startOf('month')
@@ -304,7 +265,7 @@ const calendarDays = computed(() => {
       key: isoDate,
       label: date.date(),
       isoDate,
-      dotTone: calendarAccentMap[isoDate] ?? null,
+      dotTone: expenseDateSet.value.has(isoDate) ? (calendarAccentMap[isoDate] ?? 'warm') : null,
       inCurrentMonth,
       isSelected: date.isSame(selectedDate.value, 'day'),
       isToday: date.isSame(dayjs(), 'day'),
@@ -329,12 +290,6 @@ function selectDate(isoDate) {
   if (!nextDate.isSame(currentMonth.value, 'month')) {
     currentMonth.value = nextDate.startOf('month')
   }
-}
-
-function handleAddClick() {
-  toast.info('추가 기능은 다음 단계에서 연결될 예정이에요.', {
-    autoClose: 1800,
-  })
 }
 
 function handleStockClick() {
@@ -376,19 +331,19 @@ function closeExpenseInput() {
   }
 }
 
-function handleExpenseSave(payload) {
-  budgetStore.addExpense({
-    id: Date.now(),
-    amount: payload.amount,
-    category: payload.category,
-    date: payload.date,
-    time: payload.time,
-    memo: payload.memo || '직접 입력',
-  })
+async function handleExpenseSave(payload) {
+  try {
+    await budgetStore.addExpense(payload)
 
-  toast.success('지출이 추가됐어요.', {
-    autoClose: 1600,
-  })
+    toast.success('지출이 추가됐어요.', {
+      autoClose: 1600,
+    })
+  } catch (error) {
+    console.error('Failed to save expense:', error)
+    toast.error('지출 저장에 실패했어요. json-server 상태를 확인해주세요.', {
+      autoClose: 2200,
+    })
+  }
 }
 </script>
 
