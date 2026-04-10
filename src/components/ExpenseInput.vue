@@ -2,6 +2,7 @@
 import { ref, computed, watch, nextTick } from 'vue'
 import dayjs from 'dayjs'
 import { ChevronDown, ChevronLeft, ChevronRight, Info, X } from 'lucide-vue-next'
+import { exceedsBudget } from '@/utils/budgetValidation'
 
 // ==========================================
 // 1. 타입 정의 (DB 카테고리와 완벽 일치)
@@ -20,6 +21,7 @@ export type Category =
 interface Props {
   isOpen: boolean
   selectedDate: string
+  maxAmount?: number
 }
 
 const props = defineProps<Props>()
@@ -281,6 +283,12 @@ const handleSave = () => {
     amountError.value = '0원은 저장할 수 없습니다. 금액을 입력해주세요.'
     return
   }
+
+  if (exceedsBudget(numericAmount, props.maxAmount)) {
+    amountError.value = '지출 금액은 생활비를 초과할 수 없습니다.'
+    return
+  }
+
   amountError.value = ''
 
   // 원래 약속된 형식대로 5가지 데이터를 모두 담아서 부모(HomePage)에게 쏩니다!

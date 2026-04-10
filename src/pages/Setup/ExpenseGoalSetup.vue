@@ -3,6 +3,11 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useBudgetStore } from '@/stores/useBudgetStore'
 import {
+  calculateStockTargetAmount,
+  exceedsBudget,
+  isBudgetExceededError,
+} from '@/utils/budgetValidation'
+import {
   X,
   Wallet,
   Search,
@@ -32,14 +37,34 @@ const targetQuantity = ref('')
 
 const isStockListOpen = ref(false)
 const showErrors = ref(false)
+const targetBudgetLimitMessage = '주식 목표 금액은 생활비를 초과할 수 없습니다.'
 
 const popularStocks = computed(() => budgetStore.stockOptions)
 const monthlyBudgetAmount = computed(() => Number(lastMonthExpense.value) || 0)
 const targetQuantityAmount = computed(() => Number(targetQuantity.value) || 0)
 const isMonthlyBudgetValid = computed(() => monthlyBudgetAmount.value > 0)
 const isTargetQuantityValid = computed(() => targetQuantityAmount.value > 0)
+const totalTargetAmount = computed(() => {
+  if (!selectedStock.value || !targetQuantity.value) return 0
+
+  return calculateStockTargetAmount({
+    stockPrice: selectedStock.value.price,
+    targetQuantity: targetQuantityAmount.value,
+  })
+})
+const isTargetAmountWithinBudget = computed(() => {
+  if (!selectedStock.value || !isTargetQuantityValid.value || !isMonthlyBudgetValid.value) {
+    return true
+  }
+
+  return !exceedsBudget(totalTargetAmount.value, monthlyBudgetAmount.value)
+})
 const isGoalSetupValid = computed(
-  () => isMonthlyBudgetValid.value && Boolean(selectedStock.value) && isTargetQuantityValid.value,
+  () =>
+    isMonthlyBudgetValid.value &&
+    Boolean(selectedStock.value) &&
+    isTargetQuantityValid.value &&
+    isTargetAmountWithinBudget.value,
 )
 
 const getUserId = () => {
@@ -95,14 +120,6 @@ onMounted(async () => {
   }
 })
 
-const totalTargetAmount = computed(() => {
-  if (!selectedStock.value || !targetQuantity.value) return 0
-  const quantityStr = targetQuantity.value.toString().replace(/[^0-9.]/g, '')
-  const quantity = parseFloat(quantityStr) || 0
-  const amount = selectedStock.value.price * quantity
-  return Math.min(amount, 99999999)
-})
-
 const onQuantityInput = (e) => {
   const inputVal = e.target.value
   const sanitized = inputVal.replace(/[^0-9.]/g, '')
@@ -155,6 +172,10 @@ const handleStartSaving = async () => {
     router.push('/home')
   } catch (error) {
     console.error('Failed to save settings to server:', error)
+    if (isBudgetExceededError(error)) {
+      alert(error.message)
+      return
+    }
     alert('서버와 통신하는 중 문제가 발생했습니다. json-server가 켜져 있는지 확인해주세요.')
   }
 }
@@ -340,6 +361,15 @@ const handleStartSaving = async () => {
               >주</span
             >
           </div>
+
+          <Motion
+            v-if="showErrors && !isTargetAmountWithinBudget"
+            :initial="{ opacity: 0, y: -10 }"
+            :animate="{ opacity: 1, y: 0 }"
+            class="text-red-500 text-sm font-bold px-1"
+          >
+            {{ targetBudgetLimitMessage }}
+          </Motion>
 
           <Motion
             v-if="showErrors && !isTargetQuantityValid"

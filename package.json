@@ -9,6 +9,7 @@
     "dev:server": "json-server --watch db.json --port 3000",
     "build": "vite build",
     "preview": "vite preview",
+    "test:unit": "node --test src/utils/budgetValidation.test.js",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
     "validate:db": "node scripts/validate-db.mjs"
