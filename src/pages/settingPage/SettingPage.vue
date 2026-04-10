@@ -55,7 +55,7 @@ onMounted(() => {
 });
 
 const goToSettings = () => {
-  alert('생활비 및 목표 주식 설정 페이지로 이동합니다.');
+  router.push('/setup')
 };
 
 const logoutUser = () => {
