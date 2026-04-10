@@ -315,15 +315,15 @@ const getCategoryIcon = (category: string) => {
 
 .daily-weather__sun {
   position: absolute;
-  top: 0.55rem;
-  right: 4.45rem;
-  width: 2.75rem;
-  height: 2.75rem;
+  top: 0.7rem;
+  right: 4.35rem;
+  width: 2.45rem;
+  height: 2.45rem;
   border-radius: 9999px;
-  background: radial-gradient(circle at 35% 35%, #fff8c8 0%, #ffd35c 50%, #f5a63a 100%);
+  background: linear-gradient(145deg, #fff3a8 0%, #ffbc50 78%);
   box-shadow:
-    0 0 0 0.45rem rgba(255, 196, 72, 0.16),
-    0 0 1.5rem rgba(255, 179, 61, 0.48);
+    0 0 0 0.42rem rgba(255, 188, 80, 0.16),
+    0 0.8rem 1.7rem rgba(255, 174, 54, 0.35);
   opacity: 0;
   transform: scale(0.78);
   z-index: 1;
@@ -335,16 +335,11 @@ const getCategoryIcon = (category: string) => {
 .daily-weather__sun::before {
   content: '';
   position: absolute;
-  inset: -0.7rem;
+  inset: -0.52rem;
   border-radius: inherit;
-  background: repeating-conic-gradient(
-    from -10deg,
-    rgba(255, 196, 72, 0.62) 0deg 8deg,
-    transparent 8deg 26deg
-  );
-  mask-image: radial-gradient(circle, transparent 0 47%, #000 49% 100%);
-  -webkit-mask-image: radial-gradient(circle, transparent 0 47%, #000 49% 100%);
-  opacity: 0.9;
+  border: 0.22rem solid rgba(255, 188, 80, 0.24);
+  box-shadow: 0 0 1.2rem rgba(255, 188, 80, 0.18);
+  opacity: 1;
   z-index: -1;
 }
 
@@ -364,29 +359,33 @@ const getCategoryIcon = (category: string) => {
 
 .daily-weather__drop {
   position: absolute;
-  bottom: 0.45rem;
-  width: 0.28rem;
-  height: 1.35rem;
-  border-radius: 9999px;
-  background: #5f91c9;
+  bottom: 0.55rem;
+  width: 0.58rem;
+  height: 0.9rem;
+  border-radius: 9999px 9999px 9999px 0.18rem;
+  background: linear-gradient(145deg, #a7cff6 0%, #5f91c9 78%);
+  box-shadow:
+    0 0 0 0.24rem rgba(95, 145, 201, 0.12),
+    0 0.55rem 1rem rgba(95, 145, 201, 0.24);
   opacity: 0;
-  transform: rotate(16deg) translateY(-0.2rem);
+  transform: rotate(38deg) translateY(-0.2rem);
   z-index: 3;
   transition: opacity 180ms ease;
 }
 
 .daily-weather__drop--1 {
-  right: 2rem;
+  right: 2.15rem;
 }
 
 .daily-weather__drop--2 {
-  right: 3.45rem;
-  bottom: 0.1rem;
-  height: 1.65rem;
+  right: 3.4rem;
+  bottom: 0.2rem;
+  width: 0.64rem;
+  height: 1rem;
 }
 
 .daily-weather__drop--3 {
-  right: 4.85rem;
+  right: 4.75rem;
 }
 
 .daily-weather--sunny {
@@ -400,7 +399,7 @@ const getCategoryIcon = (category: string) => {
 }
 
 .daily-weather--sunny .daily-weather__cloud {
-  background-color: #ffdf8d;
+  background-color: #ffe0a0;
   transform: translate(0.4rem, 1.05rem) scale(0.86);
 }
 
@@ -409,7 +408,7 @@ const getCategoryIcon = (category: string) => {
 }
 
 .daily-weather--rainy .daily-weather__cloud {
-  background-color: #7d8996;
+  background-color: #8794a1;
   transform: translateY(0.25rem);
 }
 
@@ -434,11 +433,11 @@ const getCategoryIcon = (category: string) => {
 @keyframes weather-rain-fall {
   0%,
   100% {
-    transform: rotate(16deg) translateY(-0.25rem);
+    transform: rotate(38deg) translateY(-0.2rem);
   }
 
   50% {
-    transform: rotate(16deg) translateY(0.3rem);
+    transform: rotate(38deg) translateY(0.24rem);
   }
 }
 
