@@ -438,6 +438,14 @@
       "amount": 1250,
       "memo": "지하철",
       "spentAt": "2026-04-08T08:15:00"
+    },
+    {
+      "memberId": 2,
+      "categoryId": 1,
+      "amount": 5000,
+      "memo": "피자",
+      "spentAt": "2026-04-04T14:58:00",
+      "id": 39
     }
   ],
   "reports": [
