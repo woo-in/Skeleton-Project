@@ -759,18 +759,18 @@ async function handleExpenseSave(payload) {
 .history-icon {
   display: grid;
   place-items: center;
-  width: 4.1rem;
-  height: 4.1rem;
-  border-radius: 0.95rem;
-  background: #f5ead8;
-  box-shadow: var(--shadow-soft);
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .history-icon-image {
-  width: 2.35rem;
-  height: 2.35rem;
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 999px;
 }
 
 .history-copy {
@@ -937,8 +937,8 @@ async function handleExpenseSave(payload) {
   }
 
   .history-icon {
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 3rem;
+    height: 3rem;
   }
 
   .floating-action {
