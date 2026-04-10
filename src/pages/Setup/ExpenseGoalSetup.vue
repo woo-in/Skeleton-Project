@@ -12,6 +12,7 @@ import {
   Lightbulb,
   ShieldCheck,
   ArrowRight,
+  ArrowLeft,
   Coins,
 } from 'lucide-vue-next'
 import { Motion } from '@motionone/vue'
@@ -34,7 +35,6 @@ const showErrors = ref(false)
 
 const popularStocks = computed(() => budgetStore.stockOptions)
 
-// Get User ID from session
 const getUserId = () => {
   const sessionStr = localStorage.getItem('userSession')
   if (sessionStr) {
@@ -77,7 +77,6 @@ const totalTargetAmount = computed(() => {
   return Math.min(amount, 99999999)
 })
 
-// Input validation for targetQuantity
 const onQuantityInput = (e) => {
   const inputVal = e.target.value
   const sanitized = inputVal.replace(/[^0-9.]/g, '')
@@ -106,6 +105,10 @@ const setTargetStock = (stock) => {
   isStockListOpen.value = false
 }
 
+const goToSetting = () => {
+  router.push('/setting')
+}
+
 const handleStartSaving = async () => {
   showErrors.value = true
 
@@ -131,7 +134,6 @@ const handleStartSaving = async () => {
 
 <template>
   <div class="min-h-screen bg-[#F9F9F8] text-[#2D2926] font-sans selection:bg-[#FFBC50]/30">
-    <!-- Header -->
     <header
       class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md flex justify-between items-center px-6 h-16 border-b border-[#D6D2CE]/20"
     >
@@ -142,7 +144,6 @@ const handleStartSaving = async () => {
     </header>
 
     <main class="w-full max-w-lg mx-auto px-6 pt-23 pb-32 flex flex-col gap-8">
-      <!-- Hero Section -->
       <Motion :initial="{ opacity: 0, y: 20 }" :animate="{ opacity: 1, y: 0 }" class="space-y-3">
         <h1 class="text-[2.25rem] font-extrabold leading-tight tracking-tight text-[#2D2926]">
           당신의 정보를 입력하세요
@@ -152,9 +153,7 @@ const handleStartSaving = async () => {
         </p>
       </Motion>
 
-      <!-- Configuration Form -->
       <div class="space-y-5">
-        <!-- Card 1: Last Month's Spending -->
         <Motion
           :initial="{ opacity: 0, y: 20 }"
           :animate="{ opacity: 1, y: 0 }"
@@ -195,7 +194,6 @@ const handleStartSaving = async () => {
           </div>
         </Motion>
 
-        <!-- Card 2: Target Stock -->
         <Motion
           :initial="{ opacity: 0, y: 20 }"
           :animate="{ opacity: 1, y: 0 }"
@@ -292,7 +290,6 @@ const handleStartSaving = async () => {
           </Motion>
         </Motion>
 
-        <!-- Card 3: Quantity Target -->
         <Motion
           :initial="{ opacity: 0, y: 20 }"
           :animate="{ opacity: 1, y: 0 }"
@@ -333,7 +330,6 @@ const handleStartSaving = async () => {
           </div>
         </Motion>
 
-        <!-- Card 4: Final Target Amount -->
         <Motion
           v-if="selectedStock"
           :initial="{ opacity: 0, y: 20 }"
@@ -373,7 +369,6 @@ const handleStartSaving = async () => {
         </Motion>
       </div>
 
-      <!-- Security Banner -->
       <Motion
         :initial="{ opacity: 0, scale: 0.95 }"
         :animate="{ opacity: 1, scale: 1 }"
@@ -397,8 +392,11 @@ const handleStartSaving = async () => {
       </Motion>
     </main>
 
-    <!-- Bottom Action Button -->
     <div class="start-button-area">
+      <button type="button" class="back-button" @click="goToSetting">
+        <ArrowLeft :size="20" class="stroke-[3px]" />
+      </button>
+
       <Motion
         @click="handleStartSaving"
         :while-hover="{ scale: 1.02 }"
@@ -438,10 +436,30 @@ const handleStartSaving = async () => {
   background-color: rgba(249, 249, 248, 0.9);
   backdrop-filter: blur(12px);
   z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.back-button {
+  width: 3.5rem;
+  height: 3.5rem;
+  flex-shrink: 0;
+  background-color: #ffffff;
+  color: #2d2926;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(214, 210, 206, 0.8);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.08),
+    0 2px 4px -1px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .start-button {
-  width: 100%;
+  flex: 1;
   height: 3.5rem;
   background-color: #ffbc50;
   color: #2d2926;
@@ -456,5 +474,6 @@ const handleStartSaving = async () => {
   justify-content: center;
   gap: 0.5rem;
   cursor: pointer;
+  margin-left: 0.15rem;
 }
 </style>
