@@ -31,6 +31,15 @@ function toTimeKey(spentAt) {
   return typeof spentAt === 'string' && spentAt.includes('T') ? spentAt.slice(11, 16) : ''
 }
 
+function toMonthKey(date = new Date()) {
+  const nextDate = date instanceof Date ? date : new Date(date)
+  if (Number.isNaN(nextDate.getTime())) return ''
+
+  const year = nextDate.getFullYear()
+  const month = String(nextDate.getMonth() + 1).padStart(2, '0')
+  return `${year}-${month}`
+}
+
 export const useBudgetStore = defineStore('budget', {
   state: () => ({
     memberId: null,
@@ -88,10 +97,12 @@ export const useBudgetStore = defineStore('budget', {
       }))
     },
 
+    currentMonthKey: () => toMonthKey(),
+
     totalExpense: (state) => state.expenses.reduce((sum, expense) => sum + expense.amount, 0),
 
     monthlyExpenseTotal() {
-      return this.totalExpense
+      return this.getMonthlyExpenseTotal(this.currentMonthKey)
     },
 
     expensesByDate(state) {
@@ -133,7 +144,7 @@ export const useBudgetStore = defineStore('budget', {
     },
 
     remainingBudget(state) {
-      return state.budget - this.totalExpense
+      return state.budget - this.monthlyExpenseTotal
     },
 
     fillPercentage(state) {
@@ -218,17 +229,17 @@ export const useBudgetStore = defineStore('budget', {
       this.targetQuantity = toNumber(member?.targetQuantity)
     },
 
-    resolveMember(members, requestedMemberId) {
-      if (requestedMemberId !== null && requestedMemberId !== undefined) {
+    resolveMember(members, requestedMemberId = this.memberId) {
+      if (
+        requestedMemberId !== null &&
+        requestedMemberId !== undefined &&
+        requestedMemberId !== ''
+      ) {
         const matched = members.find((member) => String(member.id) === String(requestedMemberId))
         if (matched) return matched
       }
 
-      return (
-        members.find((member) => toNumber(member.monthlyBudget) > 0 && member.targetStockId) ??
-        members[0] ??
-        null
-      )
+      return null
     },
 
     async loadReferenceData() {
@@ -261,8 +272,10 @@ export const useBudgetStore = defineStore('budget', {
         const members = await requestJson('/members')
         await this.loadReferenceData()
 
-        const member = this.resolveMember(members, memberId)
+        const member = this.resolveMember(members, memberId ?? this.memberId)
         if (!member) {
+          this.applyMember(null)
+          this.expenses = []
           this.initialized = true
           return
         }
@@ -283,6 +296,10 @@ export const useBudgetStore = defineStore('budget', {
         await this.initializeBudgetState()
       }
 
+      if (!this.memberId) {
+        throw new Error('Cannot update goal setup without a selected member')
+      }
+
       const payload = {
         monthlyBudget: toNumber(monthlyBudget),
         targetStockId,
@@ -301,6 +318,10 @@ export const useBudgetStore = defineStore('budget', {
     async addExpense(payload) {
       if (!this.memberId) {
         await this.initializeBudgetState()
+      }
+
+      if (!this.memberId) {
+        throw new Error('Cannot add expense without a selected member')
       }
 
       const category =

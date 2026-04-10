@@ -16,6 +16,7 @@ const HISTORY_INCREMENT = 10
 
 const currentMonth = ref(dayjs().startOf('month'))
 const selectedDate = ref(dayjs())
+const expenseInputDate = ref(dayjs())
 const isCalendarDetailOpen = ref(false)
 const isExpenseInputOpen = ref(false)
 const reopenCalendarDetail = ref(false)
@@ -45,12 +46,6 @@ const getSessionMemberId = () => {
 onMounted(async () => {
   try {
     await budgetStore.initializeBudgetState(getSessionMemberId())
-    const latestExpenseDate = budgetStore.recentExpenses[0]?.date
-
-    if (latestExpenseDate) {
-      selectedDate.value = dayjs(latestExpenseDate)
-      currentMonth.value = selectedDate.value.startOf('month')
-    }
   } catch (error) {
     console.error('Failed to initialize budget store:', error)
   }
@@ -59,6 +54,7 @@ onMounted(async () => {
 const visibleHistoryCount = ref(INITIAL_HISTORY_COUNT)
 const currentMonthKey = computed(() => currentMonth.value.format('YYYY-MM'))
 const selectedDateKey = computed(() => selectedDate.value.format('YYYY-MM-DD'))
+const expenseInputDateKey = computed(() => expenseInputDate.value.format('YYYY-MM-DD'))
 const todayDateKey = computed(() => dayjs().format('YYYY-MM-DD'))
 const expenseDateSet = computed(() => new Set(expenses.value.map((expense) => expense.date)))
 const selectedDayExpenses = computed(() => budgetStore.getExpensesByDate(selectedDateKey.value))
@@ -190,11 +186,13 @@ function closeCalendarDetail() {
 
 function showExpenseInput() {
   reopenCalendarDetail.value = false
+  expenseInputDate.value = dayjs()
   isExpenseInputOpen.value = true
 }
 
 function openExpenseInputFromCalendar() {
   reopenCalendarDetail.value = true
+  expenseInputDate.value = selectedDate.value
   isCalendarDetailOpen.value = false
   isExpenseInputOpen.value = true
 }
@@ -351,7 +349,7 @@ async function handleExpenseSave(payload) {
 
         <ExpenseInput
           :is-open="isExpenseInputOpen"
-          :selected-date="selectedDateKey"
+          :selected-date="expenseInputDateKey"
           @close="closeExpenseInput"
           @save="handleExpenseSave"
         />

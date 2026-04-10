@@ -48,6 +48,25 @@ const getUserId = () => {
   return null
 }
 
+const syncGoalSetupSession = (member) => {
+  try {
+    const session = JSON.parse(localStorage.getItem('userSession') || 'null')
+    if (!session || String(session.id) !== String(member?.id)) return
+
+    localStorage.setItem(
+      'userSession',
+      JSON.stringify({
+        ...session,
+        monthlyBudget: member.monthlyBudget,
+        targetStockId: member.targetStockId,
+        targetQuantity: member.targetQuantity,
+      }),
+    )
+  } catch (error) {
+    console.error('Failed to sync user session goal setup:', error)
+  }
+}
+
 const userId = getUserId()
 
 onMounted(async () => {
@@ -114,11 +133,13 @@ const handleStartSaving = async () => {
   }
 
   try {
-    await budgetStore.updateGoalSetup({
+    const member = await budgetStore.updateGoalSetup({
       monthlyBudget: Number(lastMonthExpense.value),
       targetStockId: selectedStock.value.id,
       targetQuantity: Number(targetQuantity.value),
     })
+
+    syncGoalSetupSession(member)
 
     alert('설정이 저장되었습니다!')
     router.push('/home')

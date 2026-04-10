@@ -1,14 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-/*
 function hasSession() {
   try {
-    return Boolean(JSON.parse(localStorage.getItem('userSession') || 'null'))
+    return Boolean(JSON.parse(localStorage.getItem('userSession') || 'null')?.id)
   } catch {
     return false
   }
 }
-*/
+
 import Setup from '@/pages/Setup/ExpenseGoalSetup.vue'
 
 const router = createRouter({
@@ -16,9 +15,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      // Dev only: open the home page while auth flow is still in progress.
-      redirect: '/home',
-      // redirect: () => (hasSession() ? '/home' : '/login'),
+      redirect: () => (hasSession() ? '/home' : '/login'),
     },
 
     {
@@ -52,27 +49,27 @@ const router = createRouter({
       path: '/setup',
       name: 'setup',
       component: Setup,
+      meta: { requiresAuth: true },
     },
     {
       path: '/report',
       name: 'report',
       component: () => import('@/pages/reportPage/ReportPage.vue'),
       meta: { requiresAuth: true, showTopBar: true, showBottomNav: true },
-    }
+    },
   ],
 })
 
-// Dev only: temporarily disable route guards until auth flow is finalized.
-// router.beforeEach((to) => {
-//   const isAuthenticated = hasSession()
-//
-//   if (to.meta.requiresAuth && !isAuthenticated) {
-//     return '/login'
-//   }
-//
-//   if (to.meta.guestOnly && isAuthenticated) {
-//     return '/home'
-//   }
-// })
+router.beforeEach((to) => {
+  const isAuthenticated = hasSession()
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    return '/login'
+  }
+
+  if (to.meta.guestOnly && isAuthenticated) {
+    return '/home'
+  }
+})
 
 export default router
