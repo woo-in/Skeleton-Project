@@ -18,7 +18,7 @@
       "password": "qwer1234!",
       "monthlyBudget": 650000,
       "targetStockId": 1,
-      "targetQuantity": 10,
+      "targetQuantity": 4,
       "ageBand": "TWENTIES",
       "id": 2
     }
@@ -484,8 +484,8 @@
       "monthlyExpenseTotal": 465200,
       "savedAmount": 184800,
       "securedQuantity": 4.2,
-      "targetQuantity": 10,
-      "progressRate": 42,
+      "targetQuantity": 4,
+      "progressRate": 105,
       "peerPercentile": 74,
       "successCount": 24,
       "summaryComment": "3월에는 쇼핑, 취미/여가, 배달/야식처럼 변동 폭이 큰 소비가 크게 늘어 예산 소진 속도가 빨라졌어요.",
