@@ -1,5 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router' // 화면 이동을 위해 추가
+import { useBudgetStore } from '@/stores/useBudgetStore' // 방금 만든 Pinia 스토어 추가
 import {
   X,
   Wallet,
@@ -13,6 +15,9 @@ import {
   Coins,
 } from 'lucide-vue-next'
 import { Motion } from '@motionone/vue'
+// 추가
+const router = useRouter()
+const budgetStore = useBudgetStore() // 스토어 인스턴스 생성
 
 const lastMonthExpense = ref('')
 
@@ -53,25 +58,16 @@ const getUserId = () => {
 
 const userId = getUserId()
 
-// Load data on mount
+// 화면 로드 시 Pinia에 저장된 값이 있다면 불러오기 (localStorage 대체)
 onMounted(() => {
-  if (userId) {
-    const savedData = localStorage.getItem(`user_setup_${userId}`)
-    if (savedData) {
-      try {
-        const data = JSON.parse(savedData)
-        lastMonthExpense.value = data.lastMonthExpense || ''
-        targetQuantity.value = data.targetQuantity || '500'
-        if (data.selectedStockTicker) {
-          const stock = popularStocks.find((s) => s.ticker === data.selectedStockTicker)
-          if (stock) {
-            selectedStock.value = stock
-            targetStock.value = stock.name
-          }
-        }
-      } catch (e) {
-        console.error('Failed to parse saved data', e)
-      }
+  if (budgetStore.budget > 0) {
+    lastMonthExpense.value = String(budgetStore.budget)
+    targetQuantity.value = String(budgetStore.targetQuantity)
+
+    const stock = popularStocks.find((s) => s.name === budgetStore.targetStockName)
+    if (stock) {
+      selectedStock.value = stock
+      targetStock.value = stock.name
     }
   }
 })
@@ -115,7 +111,7 @@ const setTargetStock = (stock) => {
   selectedStock.value = stock
   isStockListOpen.value = false
 }
-
+// 🚀 핵심 로직: Pinia에 데이터 저장 후 홈 화면으로 이동
 const handleStartSaving = () => {
   showErrors.value = true
 
@@ -123,17 +119,16 @@ const handleStartSaving = () => {
     return
   }
 
-  if (!userId) {
-    alert('로그인이 필요합니다.')
-    return
-  }
-  const dataToSave = {
-    lastMonthExpense: lastMonthExpense.value,
-    targetQuantity: targetQuantity.value,
-    selectedStockTicker: selectedStock.value?.ticker,
-  }
-  localStorage.setItem(`user_setup_${userId}`, JSON.stringify(dataToSave))
-  alert('설정이 저장되었습니다!')
+  // Pinia Store의 Action 호출 (예산, 주식명, 주식가격, 수량)
+  budgetStore.setGoalSetup(
+    Number(lastMonthExpense.value),
+    selectedStock.value.name,
+    selectedStock.value.price,
+    Number(targetQuantity.value),
+  )
+
+  // 설정 완료 후 메인 홈 화면(/home)으로 이동
+  router.push('/home')
 }
 </script>
 

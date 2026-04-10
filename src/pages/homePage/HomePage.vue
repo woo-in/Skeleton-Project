@@ -5,8 +5,9 @@ import { toast } from 'vue3-toastify'
 import HoneyPot from '@/components/HoneyPot.vue'
 import CalendarDetail from '@/components/CalendarDetail.vue'
 import ExpenseInput from '@/components/ExpenseInput.vue'
-import { useHoneyPot } from '@/composables/useHoneyPot'
 
+import { storeToRefs } from 'pinia'
+import { useBudgetStore } from '@/stores/useBudgetStore'
 const weekdays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
 
 const calendarAccentMap = {
@@ -245,7 +246,17 @@ const historyItems = [
 const calendarTitle = computed(
   () => `${currentMonth.value.year()}년 ${currentMonth.value.month() + 1}월`,
 )
-const { displayPercentage, fillPercentage, guidelinePercentage } = useHoneyPot(800000, 555000, 360000)
+const budgetStore = useBudgetStore()
+
+// storeToRefs를 써야 반응형이 유지되어서 꿀단지가 부드럽게 움직입니다!
+const {
+  budget,
+  remainingBudget,
+  fillPercentage,
+  guidelinePercentage,
+  targetStockName,
+  targetStockPrice,
+} = storeToRefs(budgetStore)
 const visibleHistoryCount = ref(3)
 const recentItems = computed(() => historyItems.slice(0, visibleHistoryCount.value))
 const canLoadMoreHistory = computed(() => visibleHistoryCount.value < historyItems.length)
@@ -253,14 +264,23 @@ const selectedDateKey = computed(() => selectedDate.value.format('YYYY-MM-DD'))
 const selectedDayExpenses = computed(() =>
   expenseEntries.value.filter((expense) => expense.date === selectedDateKey.value),
 )
+// 4. 하드코딩된 calendarDailyReport를 스토어 데이터 기반으로 변경
 const calendarDailyReport = computed(() => {
-  const stockPrice = 47900
+  // 스토어에서 설정한 주식 가격 가져오기 (0으로 나누기 방지 위해 최소값 1)
+  const stockPrice = targetStockPrice.value || 1
+
+  // 오늘 쓴 돈 합계
   const totalSpent = selectedDayExpenses.value.reduce((sum, expense) => sum + expense.amount, 0)
+
+  // 전월 일일 평균 지출액 (30일 기준)
+  const dailyAverage = Math.floor(budget.value / 30)
+  const diffFromAverage = dailyAverage - totalSpent
 
   return {
     securedQuantity: Number((totalSpent / stockPrice).toFixed(2)),
-    stockName: '카카오',
-    savedAmount: Math.max(0, stockPrice - totalSpent),
+    stockName: targetStockName.value || '주식', // 스토어에 저장된 주식명
+    savedAmount: Math.abs(diffFromAverage), // UI에 보여줄 절댓값
+    isSaved: diffFromAverage >= 0, // 평균보다 아꼈는지 여부
     progressRate: Math.min(100, Math.round((totalSpent / stockPrice) * 100)),
   }
 })
@@ -357,17 +377,14 @@ function closeExpenseInput() {
 }
 
 function handleExpenseSave(payload) {
-  expenseEntries.value = [
-    {
-      id: Date.now(),
-      amount: payload.amount,
-      category: payload.category,
-      date: payload.date,
-      time: payload.time,
-      memo: payload.memo || '직접 입력',
-    },
-    ...expenseEntries.value,
-  ]
+  budgetStore.addExpense({
+    id: Date.now(),
+    amount: payload.amount,
+    category: payload.category,
+    date: payload.date,
+    time: payload.time,
+    memo: payload.memo || '직접 입력',
+  })
 
   toast.success('지출이 추가됐어요.', {
     autoClose: 1600,
@@ -385,7 +402,7 @@ function handleExpenseSave(payload) {
           <div class="bee-slot" aria-hidden="true">
             <div class="honey-pot-stage">
               <HoneyPot
-                :display-value="displayPercentage"
+                :display-value="Math.floor(fillPercentage)"
                 :fill-percentage="fillPercentage"
                 :guideline-percentage="guidelinePercentage"
               />
@@ -394,17 +411,22 @@ function handleExpenseSave(payload) {
 
           <div class="balance-copy">
             <p class="balance-label">이번 달 생활비 남음</p>
-            <p class="balance-amount">₩245,000</p>
+            <p class="balance-amount">₩{{ remainingBudget.toLocaleString() }}</p>
             <p class="balance-hint">빨간 선은 목표 주식 가격</p>
             <p class="balance-hint">꿀단지는 현재 남은 생활비를 비율을 보여줘요</p>
           </div>
         </section>
 
         <section class="stock-card">
-          <div class="stock-badge">QQQ</div>
+          <div class="stock-badge">
+            {{ targetStockName ? targetStockName.substring(0, 2) : '주식' }}
+          </div>
           <div class="stock-copy">
-            <p class="stock-label">오늘 아끼면 살 수 있는 주식</p>
-            <p class="stock-value">QQQ 0.5주</p>
+            <p class="stock-label">남은 생활비로 살 수 있는 주식</p>
+            <p class="stock-value">
+              {{ targetStockName }}
+              {{ targetStockPrice ? (remainingBudget / targetStockPrice).toFixed(1) : 0 }}주
+            </p>
           </div>
           <button
             class="stock-arrow-button"

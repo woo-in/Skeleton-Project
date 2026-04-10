@@ -23,6 +23,7 @@ interface Props {
     stockName: string
     savedAmount: number
     progressRate: number
+    isSaved: boolean
   }
 }
 
@@ -72,142 +73,155 @@ const getCategoryIcon = (category: string) => {
         v-if="isOpen"
         class="calendar-detail-sheet fixed bottom-0 left-1/2 z-[60] flex h-[85vh] w-full max-w-md flex-col overflow-y-auto rounded-t-[2.5rem] border-t border-outline-variant bg-surface-container-lowest shadow-[0_-12px_60px_rgba(45,41,38,0.15)]"
       >
-      <div
-        class="w-full flex justify-center py-4 shrink-0 sticky top-0 bg-surface-container-lowest z-10"
-      >
-        <div class="w-10 h-1.5 bg-surface-container-highest rounded-full"></div>
-      </div>
-
-      <div class="px-6 pb-32">
-        <div class="flex justify-between items-start mb-6">
-          <div>
-            <p
-              class="text-on-surface-variant text-[12px] font-bold tracking-wider mb-1 uppercase font-label"
-            >
-              일일 요약
-            </p>
-            <h3 class="text-2xl font-extrabold font-headline text-on-surface tracking-tight">
-              {{ formattedDate }}
-            </h3>
-            <div class="flex items-center gap-1.5 mt-1.5">
-              <span class="text-[13px] font-extrabold text-primary tracking-tight font-label"
-                >오늘의 절약 리포트</span
-              >
-            </div>
-          </div>
-          <button
-            @click="emit('add-expense')"
-            class="bg-primary text-on-primary w-12 h-12 rounded-2xl active:scale-95 transition-transform flex items-center justify-center shadow-lg shadow-primary/30"
-          >
-            <Plus :size="24" :stroke-width="2.5" aria-hidden="true" />
-          </button>
+        <div
+          class="w-full flex justify-center py-4 shrink-0 sticky top-0 bg-surface-container-lowest z-10"
+        >
+          <div class="w-10 h-1.5 bg-surface-container-highest rounded-full"></div>
         </div>
 
-        <div class="mb-6">
-          <div
-            class="bg-surface-container-low border border-outline-variant p-6 rounded-[2.5rem] relative overflow-hidden"
-          >
-            <div class="absolute -right-4 -bottom-4 w-32 h-32 opacity-20 pointer-events-none">
-              <div class="honey-pot-mask relative w-full h-full bg-outline-variant overflow-hidden">
+        <div class="px-6 pb-32">
+          <div class="flex justify-between items-start mb-6">
+            <div>
+              <p
+                class="text-on-surface-variant text-[12px] font-bold tracking-wider mb-1 uppercase font-label"
+              >
+                일일 요약
+              </p>
+              <h3 class="text-2xl font-extrabold font-headline text-on-surface tracking-tight">
+                {{ formattedDate }}
+              </h3>
+              <div class="flex items-center gap-1.5 mt-1.5">
+                <span class="text-[13px] font-extrabold text-primary tracking-tight font-label"
+                  >오늘의 절약 리포트</span
+                >
+              </div>
+            </div>
+            <button
+              @click="emit('add-expense')"
+              class="bg-primary text-on-primary w-12 h-12 rounded-2xl active:scale-95 transition-transform flex items-center justify-center shadow-lg shadow-primary/30"
+            >
+              <Plus :size="24" :stroke-width="2.5" aria-hidden="true" />
+            </button>
+          </div>
+
+          <div class="mb-6">
+            <div
+              class="bg-surface-container-low border border-outline-variant p-6 rounded-[2.5rem] relative overflow-hidden"
+            >
+              <div class="absolute -right-4 -bottom-4 w-32 h-32 opacity-20 pointer-events-none">
                 <div
-                  class="absolute bottom-0 left-0 right-0 bg-primary animate-wave origin-bottom"
-                  :style="{ height: `${dailyReport.progressRate}%` }"
+                  class="honey-pot-mask relative w-full h-full bg-outline-variant overflow-hidden"
                 >
                   <div
-                    class="absolute -top-4 left-0 right-0 h-8 bg-primary rounded-[50%] scale-x-125"
-                  ></div>
+                    class="absolute bottom-0 left-0 right-0 bg-primary animate-wave origin-bottom"
+                    :style="{ height: `${dailyReport.progressRate}%` }"
+                  >
+                    <div
+                      class="absolute -top-4 left-0 right-0 h-8 bg-primary rounded-[50%] scale-x-125"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="relative z-10">
+                <div class="flex flex-col items-start">
+                  <p class="text-on-surface-variant text-[13px] font-bold mb-2 font-label">
+                    오늘 지출은 주식으로
+                  </p>
+                  <p class="text-[32px] font-extrabold text-secondary font-headline leading-tight">
+                    {{ dailyReport.stockName }} {{ dailyReport.securedQuantity }}주
+                  </p>
+                  <p class="text-lg font-bold text-secondary font-headline">확보했습니다</p>
                 </div>
               </div>
             </div>
-
-            <div class="relative z-10">
-              <div class="flex flex-col items-start">
-                <p class="text-on-surface-variant text-[13px] font-bold mb-2 font-label">
-                  오늘 지출은 주식으로
-                </p>
-                <p class="text-[32px] font-extrabold text-secondary font-headline leading-tight">
-                  {{ dailyReport.stockName }} {{ dailyReport.securedQuantity }}주
-                </p>
-                <p class="text-lg font-bold text-secondary font-headline">확보했습니다</p>
-              </div>
-            </div>
           </div>
-        </div>
 
-        <div class="bg-surface border border-outline-variant p-5 rounded-2xl mb-10">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-              <img src="/images/action/money.png" alt="총 지출" class="w-6 h-6 object-contain" />
-            </div>
-            <div class="flex-1">
-              <p class="text-xs font-bold text-on-surface-variant mb-0.5 font-label">
-                오늘의 총 지출
-              </p>
-              <p class="text-2xl font-extrabold font-headline text-on-surface leading-none">
-                {{ totalAmount.toLocaleString() }}원
-              </p>
-              <div class="mt-2.5 pt-2.5 border-t border-outline-variant/40">
-                <p class="text-xs font-semibold text-on-surface-variant font-body">
-                  평균보다
-                  <span class="text-secondary font-bold"
-                    >{{ dailyReport.savedAmount.toLocaleString() }}원</span
-                  >
-                  더 아꼈어요!
-                </p>
+          <div class="bg-surface border border-outline-variant p-5 rounded-2xl mb-10">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <img src="/images/action/money.png" alt="총 지출" class="w-6 h-6 object-contain" />
               </div>
-            </div>
-          </div>
-        </div>
-
-        <section>
-          <div class="flex items-center gap-2 mb-5">
-            <img src="/images/action/list.png" alt="거래 내역" class="w-5 h-5 object-contain" />
-            <h4 class="text-[16px] font-extrabold text-on-surface tracking-tight font-headline">
-              거래 내역
-            </h4>
-          </div>
-          <div class="space-y-3">
-            <div
-              v-for="exp in dayExpenses"
-              :key="exp.id"
-              class="flex items-center gap-4 p-4 bg-surface-container-low border border-transparent hover:border-outline-variant rounded-2xl transition-all cursor-pointer"
-            >
-              <div
-                class="w-12 h-12 rounded-xl bg-surface-container-lowest border border-outline-variant flex items-center justify-center"
-              >
-                <span class="category-image-mask" aria-hidden="true">
-                  <img
-                    :src="getCategoryIcon(exp.category)"
-                    :alt="exp.category"
-                    class="category-image"
-                  />
-                </span>
-              </div>
-
               <div class="flex-1">
-                <div class="flex justify-between items-center mb-0.5">
-                  <span class="text-[15px] font-bold text-on-surface font-body">{{
-                    exp.category
-                  }}</span>
-                  <span class="text-[15px] font-extrabold font-headline text-error"
-                    >-₩{{ exp.amount.toLocaleString() }}</span
+                <p class="text-xs font-bold text-on-surface-variant mb-0.5 font-label">
+                  오늘의 총 지출
+                </p>
+                <p class="text-2xl font-extrabold font-headline text-on-surface leading-none">
+                  {{ totalAmount.toLocaleString() }}원
+                </p>
+                <div class="mt-2.5 pt-2.5 border-t border-outline-variant/40">
+                  <p
+                    v-if="dailyReport.isSaved"
+                    class="text-xs font-semibold text-on-surface-variant font-body"
                   >
+                    평균보다
+                    <span class="text-secondary font-bold"
+                      >{{ dailyReport.savedAmount.toLocaleString() }}원</span
+                    >
+                    더 아꼈어요!
+                  </p>
+
+                  <p v-else class="text-xs font-semibold text-on-surface-variant font-body">
+                    평균보다
+                    <span class="text-error font-bold"
+                      >{{ dailyReport.savedAmount.toLocaleString() }}원</span
+                    >
+                    더 썼어요 😢
+                  </p>
                 </div>
-                <div class="flex justify-between items-center">
-                  <span class="text-[13px] text-on-surface-variant font-medium font-body">{{
-                    exp.memo
-                  }}</span>
-                  <span
-                    class="text-[10px] text-on-surface-variant/60 font-bold font-headline uppercase tracking-wider"
-                  >
-                    {{ exp.time }}
+              </div>
+            </div>
+          </div>
+
+          <section>
+            <div class="flex items-center gap-2 mb-5">
+              <img src="/images/action/list.png" alt="거래 내역" class="w-5 h-5 object-contain" />
+              <h4 class="text-[16px] font-extrabold text-on-surface tracking-tight font-headline">
+                거래 내역
+              </h4>
+            </div>
+            <div class="space-y-3">
+              <div
+                v-for="exp in dayExpenses"
+                :key="exp.id"
+                class="flex items-center gap-4 p-4 bg-surface-container-low border border-transparent hover:border-outline-variant rounded-2xl transition-all cursor-pointer"
+              >
+                <div
+                  class="w-12 h-12 rounded-xl bg-surface-container-lowest border border-outline-variant flex items-center justify-center"
+                >
+                  <span class="category-image-mask" aria-hidden="true">
+                    <img
+                      :src="getCategoryIcon(exp.category)"
+                      :alt="exp.category"
+                      class="category-image"
+                    />
                   </span>
                 </div>
+
+                <div class="flex-1">
+                  <div class="flex justify-between items-center mb-0.5">
+                    <span class="text-[15px] font-bold text-on-surface font-body">{{
+                      exp.category
+                    }}</span>
+                    <span class="text-[15px] font-extrabold font-headline text-error"
+                      >-₩{{ exp.amount.toLocaleString() }}</span
+                    >
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-[13px] text-on-surface-variant font-medium font-body">{{
+                      exp.memo
+                    }}</span>
+                    <span
+                      class="text-[10px] text-on-surface-variant/60 font-bold font-headline uppercase tracking-wider"
+                    >
+                      {{ exp.time }}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
-      </div>
+          </section>
+        </div>
       </div>
     </Transition>
   </Teleport>
