@@ -503,6 +503,14 @@ async function handleExpenseSave(payload) {
   letter-spacing: -0.05em;
 }
 
+.stock-value--empty {
+  color: #8a8179;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.35;
+}
+
 .stock-arrow-button {
   display: grid;
   place-items: center;
