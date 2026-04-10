@@ -72,7 +72,9 @@ const isTimePickerOpen = ref(false)
 const amountError = ref('')
 const date = ref(props.selectedDate)
 const time = ref(getLocalTime())
-const currentCalendarMonth = ref(dayjs(props.selectedDate || dayjs().format('YYYY-MM-DD')).startOf('month'))
+const currentCalendarMonth = ref(
+  dayjs(props.selectedDate || dayjs().format('YYYY-MM-DD')).startOf('month'),
+)
 const hourWheelRef = ref<HTMLElement | null>(null)
 const minuteWheelRef = ref<HTMLElement | null>(null)
 
@@ -356,7 +358,10 @@ const handleSave = () => {
                       type="button"
                     >
                       <span class="dropdown-icon">
-                        <span class="category-image-mask category-image-mask--sm" aria-hidden="true">
+                        <span
+                          class="category-image-mask category-image-mask--sm"
+                          aria-hidden="true"
+                        >
                           <img :src="cat.icon" :alt="cat.name" class="category-image" />
                         </span>
                       </span>
@@ -378,7 +383,9 @@ const handleSave = () => {
               >
                 <div class="field-left">
                   <div class="field-icon">
-                    <img src="/images/action/date.png" alt="날짜" class="w-6 h-6 object-contain" />
+                    <span class="action-image-mask" aria-hidden="true">
+                      <img src="/images/action/date.png" alt="날짜" class="action-image" />
+                    </span>
                   </div>
                   <span class="field-label">날짜</span>
                 </div>
@@ -458,7 +465,9 @@ const handleSave = () => {
               >
                 <div class="field-left">
                   <div class="field-icon">
-                    <img src="/images/action/time.png" alt="시간" class="w-6 h-6 object-contain" />
+                    <span class="action-image-mask" aria-hidden="true">
+                      <img src="/images/action/time.png" alt="시간" class="action-image" />
+                    </span>
                   </div>
                   <span class="field-label">시간</span>
                 </div>
@@ -533,7 +542,9 @@ const handleSave = () => {
             <div class="memo-section">
               <div class="memo-header">
                 <div class="memo-icon">
-                  <img src="/images/action/memo.png" alt="메모" class="w-6 h-6 object-contain" />
+                  <span class="action-image-mask" aria-hidden="true">
+                    <img src="/images/action/memo.png" alt="메모" class="action-image" />
+                  </span>
                 </div>
                 <span class="field-label">메모</span>
               </div>
@@ -614,7 +625,7 @@ const handleSave = () => {
 }
 
 /* ==========================================
-   2. 컨텐츠 & 헤더 
+   2. 컨텐츠 & 헤더
    ========================================== */
 .sheet-content {
   padding: 0 1.5rem 7rem 1.5rem;
@@ -630,7 +641,7 @@ const handleSave = () => {
 .sheet-title {
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--color-secondary); /* kb-brown 수정 */
+  color: var(--color-secondary);
 }
 
 .close-button {
@@ -638,7 +649,7 @@ const handleSave = () => {
   right: 0;
   top: 0;
   padding: 0.25rem;
-  color: var(--color-on-surface-variant); /* kb-brown-light 수정 */
+  color: var(--color-on-surface-variant);
   border-radius: 9999px;
   transition: background-color 0.2s;
   display: flex;
@@ -657,14 +668,14 @@ const handleSave = () => {
   margin: 0 auto 1.5rem;
   padding: 0.5rem 0.875rem;
   background-color: rgba(255, 188, 80, 0.16);
-  color: var(--color-secondary); /* kb-brown 수정 */
+  color: var(--color-secondary);
   border-radius: 9999px;
   font-size: 0.8125rem;
   font-weight: 700;
 }
 
 /* ==========================================
-   3. 폼 입력 영역 
+   3. 폼 입력 영역
    ========================================== */
 .amount-section {
   text-align: center;
@@ -675,7 +686,7 @@ const handleSave = () => {
   display: block;
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--color-on-surface-variant); /* kb-brown-light 수정 */
+  color: var(--color-on-surface-variant);
   margin-bottom: 0.5rem;
 }
 
@@ -689,7 +700,7 @@ const handleSave = () => {
 .amount-input {
   font-size: 2.25rem;
   font-weight: 800;
-  color: var(--color-secondary); /* kb-brown 수정 */
+  color: var(--color-secondary);
   background: transparent;
   border: none;
   text-align: center;
@@ -701,7 +712,7 @@ const handleSave = () => {
 .amount-currency {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-on-surface-variant); /* kb-brown-light 수정 */
+  color: var(--color-on-surface-variant);
 }
 
 .amount-underline {
@@ -771,7 +782,7 @@ const handleSave = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-secondary); /* kb-brown 수정 */
+  color: var(--color-secondary);
   transition: transform 0.2s;
 }
 
@@ -782,7 +793,7 @@ const handleSave = () => {
 
 .field-label {
   font-weight: 700;
-  color: var(--color-secondary); /* kb-brown 수정 */
+  color: var(--color-secondary);
 }
 
 .field-right {
@@ -792,7 +803,7 @@ const handleSave = () => {
   align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
-  color: var(--color-on-surface-variant); /* kb-brown-light 수정 */
+  color: var(--color-on-surface-variant);
 }
 
 .field-value {
@@ -837,7 +848,7 @@ const handleSave = () => {
   padding: 1rem 1.5rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--color-secondary); /* kb-brown 수정 */
+  color: var(--color-secondary);
   transition: background-color 0.2s;
   text-align: left;
 }
@@ -847,7 +858,7 @@ const handleSave = () => {
 }
 
 .dropdown-icon {
-  color: var(--color-on-surface-variant); /* kb-brown-light 수정 */
+  color: var(--color-on-surface-variant);
   background-color: var(--color-surface-container-low);
   padding: 0.5rem;
   border-radius: 0.5rem;
@@ -878,6 +889,25 @@ const handleSave = () => {
   height: 100%;
   object-fit: cover;
   transform: scale(1.12);
+}
+
+.action-image-mask {
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: rgba(255, 188, 80, 0.16);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.action-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.08);
 }
 
 .picker-panel {
@@ -1144,7 +1174,7 @@ const handleSave = () => {
 }
 
 /* ==========================================
-   4. 메모 및 안내 
+   4. 메모 및 안내
    ========================================== */
 .memo-section {
   display: flex;
@@ -1164,11 +1194,12 @@ const handleSave = () => {
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 0.75rem;
-  background-color: var(--color-surface-container-low);
+  background-color: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-secondary); /* kb-brown 수정 */
+  color: var(--color-secondary);
 }
 
 .memo-input {
@@ -1181,7 +1212,7 @@ const handleSave = () => {
   font-weight: 500;
   min-height: 6.25rem;
   resize: none;
-  color: var(--color-secondary); /* kb-brown 수정 */
+  color: var(--color-secondary);
   transition: all 0.2s;
   outline: none;
 }
@@ -1205,7 +1236,7 @@ const handleSave = () => {
 }
 
 .notice-icon {
-  color: var(--color-secondary); /* kb-brown 수정 */
+  color: var(--color-secondary);
   flex-shrink: 0;
   display: flex;
   align-items: flex-start;
@@ -1213,12 +1244,12 @@ const handleSave = () => {
 
 .notice-text {
   font-size: 0.8125rem;
-  color: var(--color-on-surface-variant); /* kb-brown-light 수정 */
+  color: var(--color-on-surface-variant);
   line-height: 1.6;
 }
 
 .notice-highlight {
-  color: var(--color-secondary); /* kb-brown 수정 */
+  color: var(--color-secondary);
   font-weight: 700;
 }
 
@@ -1236,7 +1267,7 @@ const handleSave = () => {
 }
 
 .amount-error {
-  color: var(--color-error); /* error 색상으로 수정 */
+  color: var(--color-error);
   font-size: 0.875rem;
   font-weight: 600;
   text-align: center;
@@ -1246,8 +1277,8 @@ const handleSave = () => {
 .save-button {
   width: 100%;
   height: 3.5rem;
-  background-color: var(--color-primary); /* kb-yellow 수정 */
-  color: var(--color-secondary); /* kb-brown 수정 */
+  background-color: var(--color-primary);
+  color: var(--color-secondary);
   border-radius: 0.5rem;
   font-weight: 800;
   font-size: 1.125rem;
@@ -1262,15 +1293,12 @@ const handleSave = () => {
 }
 
 /* Vue 트랜지션 클래스 */
-
 .slide-up-enter-active {
   transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-  /* opacity 0.55s ease-out; */
 }
 
 .slide-up-leave-active {
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  /* opacity 0.3s ease-in; */
 }
 
 .slide-up-enter-from,
@@ -1281,8 +1309,8 @@ const handleSave = () => {
 .slide-up-enter-to,
 .slide-up-leave-from {
   transform: translateX(-50%) translateY(0);
-  /* opacity: 1; */
 }
+
 .fade-enter-active {
   transition: opacity 0.15s ease-out;
 }
