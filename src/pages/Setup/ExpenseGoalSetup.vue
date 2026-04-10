@@ -442,17 +442,20 @@ const handleStartSaving = async () => {
 
 <style scoped>
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: var(--scrollbar-size, 8px);
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--scrollbar-track, transparent);
+  border-radius: var(--scrollbar-radius, 999px);
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #d6d2ce;
-  border-radius: 10px;
+  background-color: var(--scrollbar-thumb, #d8c8ad);
+  border: var(--scrollbar-border, 2px solid transparent);
+  border-radius: var(--scrollbar-radius, 999px);
+  background-clip: padding-box;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #6d6864;
+  background-color: var(--scrollbar-thumb-hover, #c5ad86);
 }
 
 .start-button-area {

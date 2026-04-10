@@ -10,3 +10,106 @@
   --color-outline-variant: #d0c5ba;
   --color-error: #ba1a1a;
 }
+
+/*
+  Global scrollbar themes.
+  Switch with: document.documentElement.dataset.scrollbarTheme = 'honey' | 'brown' | 'cream' | 'minimal' | 'contextual'
+*/
+:root {
+  --scrollbar-size: 7px;
+  --scrollbar-radius: 999px;
+  --scrollbar-track: transparent;
+  --scrollbar-thumb: rgba(75, 68, 51, 0.2);
+  --scrollbar-thumb-hover: rgba(75, 68, 51, 0.42);
+  --scrollbar-thumb-active: rgba(75, 68, 51, 0.58);
+  --scrollbar-border: 2px solid transparent;
+}
+
+:root[data-scrollbar-theme='honey'] {
+  --scrollbar-size: 8px;
+  --scrollbar-track: transparent;
+  --scrollbar-thumb: #d8c8ad;
+  --scrollbar-thumb-hover: #c5ad86;
+  --scrollbar-thumb-active: #b79b70;
+  --scrollbar-border: 2px solid transparent;
+}
+
+:root[data-scrollbar-theme='brown'] {
+  --scrollbar-size: 8px;
+  --scrollbar-track: transparent;
+  --scrollbar-thumb: rgba(91, 73, 57, 0.45);
+  --scrollbar-thumb-hover: rgba(91, 73, 57, 0.7);
+  --scrollbar-thumb-active: rgba(91, 73, 57, 0.86);
+  --scrollbar-border: 2px solid transparent;
+}
+
+:root[data-scrollbar-theme='cream'] {
+  --scrollbar-size: 9px;
+  --scrollbar-track: #fff4dd;
+  --scrollbar-thumb: #cdbb9d;
+  --scrollbar-thumb-hover: #bfa87e;
+  --scrollbar-thumb-active: #aa9168;
+  --scrollbar-border: 2px solid #fff4dd;
+}
+
+:root[data-scrollbar-theme='minimal'] {
+  --scrollbar-size: 7px;
+  --scrollbar-track: transparent;
+  --scrollbar-thumb: rgba(75, 68, 51, 0.2);
+  --scrollbar-thumb-hover: rgba(75, 68, 51, 0.42);
+  --scrollbar-thumb-active: rgba(75, 68, 51, 0.58);
+  --scrollbar-border: 2px solid transparent;
+}
+
+:root[data-scrollbar-theme='contextual'] {
+  --scrollbar-size: 8px;
+  --scrollbar-track: #f1f0ed;
+  --scrollbar-thumb: #ffbc50;
+  --scrollbar-thumb-hover: #d79524;
+  --scrollbar-thumb-active: #b97818;
+  --scrollbar-border: 2px solid #f1f0ed;
+}
+
+.app-content,
+.app-content *:not(.global-header):not(.global-header *):not(.bottom-nav):not(.bottom-nav *) {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.app-content::-webkit-scrollbar,
+.app-content *:not(.global-header):not(.global-header *):not(.bottom-nav):not(.bottom-nav *)::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
+}
+
+.app-content::-webkit-scrollbar-track,
+.app-content *:not(.global-header):not(.global-header *):not(.bottom-nav):not(.bottom-nav *)::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: var(--scrollbar-radius);
+}
+
+.app-content::-webkit-scrollbar-thumb,
+.app-content *:not(.global-header):not(.global-header *):not(.bottom-nav):not(.bottom-nav *)::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border: var(--scrollbar-border);
+  border-radius: var(--scrollbar-radius);
+  background-clip: padding-box;
+}
+
+.app-content::-webkit-scrollbar-thumb:hover,
+.app-content *:not(.global-header):not(.global-header *):not(.bottom-nav):not(.bottom-nav *)::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
+}
+
+.app-content::-webkit-scrollbar-thumb:active,
+.app-content *:not(.global-header):not(.global-header *):not(.bottom-nav):not(.bottom-nav *)::-webkit-scrollbar-thumb:active {
+  background-color: var(--scrollbar-thumb-active);
+}
+
+.global-header,
+.global-header *,
+.bottom-nav,
+.bottom-nav * {
+  scrollbar-width: auto;
+  scrollbar-color: auto;
+}
