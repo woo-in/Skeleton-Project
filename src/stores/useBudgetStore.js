@@ -1,4 +1,8 @@
 import { defineStore } from 'pinia'
+import {
+  calculateStockTargetAmount,
+  validateAmountWithinBudget,
+} from '../utils/budgetValidation'
 
 const API_BASE = '/api'
 
@@ -325,11 +329,27 @@ export const useBudgetStore = defineStore('budget', {
         throw new Error('Cannot update goal setup without a selected member')
       }
 
+      if (this.prices.length === 0) {
+        await this.loadReferenceData()
+      }
+
       const payload = {
         monthlyBudget: toNumber(monthlyBudget),
         targetStockId,
         targetQuantity: toNumber(targetQuantity),
       }
+
+      const targetStockPrice = this.latestPriceByStockId.get(payload.targetStockId)?.price ?? 0
+      const targetAmount = calculateStockTargetAmount({
+        stockPrice: targetStockPrice,
+        targetQuantity: payload.targetQuantity,
+      })
+
+      validateAmountWithinBudget({
+        amount: targetAmount,
+        budget: payload.monthlyBudget,
+        message: '주식 목표 금액은 생활비를 초과할 수 없습니다.',
+      })
 
       const member = await requestJson(`/members/${this.memberId}`, {
         method: 'PATCH',
@@ -356,12 +376,20 @@ export const useBudgetStore = defineStore('budget', {
       const spentAt =
         payload.spentAt ?? `${payload.date}T${payload.time || new Date().toTimeString().slice(0, 5)}:00`
 
+      const amount = toNumber(payload.amount)
+
+      validateAmountWithinBudget({
+        amount,
+        budget: this.budget,
+        message: '지출 금액은 생활비를 초과할 수 없습니다.',
+      })
+
       const expense = await requestJson('/expenses', {
         method: 'POST',
         body: JSON.stringify({
           memberId: this.memberId,
           categoryId: category?.id ?? payload.categoryId ?? null,
-          amount: toNumber(payload.amount),
+          amount,
           memo: payload.memo || '직접 입력',
           spentAt,
         }),

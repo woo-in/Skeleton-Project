@@ -8,6 +8,7 @@ import ExpenseInput from '@/components/ExpenseInput.vue'
 
 import { storeToRefs } from 'pinia'
 import { useBudgetStore } from '@/stores/useBudgetStore'
+import { isBudgetExceededError } from '@/utils/budgetValidation'
 const weekdays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
 
 const calendarDotTones = ['soft', 'warm', 'accent', 'dark']
@@ -215,6 +216,12 @@ async function handleExpenseSave(payload) {
     })
   } catch (error) {
     console.error('Failed to save expense:', error)
+    if (isBudgetExceededError(error)) {
+      toast.error(error.message, {
+        autoClose: 2200,
+      })
+      return
+    }
     toast.error('지출 저장에 실패했어요. json-server 상태를 확인해주세요.', {
       autoClose: 2200,
     })
@@ -350,6 +357,7 @@ async function handleExpenseSave(payload) {
         <ExpenseInput
           :is-open="isExpenseInputOpen"
           :selected-date="expenseInputDateKey"
+          :max-amount="budgetStore.budget"
           @close="closeExpenseInput"
           @save="handleExpenseSave"
         />
