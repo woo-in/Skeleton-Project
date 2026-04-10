@@ -68,8 +68,8 @@ const isGoalAchieved = computed(() => {
   return props.report.securedQuantity >= props.report.targetQuantity || props.report.progressRate >= 100
 })
 
-const goalTitleLine1 = computed(() => (isGoalAchieved.value ? '절약 목표를' : '절약 목표에'))
-const goalTitleLine2 = computed(() => (isGoalAchieved.value ? '달성했어요! 👏' : '다가가고 있어요'))
+const goalTitleLine1 = computed(() => '절약 목표를')
+const goalTitleLine2 = computed(() => (isGoalAchieved.value ? '달성했어요! 👏' : '미달성했어요'))
 const goalStatusLabel = computed(() => (isGoalAchieved.value ? 'ACHIEVED' : 'IN PROGRESS'))
 
 onMounted(() => {
