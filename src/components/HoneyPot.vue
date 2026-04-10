@@ -15,8 +15,8 @@ const props = withDefaults(
   },
 )
 
-const animatedDisplayValue = ref(props.displayValue)
-const animatedFillPercent = ref(props.fillPercentage)
+const animatedDisplayValue = ref(0)
+const animatedFillPercent = ref(0)
 
 // 중앙 숫자 애니메이션
 watch(
