@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { Plus } from 'lucide-vue-next'
 
 interface Expense {
-  id: number // DB에 맞춰 expenseId를 id로 변경
+  id: number
   amount: number
   category: string
   date: string
@@ -11,9 +11,6 @@ interface Expense {
   memo: string
 }
 
-// ==========================================
-// 1. Props & Emits 정의
-// ==========================================
 interface Props {
   isOpen: boolean
   selectedDate: string
@@ -56,7 +53,6 @@ const formattedDate = computed(() => {
   return `${y}년 ${m}월 ${d}일`
 })
 
-// 🌟 categories 폴더 이미지 경로 매핑
 const getCategoryIcon = (category: string) => {
   const iconMap: Record<string, string> = {
     일반식사: '/images/categories/meal.png',
@@ -88,37 +84,33 @@ const getCategoryIcon = (category: string) => {
         v-if="isOpen"
         class="calendar-detail-sheet fixed bottom-0 left-1/2 z-[60] flex h-[85vh] w-full max-w-md flex-col overflow-y-auto rounded-t-[2.5rem] border-t border-outline-variant bg-surface-container-lowest shadow-[0_-12px_60px_rgba(45,41,38,0.15)]"
       >
-        <div
-          class="w-full flex justify-center py-4 shrink-0 sticky top-0 bg-surface-container-lowest z-10"
-        >
+        <!-- 핸들 -->
+        <div class="w-full flex justify-center py-4 sticky top-0 bg-surface-container-lowest z-10">
           <div class="w-10 h-1.5 bg-surface-container-highest rounded-full"></div>
         </div>
 
         <div class="px-6 pb-32">
+          <!-- 헤더 -->
           <div class="flex justify-between items-start mb-6">
             <div>
-              <p
-                class="text-on-surface-variant text-[12px] font-bold tracking-wider mb-1 uppercase font-label"
-              >
-                일일 요약
-              </p>
-              <h3 class="text-2xl font-extrabold font-headline text-on-surface tracking-tight">
+              <p class="text-[12px] font-bold text-on-surface-variant mb-1 uppercase">일일 요약</p>
+              <h3 class="text-2xl font-extrabold">
                 {{ formattedDate }}
               </h3>
-              <div class="flex items-center gap-1.5 mt-1.5">
-                <span class="text-[13px] font-extrabold text-primary tracking-tight font-label"
-                  >오늘의 절약 리포트</span
-                >
-              </div>
+              <span class="text-[13px] font-bold text-primary mt-1 inline-block">
+                오늘의 절약 리포트
+              </span>
             </div>
+
             <button
               @click="emit('add-expense')"
-              class="bg-primary text-on-primary w-12 h-12 rounded-2xl active:scale-95 transition-transform flex items-center justify-center shadow-lg shadow-primary/30"
+              class="bg-primary text-on-primary w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg"
             >
-              <Plus :size="24" :stroke-width="2.5" aria-hidden="true" />
+              <Plus :size="24" />
             </button>
           </div>
 
+          <!-- 주식 확보 카드 -->
           <div class="mb-6">
             <div
               class="bg-surface-container-low border border-outline-variant p-6 rounded-[2.5rem] relative overflow-hidden"
@@ -163,85 +155,72 @@ const getCategoryIcon = (category: string) => {
             </div>
           </div>
 
-          <div class="bg-surface border border-outline-variant p-5 rounded-2xl mb-10">
+          <!-- 총 지출 -->
+          <div class="bg-surface p-5 rounded-2xl mb-10">
             <div class="flex items-center gap-4">
               <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <img src="/images/action/money.png" alt="총 지출" class="w-6 h-6 object-contain" />
+                <!-- 🔥 수정된 부분 -->
+                <span class="category-image-mask">
+                  <img src="/images/action/money.png" class="category-image" />
+                </span>
               </div>
-              <div class="flex-1">
-                <p class="text-xs font-bold text-on-surface-variant mb-0.5 font-label">
-                  오늘의 총 지출
-                </p>
-                <p class="text-2xl font-extrabold font-headline text-on-surface leading-none">
-                  {{ totalAmount.toLocaleString() }}원
-                </p>
-                <div class="mt-2.5 pt-2.5 border-t border-outline-variant/40">
-                  <p
-                    v-if="dailyReport.isSaved"
-                    class="text-xs font-semibold text-on-surface-variant font-body"
-                  >
-                    평균보다
-                    <span class="text-secondary font-bold"
-                      >{{ dailyReport.savedAmount.toLocaleString() }}원</span
-                    >
-                    더 아꼈어요!
-                  </p>
 
-                  <p v-else class="text-xs font-semibold text-on-surface-variant font-body">
-                    평균보다
-                    <span class="text-error font-bold"
-                      >{{ dailyReport.savedAmount.toLocaleString() }}원</span
-                    >
-                    더 썼어요 😢
-                  </p>
-                </div>
+              <div class="flex-1">
+                <p class="text-xs font-bold mb-1">오늘의 총 지출</p>
+                <p class="text-2xl font-extrabold">{{ totalAmount.toLocaleString() }}원</p>
+
+                <p v-if="dailyReport.isSaved" class="text-xs mt-2">
+                  평균보다
+                  <span class="font-bold text-secondary">
+                    {{ dailyReport.savedAmount.toLocaleString() }}원
+                  </span>
+                  더 아꼈어요!
+                </p>
+
+                <p v-else class="text-xs mt-2">
+                  평균보다
+                  <span class="font-bold text-error">
+                    {{ dailyReport.savedAmount.toLocaleString() }}원
+                  </span>
+                  더 썼어요 😢
+                </p>
               </div>
             </div>
           </div>
 
+          <!-- 거래 내역 -->
           <section>
             <div class="flex items-center gap-2 mb-5">
-              <img src="/images/action/list.png" alt="거래 내역" class="w-5 h-5 object-contain" />
-              <h4 class="text-[16px] font-extrabold text-on-surface tracking-tight font-headline">
-                거래 내역
-              </h4>
+              <span class="category-image-mask category-image-mask--sm">
+                <img src="/images/action/list.png" class="category-image" />
+              </span>
+
+              <h4 class="text-[16px] font-extrabold">거래 내역</h4>
             </div>
+
             <div class="space-y-3">
               <div
                 v-for="exp in dayExpenses"
                 :key="exp.id"
-                class="flex items-center gap-4 p-4 bg-surface-container-low border border-transparent hover:border-outline-variant rounded-2xl transition-all cursor-pointer"
+                class="flex items-center gap-4 p-4 bg-surface-container-low rounded-2xl"
               >
-                <div
-                  class="w-12 h-12 rounded-xl bg-surface-container-lowest border border-outline-variant flex items-center justify-center"
-                >
-                  <span class="category-image-mask" aria-hidden="true">
-                    <img
-                      :src="getCategoryIcon(exp.category)"
-                      :alt="exp.category"
-                      class="category-image"
-                    />
+                <div class="w-12 h-12 flex items-center justify-center">
+                  <span class="category-image-mask">
+                    <img :src="getCategoryIcon(exp.category)" class="category-image" />
                   </span>
                 </div>
 
                 <div class="flex-1">
-                  <div class="flex justify-between items-center mb-0.5">
-                    <span class="text-[15px] font-bold text-on-surface font-body">{{
-                      exp.category
-                    }}</span>
-                    <span class="text-[15px] font-extrabold font-headline text-error"
-                      >-₩{{ exp.amount.toLocaleString() }}</span
-                    >
-                  </div>
-                  <div class="flex justify-between items-center">
-                    <span class="text-[13px] text-on-surface-variant font-medium font-body">{{
-                      exp.memo
-                    }}</span>
-                    <span
-                      class="text-[10px] text-on-surface-variant/60 font-bold font-headline uppercase tracking-wider"
-                    >
-                      {{ exp.time }}
+                  <div class="flex justify-between">
+                    <span class="font-bold">{{ exp.category }}</span>
+                    <span class="font-extrabold text-error">
+                      -₩{{ exp.amount.toLocaleString() }}
                     </span>
+                  </div>
+
+                  <div class="flex justify-between text-sm">
+                    <span>{{ exp.memo }}</span>
+                    <span>{{ exp.time }}</span>
                   </div>
                 </div>
               </div>
@@ -255,54 +234,7 @@ const getCategoryIcon = (category: string) => {
 
 <style scoped>
 .calendar-detail-sheet {
-  transform: translateX(-50%) translateY(var(--calendar-detail-offset, 0));
-}
-
-.slide-up-enter-active {
-  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-  /* opacity 0.55s ease-out; */
-}
-
-.slide-up-leave-active {
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  /* opacity 0.3s ease-in; */
-}
-
-.slide-up-enter-from,
-.slide-up-leave-to {
-  --calendar-detail-offset: 120%;
-}
-
-.slide-up-enter-to,
-.slide-up-leave-from {
-  --calendar-detail-offset: 0;
-  /* opacity: 1; */
-}
-.fade-enter-active {
-  transition: opacity 0.15s ease-out;
-}
-
-.fade-leave-active {
-  transition: opacity 0.12s ease-in;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.fade-enter-to,
-.fade-leave-from {
-  opacity: 1;
-}
-
-.honey-pot-mask {
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C8.69 2 6 4.69 6 8v2c-2.21 0-4 1.79-4 4s1.79 4 4 4h12c2.21 0 4-1.79 4-4s-1.79-4-4-4V8c0-3.31-2.69-6-6-6z'/%3E%3C/svg%3E");
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C8.69 2 6 4.69 6 8v2c-2.21 0-4 1.79-4 4s1.79 4 4 4h12c2.21 0 4-1.79 4-4s-1.79-4-4-4V8c0-3.31-2.69-6-6-6z'/%3E%3C/svg%3E");
-  mask-size: contain;
-  -webkit-mask-size: contain;
-  mask-repeat: no-repeat;
-  -webkit-mask-repeat: no-repeat;
+  transform: translateX(-50%);
 }
 
 .daily-weather {
@@ -442,22 +374,27 @@ const getCategoryIcon = (category: string) => {
   }
 }
 
+/* 아이콘 통일 핵심 */
 .category-image-mask {
-  width: 1.95rem;
-  height: 1.95rem;
+  width: 1.9rem;
+  height: 1.9rem;
   border-radius: 9999px;
   overflow: hidden;
   background: rgba(255, 188, 80, 0.16);
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+}
+
+.category-image-mask--sm {
+  width: 1.4rem;
+  height: 1.4rem;
 }
 
 .category-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.12);
+  transform: scale(1.1);
 }
 </style>
