@@ -124,7 +124,7 @@ const getCategoryIcon = (category: string) => {
               class="bg-surface-container-low border border-outline-variant p-6 rounded-[2.5rem] relative overflow-hidden"
             >
               <div
-                class="daily-weather absolute right-1 bottom-1 w-36 h-36 pointer-events-none"
+                class="daily-weather absolute -right-1 bottom-1 w-36 h-36 pointer-events-none"
                 :class="weatherClass"
                 role="img"
                 :aria-label="weatherLabel"
@@ -315,8 +315,8 @@ const getCategoryIcon = (category: string) => {
 
 .daily-weather__sun {
   position: absolute;
-  top: 0.35rem;
-  right: 4.8rem;
+  top: 1.95rem;
+  right: 4.3rem;
   width: 2.85rem;
   height: 2.85rem;
   border-radius: 9999px;
@@ -374,18 +374,18 @@ const getCategoryIcon = (category: string) => {
 }
 
 .daily-weather__drop--1 {
-  right: 2.55rem;
+  right: 2.65rem;
 }
 
 .daily-weather__drop--2 {
-  right: 3.95rem;
+  right: 4.05rem;
   bottom: 0.55rem;
   width: 0.72rem;
   height: 1.16rem;
 }
 
 .daily-weather__drop--3 {
-  right: 5.45rem;
+  right: 5.55rem;
 }
 
 .daily-weather--sunny {
