@@ -150,7 +150,11 @@ const getCategoryIcon = (category: string) => {
               <div class="relative z-10">
                 <div class="flex flex-col items-start">
                   <p class="text-on-surface-variant text-[13px] font-bold mb-2 font-label">
-                    오늘 지출은 주식으로
+                    {{
+                      dailyReport.isSaved
+                        ? '평균보다 아낀 금액을 주식으로'
+                        : '평균보다 더 쓴 금액을 주식으로'
+                    }}
                   </p>
                   <p class="text-[32px] font-extrabold text-secondary font-headline leading-tight">
                     {{ dailyReport.stockName }} {{ dailyReport.securedQuantity }}주
