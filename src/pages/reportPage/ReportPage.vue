@@ -5,7 +5,7 @@
 
     <main class="main">
       <HeroReportCard :report="reportData" />
-      <PeerComparisonCard :report="reportData"/>
+      <PeerComparisonCard :report="reportData" />
       <OppurtunityCost :report="reportData" />
       <WeeklyAnalysisCard :report="reportData" />
     </main>
@@ -13,25 +13,22 @@
 </template>
 
 <script setup>
-import HeroReportCard from './components/HeroReportCard.vue';
-import PeerComparisonCard from './components/PeerComparisonCard.vue';
-import WeeklyAnalysisCard from './components/WeeklyAnalysisCard.vue';
-import OppurtunityCost from './components/OppurtunityCost.vue';
-import {ref, onMounted} from 'vue';
-import axios from 'axios';
-
+import HeroReportCard from './components/HeroReportCard.vue'
+import PeerComparisonCard from './components/PeerComparisonCard.vue'
+import WeeklyAnalysisCard from './components/WeeklyAnalysisCard.vue'
+import OppurtunityCost from './components/OppurtunityCost.vue'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
 
 // Vite proxy는 '/api' 경로만 프록시하므로 반드시 leading slash가 필요합니다.
-const BASEURI = '/api/reports';
+const BASEURI = '/api/reports'
 
-const reportData = ref(null);
+const reportData = ref(null)
 
 // const currentUser = {
 //   id: "S0U5oduKb5A", // 테스트하고 싶은 memberId
 //   name: "정우인"
 // };
-
-
 
 // onMounted(async () => {
 //   // 1. 가장 먼저 로그인 세션 확인
@@ -45,14 +42,14 @@ const reportData = ref(null);
 //   }
 
 //   // 3. 로그인 상태라면 유저 정보 파싱
-//   const currentUser = JSON.parse(sessionStr); 
+//   const currentUser = JSON.parse(sessionStr);
 //   console.log("현재 로그인한 유저: ", currentUser.name);
 
 //   // 4. API 통신
 //   try {
 //     // 이제 currentUser가 확실히 존재하므로 안전하게 .id에 접근 가능
 //     const response = await axios.get(`${BASEURI}?memberId=${currentUser.id}`);
-    
+
 //     // 필터링 결과 처리
 //     if (response.data && response.data.length > 0) {
 //       reportData.value = response.data[0];
@@ -67,24 +64,24 @@ const reportData = ref(null);
 onMounted(async () => {
   try {
     // 무조건 id가 1인 유저의 리포트를 가져오도록 하드코딩
-    const targetId = 1; 
-    console.log(`테스트 모드: memberId=${targetId}의 리포트를 요청합니다.`);
+    const targetId = 2
+    console.log(`테스트 모드: memberId=${targetId}의 리포트를 요청합니다.`)
 
     // API 통신 (currentUser.id 대신 targetId 사용)
-    const response = await axios.get(`${BASEURI}?memberId=${targetId}`);
-    
+    const response = await axios.get(`${BASEURI}?memberId=${targetId}`)
+
     // 필터링 결과 처리
     if (response.data && response.data.length > 0) {
-      reportData.value = response.data[0];
-      console.log("리포트 데이터 로드 성공:", reportData.value);
+      reportData.value = response.data[0]
+      console.log('리포트 데이터 로드 성공:', reportData.value)
     } else {
-      console.log("해당 유저의 리포트가 없습니다.");
-      reportData.value = null;
+      console.log('해당 유저의 리포트가 없습니다.')
+      reportData.value = null
     }
   } catch (error) {
-    console.error("API 통신 중 에러가 발생했습니다:", error);
+    console.error('API 통신 중 에러가 발생했습니다:', error)
   }
-});
+})
 </script>
 
 <style scoped>

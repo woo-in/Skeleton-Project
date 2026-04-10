@@ -72,7 +72,9 @@ const isTimePickerOpen = ref(false)
 const amountError = ref('')
 const date = ref(props.selectedDate)
 const time = ref(getLocalTime())
-const currentCalendarMonth = ref(dayjs(props.selectedDate || dayjs().format('YYYY-MM-DD')).startOf('month'))
+const currentCalendarMonth = ref(
+  dayjs(props.selectedDate || dayjs().format('YYYY-MM-DD')).startOf('month'),
+)
 const hourWheelRef = ref<HTMLElement | null>(null)
 const minuteWheelRef = ref<HTMLElement | null>(null)
 
@@ -281,6 +283,7 @@ const handleSave = () => {
   }
   amountError.value = ''
 
+  // 원래 약속된 형식대로 5가지 데이터를 모두 담아서 부모(HomePage)에게 쏩니다!
   emit('save', {
     amount: numericAmount,
     category: category.value,
@@ -356,7 +359,10 @@ const handleSave = () => {
                       type="button"
                     >
                       <span class="dropdown-icon">
-                        <span class="category-image-mask category-image-mask--sm" aria-hidden="true">
+                        <span
+                          class="category-image-mask category-image-mask--sm"
+                          aria-hidden="true"
+                        >
                           <img :src="cat.icon" :alt="cat.name" class="category-image" />
                         </span>
                       </span>

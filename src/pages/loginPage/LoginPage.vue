@@ -109,10 +109,7 @@ const loginUser = async () => {
       };
 
       localStorage.setItem('userSession', JSON.stringify(sessionData));
-
-
-      // 4. 로그인 성공 후 설정 페이지로 이동
-      router.push('/setting'); // <-- 이 부분을 수정했습니다.
+      router.push('/home');
 
     } else {
       // 일치하는 데이터가 없으면 로그인 실패

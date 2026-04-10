@@ -1,5 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useBudgetStore } from '@/stores/useBudgetStore'
 import {
   X,
   Wallet,
@@ -14,8 +16,10 @@ import {
 } from 'lucide-vue-next'
 import { Motion } from '@motionone/vue'
 
-const lastMonthExpense = ref('')
+const router = useRouter()
+const budgetStore = useBudgetStore()
 
+const lastMonthExpense = ref('')
 const onExpenseInput = (e) => {
   const value = e.target.value.replace(/[^0-9]/g, '')
   lastMonthExpense.value = value
@@ -28,14 +32,7 @@ const targetQuantity = ref('')
 const isStockListOpen = ref(false)
 const showErrors = ref(false)
 
-const popularStocks = [
-  { name: '케이뱅크', ticker: 'KBK', price: 6080 },
-  { name: '카카오', ticker: 'KKO', price: 47500 },
-  { name: '삼성전자', ticker: 'SMS', price: 204500 },
-  { name: 'KB금융', ticker: 'KBF', price: 155900 },
-  { name: '타이거200', ticker: 'TG2', price: 87700 },
-  { name: '현대차', ticker: 'HDY', price: 501000 },
-]
+const popularStocks = computed(() => budgetStore.stockOptions)
 
 // Get User ID from session
 const getUserId = () => {
@@ -53,25 +50,21 @@ const getUserId = () => {
 
 const userId = getUserId()
 
-// Load data on mount
-onMounted(() => {
-  if (userId) {
-    const savedData = localStorage.getItem(`user_setup_${userId}`)
-    if (savedData) {
-      try {
-        const data = JSON.parse(savedData)
-        lastMonthExpense.value = data.lastMonthExpense || ''
-        targetQuantity.value = data.targetQuantity || '500'
-        if (data.selectedStockTicker) {
-          const stock = popularStocks.find((s) => s.ticker === data.selectedStockTicker)
-          if (stock) {
-            selectedStock.value = stock
-            targetStock.value = stock.name
-          }
-        }
-      } catch (e) {
-        console.error('Failed to parse saved data', e)
-      }
+onMounted(async () => {
+  try {
+    await budgetStore.initializeBudgetState(userId)
+  } catch (error) {
+    console.error('Failed to initialize budget store:', error)
+  }
+
+  if (budgetStore.budget > 0) {
+    lastMonthExpense.value = String(budgetStore.budget)
+    targetQuantity.value = String(budgetStore.targetQuantity)
+
+    const stock = popularStocks.value.find((s) => s.id === budgetStore.targetStockId)
+    if (stock) {
+      selectedStock.value = stock
+      targetStock.value = stock.name
     }
   }
 })
@@ -116,24 +109,26 @@ const setTargetStock = (stock) => {
   isStockListOpen.value = false
 }
 
-const handleStartSaving = () => {
+const handleStartSaving = async () => {
   showErrors.value = true
 
   if (!lastMonthExpense.value || !selectedStock.value || !targetQuantity.value) {
     return
   }
 
-  if (!userId) {
-    alert('로그인이 필요합니다.')
-    return
+  try {
+    await budgetStore.updateGoalSetup({
+      monthlyBudget: Number(lastMonthExpense.value),
+      targetStockId: selectedStock.value.id,
+      targetQuantity: Number(targetQuantity.value),
+    })
+
+    alert('설정이 저장되었습니다!')
+    router.push('/home')
+  } catch (error) {
+    console.error('Failed to save settings to server:', error)
+    alert('서버와 통신하는 중 문제가 발생했습니다. json-server가 켜져 있는지 확인해주세요.')
   }
-  const dataToSave = {
-    lastMonthExpense: lastMonthExpense.value,
-    targetQuantity: targetQuantity.value,
-    selectedStockTicker: selectedStock.value?.ticker,
-  }
-  localStorage.setItem(`user_setup_${userId}`, JSON.stringify(dataToSave))
-  alert('설정이 저장되었습니다!')
 }
 </script>
 
@@ -153,8 +148,7 @@ const handleStartSaving = () => {
       <!-- Hero Section -->
       <Motion :initial="{ opacity: 0, y: 20 }" :animate="{ opacity: 1, y: 0 }" class="space-y-3">
         <h1 class="text-[2.25rem] font-extrabold leading-tight tracking-tight text-[#2D2926]">
-          낭비왕인 당신!! <br />
-          정보를 입력하세요
+          당신의 정보를 입력하세요
         </h1>
         <p class="text-[#6D6864] text-lg font-medium">
           아낀 돈이 어떤 주식으로 바뀌는지 확인해보세요
