@@ -242,9 +242,19 @@ const visibleHistoryCount = ref(3)
 const recentItems = computed(() => historyItems.slice(0, visibleHistoryCount.value))
 const canLoadMoreHistory = computed(() => visibleHistoryCount.value < historyItems.length)
 const selectedDateKey = computed(() => selectedDate.value.format('YYYY-MM-DD'))
+const todayDateKey = computed(() => dayjs().format('YYYY-MM-DD'))
 const expenseDateSet = computed(() => new Set(expenses.value.map((expense) => expense.date)))
 const selectedDayExpenses = computed(() => budgetStore.getExpensesByDate(selectedDateKey.value))
 const calendarDailyReport = computed(() => budgetStore.getDailyReport(selectedDateKey.value))
+const todayExpenseTotal = computed(() =>
+  budgetStore
+    .getExpensesByDate(todayDateKey.value)
+    .reduce((sum, expense) => sum + expense.amount, 0),
+)
+const todayExpenseStockQuantity = computed(() => {
+  if (!targetStockPrice.value) return '0.0'
+  return (todayExpenseTotal.value / targetStockPrice.value).toFixed(1)
+})
 
 const calendarDays = computed(() => {
   const monthStart = currentMonth.value.startOf('month')
@@ -352,8 +362,6 @@ async function handleExpenseSave(payload) {
     <div class="phone-shell">
       <div class="home-page">
         <section class="hero-section">
-          
-
           <div class="bee-slot" aria-hidden="true">
             <div class="honey-pot-stage">
               <HoneyPot
@@ -374,25 +382,15 @@ async function handleExpenseSave(payload) {
 
         <section class="stock-card">
           <div class="stock-badge">
-            {{ targetStockName ? targetStockName.substring(0, 2) : '주식' }}
+            {{ targetStockName ? targetStockName.substring(0, 3) : '주식' }}
           </div>
           <div class="stock-copy">
-            <p class="stock-label">남은 생활비로 살 수 있는 주식</p>
+            <p class="stock-label">오늘 쓴 돈으로 살 수 있었던 주식</p>
             <p class="stock-value">
-              {{ targetStockName }}
-              {{ targetStockPrice ? (remainingBudget / targetStockPrice).toFixed(1) : 0 }}주
+              {{ targetStockName || '주식' }}
+              {{ todayExpenseStockQuantity }}주
             </p>
           </div>
-          <button
-            class="stock-arrow-button"
-            type="button"
-            aria-label="주식 카드 보기"
-            @click="handleStockClick"
-          >
-            <svg class="stock-arrow" viewBox="0 0 16 16" aria-hidden="true">
-              <path d="M6 3.5L10.5 8L6 12.5" />
-            </svg>
-          </button>
         </section>
 
         <section class="calendar-card">
@@ -616,7 +614,7 @@ async function handleExpenseSave(payload) {
   height: 3.75rem;
   border-radius: var(--radius-accent);
   background: #fff8e8;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 800;
   letter-spacing: -0.05em;
 }
@@ -933,7 +931,7 @@ async function handleExpenseSave(payload) {
     (100vw - min(100vw, var(--device-width))) / 2 + 2.4rem + env(safe-area-inset-right, 0px)
   );
   bottom: calc(
-    (100vh - min(100vh, var(--device-height))) / 2 + 1.6rem + env(safe-area-inset-bottom, 0px)
+    (100vh - min(100vh, var(--device-height))) / 2 + 6.5rem + env(safe-area-inset-bottom, 0px)
   );
   margin: 0;
   border: 0;
@@ -1064,7 +1062,7 @@ async function handleExpenseSave(payload) {
       (100vw - min(100vw, var(--device-width))) / 2 + 1.3rem + env(safe-area-inset-right, 0px)
     );
     bottom: calc(
-      (100vh - min(100vh, var(--device-height))) / 2 + 1.55rem + env(safe-area-inset-bottom, 0px)
+      (100vh - min(100vh, var(--device-height))) / 2 + 6.25rem + env(safe-area-inset-bottom, 0px)
     );
   }
 

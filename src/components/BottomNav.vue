@@ -2,25 +2,25 @@
 
 <template>
   <nav
-    class="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-md bg-white border-t border-gray-200 rounded-t-[28px] shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-safe"
+    class="bottom-nav fixed left-1/2 -translate-x-1/2 z-50 bg-white border-t border-gray-200 rounded-t-[24px] shadow-[0_-4px_18px_rgba(0,0,0,0.05)] pb-safe"
   >
-    <div class="flex justify-around items-center h-24 px-4">
+    <div class="flex justify-around items-center h-20 px-3">
       <!-- 홈 -->
       <RouterLink to="/home" custom v-slot="{ isActive, navigate }">
         <button @click="navigate" class="flex flex-col items-center justify-center w-full">
           <div
             class="flex flex-col items-center justify-center transition-all duration-200"
             :class="
-              isActive ? 'bg-[#FAD06A] rounded-[18px] w-[58px] h-[58px]' : 'w-[58px] h-[58px]'
+              isActive ? 'bg-[#FAD06A] rounded-[16px] w-[52px] h-[52px]' : 'w-[52px] h-[52px]'
             "
           >
             <img
               :src="isActive ? '/images/nav/home-brown.png' : '/images/nav/home-gray.png'"
               alt="홈"
-              class="w-8 h-8 object-contain mb-1"
+              class="w-7 h-7 object-contain mb-0.5"
             />
             <span
-              class="text-[11px] font-semibold"
+              class="text-[10px] font-semibold"
               :class="isActive ? 'text-[#5b3b16]' : 'text-[#9CA3AF]'"
             >
               홈
@@ -35,16 +35,16 @@
           <div
             class="flex flex-col items-center justify-center transition-all duration-200"
             :class="
-              isActive ? 'bg-[#FAD06A] rounded-[18px] w-[58px] h-[58px]' : 'w-[58px] h-[58px]'
+              isActive ? 'bg-[#FAD06A] rounded-[16px] w-[52px] h-[52px]' : 'w-[52px] h-[52px]'
             "
           >
             <img
               :src="isActive ? '/images/nav/report-brown.png' : '/images/nav/report-gray.png'"
               alt="분석"
-              class="w-8 h-8 object-contain mb-1"
+              class="w-7 h-7 object-contain mb-0.5"
             />
             <span
-              class="text-[11px] font-semibold"
+              class="text-[10px] font-semibold"
               :class="isActive ? 'text-[#5b3b16]' : 'text-[#9CA3AF]'"
             >
               분석
@@ -59,16 +59,16 @@
           <div
             class="flex flex-col items-center justify-center transition-all duration-200"
             :class="
-              isActive ? 'bg-[#FAD06A] rounded-[18px] w-[58px] h-[58px]' : 'w-[58px] h-[58px]'
+              isActive ? 'bg-[#FAD06A] rounded-[16px] w-[52px] h-[52px]' : 'w-[52px] h-[52px]'
             "
           >
             <img
               :src="isActive ? '/images/nav/settings-brown.png' : '/images/nav/settings-gray.png'"
               alt="설정"
-              class="w-8 h-8 object-contain mb-1"
+              class="w-7 h-7 object-contain mb-0.5"
             />
             <span
-              class="text-[11px] font-semibold"
+              class="text-[10px] font-semibold"
               :class="isActive ? 'text-[#5b3b16]' : 'text-[#9CA3AF]'"
             >
               설정
@@ -81,6 +81,11 @@
 </template>
 
 <style scoped>
+.bottom-nav {
+  width: min(100vw, var(--device-width, 430px));
+  bottom: calc((100vh - min(100vh, var(--device-height, 932px))) / 2);
+}
+
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom);
 }

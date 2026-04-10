@@ -1,15 +1,19 @@
 <template>
   <div class="iphone-pro-max">
     <main class="app-content">
-      <TopBar />
+      <TopBar v-if="route.meta.showTopBar" />
       <RouterView />
+      <BottomNav v-if="route.meta.showBottomNav" />
     </main>
   </div>
 </template>
 
 <script setup>
-import { RouterView } from 'vue-router'
-import  TopBar  from '@/components/TopBar.vue'
+import { RouterView, useRoute } from 'vue-router'
+import BottomNav from '@/components/BottomNav.vue'
+import TopBar from '@/components/TopBar.vue'
+
+const route = useRoute()
 </script>
 
 <style>
