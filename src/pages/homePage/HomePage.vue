@@ -352,7 +352,7 @@ async function handleExpenseSave(payload) {
     <div class="phone-shell">
       <div class="home-page">
         <section class="hero-section">
-          <p class="page-title">내 주식 어디갔어?</p>
+          
 
           <div class="bee-slot" aria-hidden="true">
             <div class="honey-pot-stage">

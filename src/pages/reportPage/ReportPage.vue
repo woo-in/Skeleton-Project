@@ -1,5 +1,8 @@
 <template>
   <div class="div-wrapper">
+    <div class="background-deco"><div class="gradient-blur"></div></div>
+    <div class="container-deco"><div class="dark-blur"></div></div>
+
     <main class="main">
       <HeroReportCard :report="reportData" />
       <PeerComparisonCard :report="reportData" />
@@ -90,9 +93,47 @@ onMounted(async () => {
   width: 100%;
   padding: 0px 0px 128px;
   position: relative;
-  background-color: #f9f9fb;
+  background-color: #fdfcfb; /* 💡 회원가입 페이지와 동일한 배경색으로 변경 */
   box-sizing: border-box;
+  overflow: hidden; /* 💡 블러 효과가 화면 밖으로 삐져나가는 것 방지 */
 }
+
+/* ✨ 회원가입 페이지에서 가져온 배경 그라데이션 CSS 시작 */
+.background-deco, .container-deco {
+  display: flex;
+  flex-direction: column;
+  width: 156px;
+  height: 482px;
+  position: absolute;
+  opacity: 0.3;
+  z-index: 0; /* 배경이 카드를 가리지 않게 맨 뒤로 보냄 */
+}
+
+.background-deco { 
+  top: 0; 
+  right: 0; 
+}
+
+.container-deco { 
+  left: 0; 
+  bottom: 0; 
+  opacity: 0.2; 
+}
+
+.gradient-blur {
+  flex: 1;
+  width: 100%;
+  filter: blur(60px);
+  background: linear-gradient(259deg, rgba(255, 188, 80, 0.4) 0%, rgba(255, 188, 80, 0) 100%);
+}
+
+.dark-blur {
+  flex: 1;
+  width: 100%;
+  filter: blur(60px);
+  background: linear-gradient(79deg, rgba(75, 66, 55, 0.2) 0%, rgba(75, 66, 55, 0) 100%);
+}
+/* ✨ 배경 CSS 끝 */
 
 .div-wrapper .main {
   display: flex;
@@ -100,13 +141,18 @@ onMounted(async () => {
   max-width: 100%;
   align-items: stretch;
   gap: 24px;
-  padding: 96px 24px 0px;
+  /* 🚨 범인 검거 완료! padding top을 96px -> 24px로 확 줄였습니다 */
+  padding: 24px 24px 0px; 
   position: relative;
   width: 100%;
   flex: 0 0 auto;
   margin: 0 auto;
   box-sizing: border-box;
+  z-index: 1; /* 카드들이 그라데이션 배경보다 위에 보이도록 설정 */
 }
+</style>
+
+
 /* 
 .div-wrapper .hero-goal-section {
   display: flex;
@@ -1410,4 +1456,4 @@ onMounted(async () => {
   line-height: 15px;
   white-space: nowrap;
 } */
-</style>
+

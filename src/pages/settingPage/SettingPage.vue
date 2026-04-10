@@ -1,8 +1,5 @@
 <template>
   <div class="settings-page">
-    <header class="header">
-      <h1 class="header-title">내 주식 어디갔어?</h1>
-    </header>
 
     <main class="main-content">
       <section class="profile-section">
