@@ -86,7 +86,6 @@ const onQuantityInput = (e) => {
     const quantity = parseFloat(sanitized) || 0
     const amount = selectedStock.value.price * quantity
     if (amount > 99999999) {
-      // If it exceeds, don't update and keep previous value in input
       e.target.value = targetQuantity.value
       return
     }
@@ -95,11 +94,9 @@ const onQuantityInput = (e) => {
 }
 
 const setTargetStock = (stock) => {
-  // Check if current quantity with new stock price exceeds limit
   const quantity = parseFloat(targetQuantity.value) || 0
   const amount = stock.price * quantity
   if (amount > 99999999) {
-    // Cap quantity if it exceeds
     const maxQty = 99999999 / stock.price
     targetQuantity.value = maxQty.toFixed(2)
   }
@@ -144,7 +141,7 @@ const handleStartSaving = async () => {
       </button>
     </header>
 
-    <main class="w-full max-w-lg mx-auto px-6 pt-24 pb-32 flex flex-col gap-8">
+    <main class="w-full max-w-lg mx-auto px-6 pt-6 pb-32 flex flex-col gap-8">
       <!-- Hero Section -->
       <Motion :initial="{ opacity: 0, y: 20 }" :animate="{ opacity: 1, y: 0 }" class="space-y-3">
         <h1 class="text-[2.25rem] font-extrabold leading-tight tracking-tight text-[#2D2926]">
@@ -180,7 +177,7 @@ const handleStartSaving = async () => {
               >원</span
             >
           </div>
-          <!-- Error Message -->
+
           <Motion
             v-if="showErrors && !lastMonthExpense"
             :initial="{ opacity: 0, y: -10 }"
@@ -189,6 +186,7 @@ const handleStartSaving = async () => {
           >
             생활비를 입력하세요.
           </Motion>
+
           <div class="flex items-start gap-2 px-1">
             <Info :size="16" class="text-[#FFBC50] mt-0.5 shrink-0" />
             <p class="text-sm text-[#6D6864] leading-relaxed">
@@ -226,7 +224,6 @@ const handleStartSaving = async () => {
             </button>
           </div>
 
-          <!-- Error Message -->
           <Motion
             v-if="showErrors && !selectedStock"
             :initial="{ opacity: 0, y: -10 }"
@@ -236,7 +233,6 @@ const handleStartSaving = async () => {
             목표주식을 선택하세요.
           </Motion>
 
-          <!-- Selected Stock Info Card -->
           <Motion
             v-if="selectedStock && !isStockListOpen"
             :initial="{ opacity: 0, scale: 0.95 }"
@@ -261,7 +257,6 @@ const handleStartSaving = async () => {
             </div>
           </Motion>
 
-          <!-- Popular Stocks List -->
           <Motion
             v-if="isStockListOpen"
             :initial="{ opacity: 0, height: 0 }"
@@ -320,7 +315,7 @@ const handleStartSaving = async () => {
               >주</span
             >
           </div>
-          <!-- Error Message -->
+
           <Motion
             v-if="showErrors && !targetQuantity"
             :initial="{ opacity: 0, y: -10 }"
@@ -329,6 +324,7 @@ const handleStartSaving = async () => {
           >
             목표 수량을 입력하세요.
           </Motion>
+
           <div class="flex items-start gap-2 px-1">
             <Lightbulb :size="16" class="text-[#FFBC50] mt-0.5 shrink-0" />
             <p class="text-sm text-[#6D6864] leading-relaxed">
@@ -402,14 +398,12 @@ const handleStartSaving = async () => {
     </main>
 
     <!-- Bottom Action Button -->
-    <div
-      class="fixed bottom-0 left-0 w-full p-6 bg-gradient-to-t from-[#F9F9F8] via-[#F9F9F8] to-transparent flex justify-center items-end z-50"
-    >
+    <div class="start-button-area">
       <Motion
         @click="handleStartSaving"
         :while-hover="{ scale: 1.02 }"
         :while-tap="{ scale: 0.98 }"
-        class="w-full max-w-lg h-16 bg-[#FFBC50] text-[#2D2926] rounded-2xl font-bold text-lg shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+        class="start-button"
       >
         절약 시작하기
         <ArrowRight :size="20" class="stroke-[3px]" />
@@ -431,5 +425,36 @@ const handleStartSaving = async () => {
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #6d6864;
+}
+
+.start-button-area {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 450px;
+  padding: 1.5rem;
+  background-color: rgba(249, 249, 248, 0.9);
+  backdrop-filter: blur(12px);
+  z-index: 50;
+}
+
+.start-button {
+  width: 100%;
+  height: 3.5rem;
+  background-color: #ffbc50;
+  color: #2d2926;
+  border-radius: 0.5rem;
+  font-weight: 800;
+  font-size: 1.125rem;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
 }
 </style>
