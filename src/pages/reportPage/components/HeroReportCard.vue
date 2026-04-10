@@ -69,7 +69,7 @@ const isGoalAchieved = computed(() => {
 })
 
 const goalTitleLine1 = computed(() => '절약 목표를')
-const goalTitleLine2 = computed(() => (isGoalAchieved.value ? '달성했어요! 👏' : '미달성했어요'))
+const goalTitleLine2 = computed(() => (isGoalAchieved.value ? '달성했어요! 👏' : '미달성했어요 😢'))
 const goalStatusLabel = computed(() => (isGoalAchieved.value ? 'ACHIEVED' : 'IN PROGRESS'))
 
 onMounted(() => {
