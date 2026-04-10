@@ -1,12 +1,13 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import dayjs from 'dayjs'
 import { toast } from 'vue3-toastify'
 import HoneyPot from '@/components/HoneyPot.vue'
 import CalendarDetail from '@/components/CalendarDetail.vue'
 import ExpenseInput from '@/components/ExpenseInput.vue'
-import { useHoneyPot } from '@/composables/useHoneyPot'
 
+import { storeToRefs } from 'pinia'
+import { useBudgetStore } from '@/stores/useBudgetStore'
 const weekdays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
 
 const calendarAccentMap = {
@@ -31,53 +32,11 @@ const calendarAccentMap = {
   '2024-05-30': 'warm',
 }
 
-const currentMonth = ref(dayjs('2024-05-01'))
-const selectedDate = ref(dayjs('2024-05-03'))
+const currentMonth = ref(dayjs().startOf('month'))
+const selectedDate = ref(dayjs())
 const isCalendarDetailOpen = ref(false)
 const isExpenseInputOpen = ref(false)
 const reopenCalendarDetail = ref(false)
-const expenseEntries = ref([
-  {
-    id: 1,
-    category: '카페/음료',
-    amount: 4800,
-    date: '2024-05-02',
-    time: '08:40',
-    memo: '출근 전 아메리카노',
-  },
-  {
-    id: 2,
-    category: '일반식사',
-    amount: 11000,
-    date: '2024-05-02',
-    time: '12:15',
-    memo: '점심 식사',
-  },
-  {
-    id: 3,
-    category: '카페/음료',
-    amount: 5400,
-    date: '2024-05-03',
-    time: '09:10',
-    memo: '아이스 라떼',
-  },
-  {
-    id: 4,
-    category: '일반식사',
-    amount: 10200,
-    date: '2024-05-03',
-    time: '12:20',
-    memo: '회사 앞 점심',
-  },
-  {
-    id: 5,
-    category: '쇼핑',
-    amount: 10000,
-    date: '2024-05-03',
-    time: '19:40',
-    memo: '생활용품 구매',
-  },
-])
 
 const historyItems = [
   {
@@ -245,25 +204,47 @@ const historyItems = [
 const calendarTitle = computed(
   () => `${currentMonth.value.year()}년 ${currentMonth.value.month() + 1}월`,
 )
-const { displayPercentage, fillPercentage, guidelinePercentage } = useHoneyPot(800000, 555000, 360000)
+const budgetStore = useBudgetStore()
+
+// storeToRefs를 써야 반응형이 유지되어서 꿀단지가 부드럽게 움직입니다!
+const {
+  expenses,
+  remainingBudget,
+  fillPercentage,
+  guidelinePercentage,
+  targetStockName,
+  targetStockPrice,
+} = storeToRefs(budgetStore)
+
+const getSessionMemberId = () => {
+  try {
+    return JSON.parse(localStorage.getItem('userSession') || 'null')?.id ?? null
+  } catch {
+    return null
+  }
+}
+
+onMounted(async () => {
+  try {
+    await budgetStore.initializeBudgetState(getSessionMemberId())
+    const latestExpenseDate = budgetStore.recentExpenses[0]?.date
+
+    if (latestExpenseDate) {
+      selectedDate.value = dayjs(latestExpenseDate)
+      currentMonth.value = selectedDate.value.startOf('month')
+    }
+  } catch (error) {
+    console.error('Failed to initialize budget store:', error)
+  }
+})
+
 const visibleHistoryCount = ref(3)
 const recentItems = computed(() => historyItems.slice(0, visibleHistoryCount.value))
 const canLoadMoreHistory = computed(() => visibleHistoryCount.value < historyItems.length)
 const selectedDateKey = computed(() => selectedDate.value.format('YYYY-MM-DD'))
-const selectedDayExpenses = computed(() =>
-  expenseEntries.value.filter((expense) => expense.date === selectedDateKey.value),
-)
-const calendarDailyReport = computed(() => {
-  const stockPrice = 47900
-  const totalSpent = selectedDayExpenses.value.reduce((sum, expense) => sum + expense.amount, 0)
-
-  return {
-    securedQuantity: Number((totalSpent / stockPrice).toFixed(2)),
-    stockName: '카카오',
-    savedAmount: Math.max(0, stockPrice - totalSpent),
-    progressRate: Math.min(100, Math.round((totalSpent / stockPrice) * 100)),
-  }
-})
+const expenseDateSet = computed(() => new Set(expenses.value.map((expense) => expense.date)))
+const selectedDayExpenses = computed(() => budgetStore.getExpensesByDate(selectedDateKey.value))
+const calendarDailyReport = computed(() => budgetStore.getDailyReport(selectedDateKey.value))
 
 const calendarDays = computed(() => {
   const monthStart = currentMonth.value.startOf('month')
@@ -284,7 +265,7 @@ const calendarDays = computed(() => {
       key: isoDate,
       label: date.date(),
       isoDate,
-      dotTone: calendarAccentMap[isoDate] ?? null,
+      dotTone: expenseDateSet.value.has(isoDate) ? (calendarAccentMap[isoDate] ?? 'warm') : null,
       inCurrentMonth,
       isSelected: date.isSame(selectedDate.value, 'day'),
       isToday: date.isSame(dayjs(), 'day'),
@@ -309,12 +290,6 @@ function selectDate(isoDate) {
   if (!nextDate.isSame(currentMonth.value, 'month')) {
     currentMonth.value = nextDate.startOf('month')
   }
-}
-
-function handleAddClick() {
-  toast.info('추가 기능은 다음 단계에서 연결될 예정이에요.', {
-    autoClose: 1800,
-  })
 }
 
 function handleStockClick() {
@@ -356,22 +331,19 @@ function closeExpenseInput() {
   }
 }
 
-function handleExpenseSave(payload) {
-  expenseEntries.value = [
-    {
-      id: Date.now(),
-      amount: payload.amount,
-      category: payload.category,
-      date: payload.date,
-      time: payload.time,
-      memo: payload.memo || '직접 입력',
-    },
-    ...expenseEntries.value,
-  ]
+async function handleExpenseSave(payload) {
+  try {
+    await budgetStore.addExpense(payload)
 
-  toast.success('지출이 추가됐어요.', {
-    autoClose: 1600,
-  })
+    toast.success('지출이 추가됐어요.', {
+      autoClose: 1600,
+    })
+  } catch (error) {
+    console.error('Failed to save expense:', error)
+    toast.error('지출 저장에 실패했어요. json-server 상태를 확인해주세요.', {
+      autoClose: 2200,
+    })
+  }
 }
 </script>
 
@@ -385,7 +357,7 @@ function handleExpenseSave(payload) {
           <div class="bee-slot" aria-hidden="true">
             <div class="honey-pot-stage">
               <HoneyPot
-                :display-value="displayPercentage"
+                :display-value="Math.floor(fillPercentage)"
                 :fill-percentage="fillPercentage"
                 :guideline-percentage="guidelinePercentage"
               />
@@ -394,17 +366,22 @@ function handleExpenseSave(payload) {
 
           <div class="balance-copy">
             <p class="balance-label">이번 달 생활비 남음</p>
-            <p class="balance-amount">₩245,000</p>
+            <p class="balance-amount">₩{{ remainingBudget.toLocaleString() }}</p>
             <p class="balance-hint">빨간 선은 목표 주식 가격</p>
             <p class="balance-hint">꿀단지는 현재 남은 생활비를 비율을 보여줘요</p>
           </div>
         </section>
 
         <section class="stock-card">
-          <div class="stock-badge">QQQ</div>
+          <div class="stock-badge">
+            {{ targetStockName ? targetStockName.substring(0, 2) : '주식' }}
+          </div>
           <div class="stock-copy">
-            <p class="stock-label">오늘 아끼면 살 수 있는 주식</p>
-            <p class="stock-value">QQQ 0.5주</p>
+            <p class="stock-label">남은 생활비로 살 수 있는 주식</p>
+            <p class="stock-value">
+              {{ targetStockName }}
+              {{ targetStockPrice ? (remainingBudget / targetStockPrice).toFixed(1) : 0 }}주
+            </p>
           </div>
           <button
             class="stock-arrow-button"

@@ -1,5 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useBudgetStore } from '@/stores/useBudgetStore'
 import {
   X,
   Wallet,
@@ -13,10 +15,11 @@ import {
   Coins,
 } from 'lucide-vue-next'
 import { Motion } from '@motionone/vue'
-import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const budgetStore = useBudgetStore()
 
 const lastMonthExpense = ref('')
-const router = useRouter()
 const onExpenseInput = (e) => {
   const value = e.target.value.replace(/[^0-9]/g, '')
   lastMonthExpense.value = value
@@ -29,14 +32,7 @@ const targetQuantity = ref('')
 const isStockListOpen = ref(false)
 const showErrors = ref(false)
 
-const popularStocks = [
-  { name: '케이뱅크', ticker: 'KBK', price: 6080 },
-  { name: '카카오', ticker: 'KKO', price: 47500 },
-  { name: '삼성전자', ticker: 'SMS', price: 204500 },
-  { name: 'KB금융', ticker: 'KBF', price: 155900 },
-  { name: '타이거200', ticker: 'TG2', price: 87700 },
-  { name: '현대차', ticker: 'HDY', price: 501000 },
-]
+const popularStocks = computed(() => budgetStore.stockOptions)
 
 // Get User ID from session
 const getUserId = () => {
@@ -52,47 +48,23 @@ const getUserId = () => {
   return null
 }
 
-const userId = getUserId() || 'testUser' // Hardcoded for testing
+const userId = getUserId()
 
-// Load data on mount
 onMounted(async () => {
-  if (userId) {
-    try {
-      // Fetch user data from json-server
-      const response = await fetch(`/members/${userId}`)
-      if (response.ok) {
-        const data = await response.json()
-        lastMonthExpense.value = data.monthlyBudget ? data.monthlyBudget.toString() : ''
-        targetQuantity.value = data.targetQuantity ? data.targetQuantity.toString() : ''
-        if (data.targetStockId) {
-          const stock = popularStocks.find((s) => s.ticker === data.targetStockId)
-          if (stock) {
-            selectedStock.value = stock
-            targetStock.value = stock.name
-          }
-        }
-      }
-    } catch (e) {
-      console.error('Failed to fetch user data from server', e)
+  try {
+    await budgetStore.initializeBudgetState(userId)
+  } catch (error) {
+    console.error('Failed to initialize budget store:', error)
+  }
 
-      // Fallback to localStorage if server fails
-      const savedData = localStorage.getItem(`user_setup_${userId}`)
-      if (savedData) {
-        try {
-          const data = JSON.parse(savedData)
-          lastMonthExpense.value = data.lastMonthExpense || ''
-          targetQuantity.value = data.targetQuantity || ''
-          if (data.selectedStockTicker) {
-            const stock = popularStocks.find((s) => s.ticker === data.selectedStockTicker)
-            if (stock) {
-              selectedStock.value = stock
-              targetStock.value = stock.name
-            }
-          }
-        } catch (err) {
-          console.error('Failed to parse saved data', err)
-        }
-      }
+  if (budgetStore.budget > 0) {
+    lastMonthExpense.value = String(budgetStore.budget)
+    targetQuantity.value = String(budgetStore.targetQuantity)
+
+    const stock = popularStocks.value.find((s) => s.id === budgetStore.targetStockId)
+    if (stock) {
+      selectedStock.value = stock
+      targetStock.value = stock.name
     }
   }
 })
@@ -144,41 +116,15 @@ const handleStartSaving = async () => {
     return
   }
 
-  /*
-  if (!userId) {
-    alert('로그인이 필요합니다.')
-    return
-  }
-  */
-
   try {
-    // 1. Save to json-server
-    const response = await fetch(`/members/${userId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        monthlyBudget: parseInt(lastMonthExpense.value),
-        targetStockId: selectedStock.value.ticker,
-        targetQuantity: parseFloat(targetQuantity.value),
-      }),
+    await budgetStore.updateGoalSetup({
+      monthlyBudget: Number(lastMonthExpense.value),
+      targetStockId: selectedStock.value.id,
+      targetQuantity: Number(targetQuantity.value),
     })
 
-    if (response.ok) {
-      // 2. Also save to localStorage as backup
-      const dataToSave = {
-        lastMonthExpense: lastMonthExpense.value,
-        targetQuantity: targetQuantity.value,
-        selectedStockTicker: selectedStock.value?.ticker,
-      }
-      localStorage.setItem(`user_setup_${userId}`, JSON.stringify(dataToSave))
-
-      alert('설정이 저장되었습니다!')
-      router.push('/home')
-    } else {
-      alert('설정 저장 중 오류가 발생했습니다.')
-    }
+    alert('설정이 저장되었습니다!')
+    router.push('/home')
   } catch (error) {
     console.error('Failed to save settings to server:', error)
     alert('서버와 통신하는 중 문제가 발생했습니다. json-server가 켜져 있는지 확인해주세요.')
