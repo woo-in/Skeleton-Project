@@ -307,6 +307,7 @@ const getCategoryIcon = (category: string) => {
 
 .daily-weather {
   opacity: 0.2;
+  isolation: isolate;
   transition:
     opacity 180ms ease,
     transform 180ms ease;
@@ -314,17 +315,18 @@ const getCategoryIcon = (category: string) => {
 
 .daily-weather__sun {
   position: absolute;
-  top: 0.35rem;
-  right: 4.1rem;
-  width: 3rem;
-  height: 3rem;
+  top: 0.55rem;
+  right: 4.45rem;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: 9999px;
-  background: radial-gradient(circle, #fff8c8 0%, #ffd35c 48%, #ffb33d 100%);
+  background: radial-gradient(circle at 35% 35%, #fff8c8 0%, #ffd35c 50%, #f5a63a 100%);
   box-shadow:
-    0 0 0 0.55rem rgba(255, 196, 72, 0.2),
-    0 0 1.8rem rgba(255, 179, 61, 0.55);
+    0 0 0 0.45rem rgba(255, 196, 72, 0.16),
+    0 0 1.5rem rgba(255, 179, 61, 0.48);
   opacity: 0;
   transform: scale(0.78);
+  z-index: 1;
   transition:
     opacity 180ms ease,
     transform 180ms ease;
@@ -333,19 +335,23 @@ const getCategoryIcon = (category: string) => {
 .daily-weather__sun::before {
   content: '';
   position: absolute;
-  inset: -0.9rem;
+  inset: -0.7rem;
   border-radius: inherit;
-  background: conic-gradient(
-    from 0deg,
-    rgba(255, 196, 72, 0.9) 0deg 10deg,
-    transparent 10deg 28deg
+  background: repeating-conic-gradient(
+    from -10deg,
+    rgba(255, 196, 72, 0.62) 0deg 8deg,
+    transparent 8deg 26deg
   );
-  animation: weather-sun-spin 8s linear infinite;
+  mask-image: radial-gradient(circle, transparent 0 47%, #000 49% 100%);
+  -webkit-mask-image: radial-gradient(circle, transparent 0 47%, #000 49% 100%);
+  opacity: 0.9;
+  z-index: -1;
 }
 
 .daily-weather__cloud {
   position: absolute;
   inset: 0;
+  z-index: 2;
   transition:
     background-color 180ms ease,
     transform 180ms ease;
@@ -365,6 +371,7 @@ const getCategoryIcon = (category: string) => {
   background: #5f91c9;
   opacity: 0;
   transform: rotate(16deg) translateY(-0.2rem);
+  z-index: 3;
   transition: opacity 180ms ease;
 }
 
@@ -393,8 +400,8 @@ const getCategoryIcon = (category: string) => {
 }
 
 .daily-weather--sunny .daily-weather__cloud {
-  background-color: #ffe5a4;
-  transform: translate(0.35rem, 1rem) scale(0.88);
+  background-color: #ffdf8d;
+  transform: translate(0.4rem, 1.05rem) scale(0.86);
 }
 
 .daily-weather--rainy {
@@ -422,12 +429,6 @@ const getCategoryIcon = (category: string) => {
 
 .daily-weather--rainy .daily-weather__drop--3 {
   animation-delay: 0.34s;
-}
-
-@keyframes weather-sun-spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 @keyframes weather-rain-fall {
