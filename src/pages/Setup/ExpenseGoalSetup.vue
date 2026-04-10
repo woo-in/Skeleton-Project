@@ -33,6 +33,13 @@ const isStockListOpen = ref(false)
 const showErrors = ref(false)
 
 const popularStocks = computed(() => budgetStore.stockOptions)
+const monthlyBudgetAmount = computed(() => Number(lastMonthExpense.value) || 0)
+const targetQuantityAmount = computed(() => Number(targetQuantity.value) || 0)
+const isMonthlyBudgetValid = computed(() => monthlyBudgetAmount.value > 0)
+const isTargetQuantityValid = computed(() => targetQuantityAmount.value > 0)
+const isGoalSetupValid = computed(
+  () => isMonthlyBudgetValid.value && Boolean(selectedStock.value) && isTargetQuantityValid.value,
+)
 
 // Get User ID from session
 const getUserId = () => {
@@ -128,15 +135,15 @@ const setTargetStock = (stock) => {
 const handleStartSaving = async () => {
   showErrors.value = true
 
-  if (!lastMonthExpense.value || !selectedStock.value || !targetQuantity.value) {
+  if (!isGoalSetupValid.value) {
     return
   }
 
   try {
     const member = await budgetStore.updateGoalSetup({
-      monthlyBudget: Number(lastMonthExpense.value),
+      monthlyBudget: monthlyBudgetAmount.value,
       targetStockId: selectedStock.value.id,
-      targetQuantity: Number(targetQuantity.value),
+      targetQuantity: targetQuantityAmount.value,
     })
 
     syncGoalSetupSession(member)
@@ -200,12 +207,12 @@ const handleStartSaving = async () => {
           </div>
 
           <Motion
-            v-if="showErrors && !lastMonthExpense"
+            v-if="showErrors && !isMonthlyBudgetValid"
             :initial="{ opacity: 0, y: -10 }"
             :animate="{ opacity: 1, y: 0 }"
             class="text-red-500 text-sm font-bold px-1"
           >
-            생활비를 입력하세요.
+            생활비는 1원 이상 입력하세요.
           </Motion>
 
           <div class="flex items-start gap-2 px-1">
@@ -338,12 +345,12 @@ const handleStartSaving = async () => {
           </div>
 
           <Motion
-            v-if="showErrors && !targetQuantity"
+            v-if="showErrors && !isTargetQuantityValid"
             :initial="{ opacity: 0, y: -10 }"
             :animate="{ opacity: 1, y: 0 }"
             class="text-red-500 text-sm font-bold px-1"
           >
-            목표 수량을 입력하세요.
+            목표 수량은 0보다 크게 입력하세요.
           </Motion>
 
           <div class="flex items-start gap-2 px-1">

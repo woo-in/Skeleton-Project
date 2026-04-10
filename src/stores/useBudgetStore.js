@@ -51,6 +51,7 @@ export const useBudgetStore = defineStore('budget', {
     categories: [],
     expenses: [],
     isLoading: false,
+    loadingPromise: null,
     error: null,
     initialized: false,
   }),
@@ -264,8 +265,31 @@ export const useBudgetStore = defineStore('budget', {
     },
 
     async initializeBudgetState(memberId = null) {
-      if (this.isLoading) return
+      const requestedMemberId = memberId ?? this.memberId
 
+      if (this.loadingPromise) {
+        await this.loadingPromise
+
+        if (
+          requestedMemberId === null ||
+          requestedMemberId === undefined ||
+          requestedMemberId === '' ||
+          String(this.memberId) === String(requestedMemberId)
+        ) {
+          return
+        }
+      }
+
+      this.loadingPromise = this.loadBudgetState(requestedMemberId)
+
+      try {
+        await this.loadingPromise
+      } finally {
+        this.loadingPromise = null
+      }
+    },
+
+    async loadBudgetState(memberId = null) {
       this.isLoading = true
       this.error = null
 

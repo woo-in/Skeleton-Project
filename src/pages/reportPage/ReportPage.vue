@@ -57,6 +57,20 @@ function getSessionUser() {
   }
 }
 
+function getReportMonthTime(report) {
+  const targetMonth = report?.targetMonth
+  if (typeof targetMonth !== 'string') return 0
+
+  const monthDate = new Date(`${targetMonth}-01T00:00:00`)
+  return Number.isNaN(monthDate.getTime()) ? 0 : monthDate.getTime()
+}
+
+function selectLatestReport(reports) {
+  if (!Array.isArray(reports) || reports.length === 0) return null
+
+  return [...reports].sort((a, b) => getReportMonthTime(b) - getReportMonthTime(a))[0]
+}
+
 async function appendStockTicker(report) {
   if (!report?.stockId) return report
 
@@ -90,7 +104,7 @@ onMounted(async () => {
       params: { memberId: currentUser.id },
     })
 
-    const report = response.data?.[0] ?? null
+    const report = selectLatestReport(response.data)
     reportData.value = await appendStockTicker(report)
     emptyMessage.value = `${currentUser.name ?? '사용자'}님의 리포트가 아직 없습니다.`
   } catch (error) {
