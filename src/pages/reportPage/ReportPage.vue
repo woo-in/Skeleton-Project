@@ -90,7 +90,7 @@ onMounted(async () => {
   width: 100%;
   padding: 0px 0px 128px;
   position: relative;
-  background: linear-gradient(180deg, #fcf3df 0%, #f8efe2 46%, #f6f4ef 100%);
+  background-color: #fdfcfb;
   box-sizing: border-box;
   overflow: hidden;
 }

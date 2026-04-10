@@ -97,7 +97,7 @@ onMounted(() => {
   width: 100%;
   padding: 26px 22px;
   position: relative;
-  background: linear-gradient(145deg, #df7d24 0%, #f5a33c 100%);
+  background-color: #ffbc50;
   border-radius: 28px;
   overflow: hidden;
   box-shadow: 0 18px 34px rgba(178, 91, 24, 0.22);
