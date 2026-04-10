@@ -124,7 +124,7 @@ const getCategoryIcon = (category: string) => {
               class="bg-surface-container-low border border-outline-variant p-6 rounded-[2.5rem] relative overflow-hidden"
             >
               <div
-                class="daily-weather absolute -right-4 -bottom-4 w-32 h-32 pointer-events-none"
+                class="daily-weather absolute right-1 bottom-1 w-36 h-36 pointer-events-none"
                 :class="weatherClass"
                 role="img"
                 :aria-label="weatherLabel"
@@ -315,10 +315,10 @@ const getCategoryIcon = (category: string) => {
 
 .daily-weather__sun {
   position: absolute;
-  top: 0.7rem;
-  right: 4.35rem;
-  width: 2.45rem;
-  height: 2.45rem;
+  top: 0.35rem;
+  right: 4.8rem;
+  width: 2.85rem;
+  height: 2.85rem;
   border-radius: 9999px;
   background: linear-gradient(145deg, #fff3a8 0%, #ffbc50 78%);
   box-shadow:
@@ -359,9 +359,9 @@ const getCategoryIcon = (category: string) => {
 
 .daily-weather__drop {
   position: absolute;
-  bottom: 0.55rem;
-  width: 0.58rem;
-  height: 0.9rem;
+  bottom: 1rem;
+  width: 0.68rem;
+  height: 1.05rem;
   border-radius: 9999px 9999px 9999px 0.18rem;
   background: linear-gradient(145deg, #a7cff6 0%, #5f91c9 78%);
   box-shadow:
@@ -374,23 +374,23 @@ const getCategoryIcon = (category: string) => {
 }
 
 .daily-weather__drop--1 {
-  right: 2.15rem;
+  right: 2.55rem;
 }
 
 .daily-weather__drop--2 {
-  right: 3.4rem;
-  bottom: 0.2rem;
-  width: 0.64rem;
-  height: 1rem;
+  right: 3.95rem;
+  bottom: 0.55rem;
+  width: 0.72rem;
+  height: 1.16rem;
 }
 
 .daily-weather__drop--3 {
-  right: 4.75rem;
+  right: 5.45rem;
 }
 
 .daily-weather--sunny {
-  opacity: 0.38;
-  transform: translate(-0.2rem, -0.15rem);
+  opacity: 0.64;
+  transform: translate(-0.45rem, -0.35rem);
 }
 
 .daily-weather--sunny .daily-weather__sun {
@@ -400,16 +400,17 @@ const getCategoryIcon = (category: string) => {
 
 .daily-weather--sunny .daily-weather__cloud {
   background-color: #ffe0a0;
-  transform: translate(0.4rem, 1.05rem) scale(0.86);
+  transform: translate(0.72rem, 1.35rem) scale(0.82);
 }
 
 .daily-weather--rainy {
-  opacity: 0.32;
+  opacity: 0.58;
+  transform: translate(-0.3rem, -0.2rem);
 }
 
 .daily-weather--rainy .daily-weather__cloud {
   background-color: #8794a1;
-  transform: translateY(0.25rem);
+  transform: translate(0.35rem, 0.25rem) scale(0.9);
 }
 
 .daily-weather--rainy .daily-weather__fill,
@@ -433,11 +434,11 @@ const getCategoryIcon = (category: string) => {
 @keyframes weather-rain-fall {
   0%,
   100% {
-    transform: rotate(38deg) translateY(-0.2rem);
+    transform: rotate(38deg) translateY(-0.25rem);
   }
 
   50% {
-    transform: rotate(38deg) translateY(0.24rem);
+    transform: rotate(38deg) translateY(0.36rem);
   }
 }
 
