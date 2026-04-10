@@ -5,15 +5,8 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
 
-const router = useRouter()
 
-function handleClose() {
-  // 뒤로 가기를 하거나 홈 화면으로 이동하게 설정
-  // router.go(-1) 
-  router.push('/home')
-}
 </script>
 
 <style scoped>
