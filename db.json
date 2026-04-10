@@ -17,8 +17,8 @@
       "birthdate": "19990606",
       "password": "qwer1234!",
       "monthlyBudget": 650000,
-      "targetStockId": 1,
-      "targetQuantity": 10,
+      "targetStockId": 3,
+      "targetQuantity": 12,
       "ageBand": "TWENTIES",
       "id": 2
     }
