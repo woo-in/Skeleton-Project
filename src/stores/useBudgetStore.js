@@ -67,6 +67,14 @@ export const useBudgetStore = defineStore('budget', {
       return this.targetStock?.name ?? ''
     },
 
+    targetStockTicker() {
+      return this.targetStock?.ticker ?? this.targetStock?.symbol ?? ''
+    },
+
+    targetStockRealTicker() {
+      return this.targetStock?.realTicker ?? null
+    },
+
     targetStockPrice() {
       return this.latestPriceByStockId.get(this.targetStockId)?.price ?? 0
     },
@@ -75,6 +83,7 @@ export const useBudgetStore = defineStore('budget', {
       return state.stocks.map((stock) => ({
         ...stock,
         ticker: stock.ticker ?? stock.symbol ?? String(stock.id),
+        realTicker: stock.realTicker ?? null,
         price: this.latestPriceByStockId.get(stock.id)?.price ?? 0,
       }))
     },

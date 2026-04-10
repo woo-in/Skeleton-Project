@@ -63,6 +63,8 @@ uniqueById(reports, 'reports');
 const memberIds = new Set(members.map((member) => member.id));
 const categoryIds = new Set(categories.map((category) => category.id));
 const stockIds = new Set(stocks.map((stock) => stock.id));
+const stockTickers = new Set();
+const realTickerPattern = /^\d{6}$/;
 
 const memberIdTypes = [...new Set(members.map((member) => typeof member.id))];
 assert(
@@ -83,6 +85,20 @@ for (const expense of expenses) {
 for (const price of prices) {
   assert(stockIds.has(price.stockId), `price ${price.id} points to missing stock ${price.stockId}`);
   assert(typeof price.price === 'number', `price ${price.id} price must be a number`);
+}
+
+for (const stock of stocks) {
+  assert(typeof stock.name === 'string' && stock.name.length > 0, `stock ${stock.id} name must be a non-empty string`);
+  assert(
+    typeof stock.ticker === 'string' && stock.ticker.length > 0,
+    `stock ${stock.id} ticker must be a non-empty string`,
+  );
+  assert(!stockTickers.has(stock.ticker), `stocks has duplicate ticker: ${stock.ticker}`);
+  stockTickers.add(stock.ticker);
+  assert(
+    stock.realTicker === null || (typeof stock.realTicker === 'string' && realTickerPattern.test(stock.realTicker)),
+    `stock ${stock.id} realTicker must be null or a 6-digit string`,
+  );
 }
 
 for (const report of reports) {
