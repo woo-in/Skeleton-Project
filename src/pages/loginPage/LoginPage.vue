@@ -68,9 +68,7 @@
     <footer class="footer">
       <div class="text-wrapper"><p class="p">© 2026 KB SKELETON PROJECT. ALL RIGHTS RESERVED.</p></div>
     </footer>
-    <header class="header">
-      <div class="text-wrapper-3"><div class="text-9">내 주식 어디갔어?</div></div>
-    </header>
+    
   </div>
 </template>
 

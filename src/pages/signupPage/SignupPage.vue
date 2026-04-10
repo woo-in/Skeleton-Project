@@ -113,9 +113,7 @@
     <footer class="footer">
       <div class="text-wrapper"><p class="p">© 2026 KB SKELETON PROJECT. ALL RIGHTS RESERVED.</p></div>
     </footer>
-    <header class="header">
-      <div class="text-wrapper-3"><div class="text-9">내 주식 어디갔어?</div></div>
-    </header>
+    
   </div>
 </template>
 
@@ -185,6 +183,9 @@ const registerUser = async () => {
     // 3. 아이디 중복 검사 (id가 아닌 userId로 조회하도록 수정)
     const checkResponse = await fetch(`http://localhost:3000/members?userId=${userId.value}`);
     const existingUsers = await checkResponse.json();
+
+    console.log('ㅎㅇ');
+
 
     if (existingUsers.length > 0) {
       alert('이미 사용 중인 아이디입니다.');

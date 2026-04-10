@@ -1,6 +1,7 @@
 <template>
   <div class="iphone-pro-max">
     <main class="app-content">
+      <TopBar />
       <RouterView />
     </main>
   </div>
@@ -8,6 +9,7 @@
 
 <script setup>
 import { RouterView } from 'vue-router'
+import  TopBar  from '@/components/TopBar.vue'
 </script>
 
 <style>
