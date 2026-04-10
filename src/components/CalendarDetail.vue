@@ -147,7 +147,11 @@ const getCategoryIcon = (category: string) => {
               <div class="relative z-10">
                 <div class="flex flex-col items-start">
                   <p class="text-on-surface-variant text-[13px] font-bold mb-2 font-label">
-                    일평균 생활비를 아껴서
+                    {{
+                      dailyReport.isSaved
+                        ? '일평균 생활비를 아껴서'
+                        : '일평균 생활비보다 많이 써서'
+                    }}
                   </p>
                   <p class="text-[32px] font-extrabold text-secondary font-headline leading-tight">
                     {{ dailyReport.stockName }} {{ dailyReport.securedQuantity }}주
