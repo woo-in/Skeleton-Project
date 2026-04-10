@@ -1,20 +1,39 @@
 <template>
-    <div class="section-social-peer">
-      <div class="container">
-        <div class="div">
-          <div class="div-wrapper"><div class="text-wrapper">20대 절약 수준</div></div>
-          <div class="div-wrapper"><p class="p">지난달 지출 패턴 분석 결과</p></div>
-        </div>
-        <div class="background"><div class="text-wrapper-2">TOP 18%</div></div>
+  <div class="section-social-peer">
+    <div class="container">
+      <div class="div">
+        <div class="div-wrapper"><div class="text-wrapper">20대 절약 수준</div></div>
+        <div class="div-wrapper"><p class="p">지난달 지출 패턴 분석 결과</p></div>
       </div>
-      <div class="background-wrapper"><div class="background-2"></div></div>
-      <div class="container-2">
-        <div class="container-3"><div class="text-wrapper-3">AVERAGE</div></div>
-        <div class="container-4"><div class="text-wrapper-4">SAVING CHAMPION</div></div>
-      </div>
+      <div class="background"><div class="text-wrapper-2">{{ savingRankLabel }}</div></div>
     </div>
+    <div class="background-wrapper">
+      <div class="background-2" :style="{ width: `${peerProgressWidth}%` }"></div>
+    </div>
+    <div class="container-2">
+      <div class="container-3"><div class="text-wrapper-3">AVERAGE</div></div>
+      <div class="container-4"><div class="text-wrapper-4">SAVING CHAMPION</div></div>
+    </div>
+  </div>
 </template>
 
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps({
+  report: {
+    type: Object,
+    default: null,
+  },
+})
+
+const peerProgressWidth = computed(() => {
+  const percentile = Number(props.report?.peerPercentile ?? 0)
+  return Math.min(Math.max(percentile, 0), 100)
+})
+
+const savingRankLabel = computed(() => `TOP ${100 - peerProgressWidth.value}%`)
+</script>
 
 <style scoped>
 .section-social-peer {
@@ -22,12 +41,13 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 12px;
-  padding: 24px;
+  padding: 22px 20px;
   position: relative;
   background-color: #ffffff;
-  border-radius: 24px;
-  border: 1px solid;
-  border-color: #e6e8eb;
+  border-radius: 22px;
+  border: 1px solid #efe7dc;
+  box-shadow: 0 10px 24px rgba(75, 68, 51, 0.05);
+  box-sizing: border-box;
 }
 
 .section-social-peer .container {
@@ -42,12 +62,13 @@
 }
 
 .section-social-peer .div {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 4px;
   position: relative;
-  flex: 0 0 auto;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .section-social-peer .div-wrapper {
@@ -61,8 +82,8 @@
 }
 
 .section-social-peer .text-wrapper {
-  width: 96.88px;
-  height: 24px;
+  width: auto;
+  min-height: 24px;
   color: #1a1a1a;
   font-size: 16px;
   line-height: 24px;
@@ -73,12 +94,12 @@
   font-family: "Pretendard Variable-Regular", Helvetica;
   font-weight: 400;
   letter-spacing: 0;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .section-social-peer .p {
-  width: 146.78px;
-  height: 20px;
+  width: auto;
+  min-height: 20px;
   color: #7d7569;
   font-size: 14px;
   line-height: 20px;
@@ -89,7 +110,7 @@
   font-family: "Pretendard Variable-Regular", Helvetica;
   font-weight: 400;
   letter-spacing: 0;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .section-social-peer .background {
@@ -107,8 +128,8 @@
   position: relative;
   display: flex;
   align-items: center;
-  width: 58.73px;
-  height: 20px;
+  width: auto;
+  height: auto;
   margin-top: -1.00px;
   font-family: "Manrope-ExtraBold", Helvetica;
   font-weight: 800;
@@ -123,7 +144,7 @@
   position: relative;
   align-self: stretch;
   width: 100%;
-  height: 16px;
+  height: 12px;
   background-color: #fff6e6;
   border-radius: 9999px;
   overflow: hidden;
@@ -149,15 +170,13 @@
 .section-social-peer .container-3 {
   position: relative;
   align-self: stretch;
-  width: 54.17px;
+  width: auto;
 }
 
 .section-social-peer .text-wrapper-3 {
-  position: absolute;
-  top: -1px;
-  left: 0;
-  width: 54px;
-  height: 17px;
+  position: relative;
+  width: auto;
+  height: auto;
   display: flex;
   align-items: center;
   font-family: "Pretendard Variable-Regular", Helvetica;
@@ -172,15 +191,13 @@
 .section-social-peer .container-4 {
   position: relative;
   align-self: stretch;
-  width: 111.84px;
+  width: auto;
 }
 
 .section-social-peer .text-wrapper-4 {
-  position: absolute;
-  top: -1px;
-  left: 0;
-  width: 112px;
-  height: 17px;
+  position: relative;
+  width: auto;
+  height: auto;
   display: flex;
   align-items: center;
   font-family: "Pretendard Variable-Regular", Helvetica;

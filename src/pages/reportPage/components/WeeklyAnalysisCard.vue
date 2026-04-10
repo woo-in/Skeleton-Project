@@ -10,15 +10,15 @@
 
     <div class="overlay">
       <div class="background-border">
-        <span class="icon" aria-hidden="true">📈</span> 
+        <span class="icon" aria-hidden="true">📈</span>
       </div>
       <div class="container-4">
         <p v-if="hasDailyExpenses" class="p">
-          <span>지난달 </span> 
+          <span>지난달 </span>
           <strong>{{ lowestExpenseDay }}요일 지출이 가장 적었네요.</strong>
         </p>
         <p v-if="hasDailyExpenses" class="element">
-          <span>평소보다 </span> 
+          <span>평소보다 </span>
           <strong>{{ savingPercent }}% 더</strong>
           <span>아꼈습니다!<br />칭찬해요 👏</span>
         </p>
@@ -166,13 +166,15 @@ onBeforeUnmount(() => {
 .section-weekly {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 24px 20px;
+  gap: 20px;
+  padding: 22px 20px;
   background-color: #ffffff;
-  border-radius: 24px;
-  border: 1px solid #e6e8eb;
+  border-radius: 22px;
+  border: 1px solid #efe7dc;
   font-family: "Pretendard Variable", Pretendard, -apple-system, sans-serif;
-  max-width: 360px; /* 화면 비율에 맞게 조절하세요 */
+  box-sizing: border-box;
+  max-width: 100%;
+  box-shadow: 0 10px 24px rgba(75, 68, 51, 0.05);
 }
 
 /* 제목 */
@@ -180,7 +182,7 @@ onBeforeUnmount(() => {
   margin: 0;
   color: #1a1a1a;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 800;
   letter-spacing: -0.45px;
 }
 
@@ -195,9 +197,9 @@ onBeforeUnmount(() => {
 .overlay {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
-  padding: 20px;
-  background-color: #fff8f0; /* 부드러운 살구색 배경 */
+  gap: 12px;
+  padding: 16px;
+  background-color: #fff8f0;
   border-radius: 16px;
 }
 
@@ -221,6 +223,7 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
 }
 
 .container-4 p {
@@ -228,6 +231,7 @@ onBeforeUnmount(() => {
   color: #4b4433;
   font-size: 14px;
   line-height: 1.5;
+  word-break: keep-all;
 }
 
 .container-4 strong {

@@ -22,63 +22,56 @@
     </p>
 
     <ul class="op-cost__list" v-if="report">
-  <li 
-    v-for="category in report.topCategories" 
-    :key="category.categoryId"
-    class="op-cost__card"
-    :class="category.rank === 1 ? 'op-cost__card--tall' : 'op-cost__card--short'"
-  >
-    <div class="op-cost__left">
-      <div class="op-cost__icon-wrap">
-        <img 
-          :src="category.categoryImageUrl" 
-          :alt="category.categoryName" 
-          class="op-cost__category-icon"
-        />
-      </div>
-      
-      <div class="op-cost__text">
-        <span class="op-cost__name">{{ category.categoryName }}</span>
-        <span class="op-cost__sub">지난달 {{ category.amount / 10000 }}만원 지출</span>
-      </div>
-    </div>
+      <li
+        v-for="category in report.topCategories"
+        :key="category.categoryId"
+        class="op-cost__card"
+        :class="category.rank === 1 ? 'op-cost__card--tall' : 'op-cost__card--short'"
+      >
+        <div class="op-cost__left">
+          <div class="op-cost__icon-wrap">
+            <img
+              :src="category.categoryImageUrl"
+              :alt="category.categoryName"
+              class="op-cost__category-icon"
+            />
+          </div>
 
-    <div 
-      class="op-cost__right" 
-      :class="{ 'op-cost__right--stack': category.rank === 1 }"
-    >
-      <span class="op-cost__shares">+{{ category.additionalQuantity }}주</span>
-      
-      <span v-if="category.rank === 1" class="op-cost__badge">절약 집중 항목</span>
-    </div>
-  </li>
-</ul>
-<div v-else>
-    데이터 로딩 중...
-  </div>
+          <div class="op-cost__text">
+            <span class="op-cost__name">{{ category.categoryName }}</span>
+            <span class="op-cost__sub">지난달 {{ category.amount.toLocaleString() }}원 지출</span>
+          </div>
+        </div>
+
+        <div class="op-cost__right" :class="{ 'op-cost__right--stack': category.rank === 1 }">
+          <span class="op-cost__shares">+{{ category.additionalQuantity }}주</span>
+
+          <span v-if="category.rank === 1" class="op-cost__badge">절약 집중 항목</span>
+        </div>
+      </li>
+    </ul>
+    <div v-else>데이터 로딩 중...</div>
   </section>
 </template>
 
 
 <script setup>
-// 부모가 보내주는 'report' 데이터를 인식하도록 정의합니다.
 defineProps({
-  report: Object
-});
+  report: Object,
+})
 
 </script>
 
 <style scoped>
 
 
-/* 레이아웃·수치: Section - Opportunity Cost_ Top 3 Categories.svg (342×411) 기준 */
 .op-cost {
   width: 100%;
-  max-width: 342px;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 15.4px;
+  gap: 14px;
   position: relative;
   box-sizing: border-box;
   align-self: center;
@@ -95,9 +88,9 @@ defineProps({
 .op-cost__title {
   margin: 0;
   font-family: 'Pretendard Variable', Pretendard, Helvetica, system-ui, sans-serif;
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 28px;
+  font-weight: 800;
+  font-size: 19px;
+  line-height: 1.35;
   letter-spacing: -0.5px;
   color: #1a1a1a;
 }
@@ -122,6 +115,7 @@ defineProps({
   font-size: 14px;
   line-height: 22.8px;
   color: #7d7569;
+  word-break: keep-all;
 }
 
 .op-cost__list {
@@ -139,11 +133,13 @@ defineProps({
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 20px;
+  gap: 12px;
+  padding: 16px;
   box-sizing: border-box;
   background-color: #ffffff;
-  border-radius: 23.5px;
-  border: 1px solid #f2f4f7;
+  border-radius: 20px;
+  border: 1px solid #efe7dc;
+  box-shadow: 0 10px 24px rgba(75, 68, 51, 0.05);
 }
 
 .op-cost__card--tall {
@@ -157,19 +153,20 @@ defineProps({
 .op-cost__left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   min-width: 0;
+  flex: 1 1 auto;
 }
 
 .op-cost__icon-wrap {
-  width: 56px; /* 기존 48px에서 크기 증가 */
-  height: 56px; /* 기존 48px에서 크기 증가 */
-  border-radius: 50%; /* 16px에서 50%로 변경하여 완전한 원형으로 만듦 */
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  overflow: hidden; /* 내부 이미지가 동그라미 밖으로 삐져나오지 않도록 방지 */
+  overflow: hidden;
 }
 
 .op-cost__icon-wrap--delivery {
@@ -185,9 +182,9 @@ defineProps({
 }
 
 .op-cost__category-icon {
-  width: 100%; /* 동그라미 영역을 꽉 채우도록 변경 */
+  width: 100%;
   height: 100%;
-  object-fit: cover; /* 이미지가 찌그러지지 않고 꽉 차게 렌더링 */
+  object-fit: cover;
   display: block;
 }
 
@@ -205,6 +202,7 @@ defineProps({
   font-size: 15px;
   line-height: 22.5px;
   color: #1a1a1a;
+  word-break: keep-all;
 }
 
 .op-cost__sub {
@@ -213,6 +211,7 @@ defineProps({
   font-size: 12px;
   line-height: 16px;
   color: #7d7569;
+  word-break: keep-all;
 }
 
 .op-cost__right {
@@ -220,6 +219,7 @@ defineProps({
   flex-direction: column;
   align-items: flex-end;
   flex-shrink: 0;
+  max-width: 40%;
 }
 
 .op-cost__right--stack {
@@ -229,10 +229,11 @@ defineProps({
 .op-cost__shares {
   font-family: Manrope, 'Manrope-ExtraBold', system-ui, sans-serif;
   font-weight: 800;
-  font-size: 18px;
-  line-height: 28px;
+  font-size: clamp(16px, 4.5vw, 18px);
+  line-height: 1.35;
   color: #4b4433;
   text-align: right;
+  white-space: nowrap;
 }
 
 .op-cost__badge {

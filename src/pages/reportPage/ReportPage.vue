@@ -90,20 +90,19 @@ onMounted(async () => {
   width: 100%;
   padding: 0px 0px 128px;
   position: relative;
-  background-color: #fdfcfb; /* 💡 회원가입 페이지와 동일한 배경색으로 변경 */
+  background: linear-gradient(180deg, #fcf3df 0%, #f8efe2 46%, #f6f4ef 100%);
   box-sizing: border-box;
-  overflow: hidden; /* 💡 블러 효과가 화면 밖으로 삐져나가는 것 방지 */
+  overflow: hidden;
 }
 
-/* ✨ 회원가입 페이지에서 가져온 배경 그라데이션 CSS 시작 */
 .background-deco, .container-deco {
   display: flex;
   flex-direction: column;
   width: 156px;
   height: 482px;
   position: absolute;
-  opacity: 0.3;
-  z-index: 0; /* 배경이 카드를 가리지 않게 맨 뒤로 보냄 */
+  opacity: 0.16;
+  z-index: 0;
 }
 
 .background-deco { 
@@ -130,22 +129,20 @@ onMounted(async () => {
   filter: blur(60px);
   background: linear-gradient(79deg, rgba(75, 66, 55, 0.2) 0%, rgba(75, 66, 55, 0) 100%);
 }
-/* ✨ 배경 CSS 끝 */
 
 .div-wrapper .main {
   display: flex;
   flex-direction: column;
-  max-width: 100%;
+  max-width: 390px;
   align-items: stretch;
-  gap: 24px;
-  /* 🚨 범인 검거 완료! padding top을 96px -> 24px로 확 줄였습니다 */
-  padding: 24px 24px 0px; 
+  gap: 18px;
+  padding: 18px 18px 0px;
   position: relative;
   width: 100%;
   flex: 0 0 auto;
   margin: 0 auto;
   box-sizing: border-box;
-  z-index: 1; /* 카드들이 그라데이션 배경보다 위에 보이도록 설정 */
+  z-index: 1;
 }
 
 .report-state {
