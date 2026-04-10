@@ -108,6 +108,30 @@ export const useBudgetStore = defineStore('budget', {
       return (date) => this.expensesByDate[date] ?? []
     },
 
+    getExpensesByMonth() {
+      return (monthKey) =>
+        this.expenses.filter(
+          (expense) => typeof expense.date === 'string' && expense.date.startsWith(monthKey),
+        )
+    },
+
+    getMonthlyExpenseTotal() {
+      return (monthKey) =>
+        this.getExpensesByMonth(monthKey).reduce((sum, expense) => sum + expense.amount, 0)
+    },
+
+    getMonthlyRemainingBudget(state) {
+      return (monthKey) => state.budget - this.getMonthlyExpenseTotal(monthKey)
+    },
+
+    getMonthlyFillPercentage(state) {
+      return (monthKey) => {
+        if (state.budget <= 0) return 0
+        const ratio = (this.getMonthlyRemainingBudget(monthKey) / state.budget) * 100
+        return Math.min(Math.max(ratio, 0), 100)
+      }
+    },
+
     remainingBudget(state) {
       return state.budget - this.totalExpense
     },
@@ -119,8 +143,8 @@ export const useBudgetStore = defineStore('budget', {
     },
 
     guidelinePercentage(state) {
-      if (state.budget <= 0 || this.targetStockPrice <= 0) return 0
-      const ratio = (this.targetStockPrice / state.budget) * 100
+      if (state.budget <= 0 || this.targetTotalAmount <= 0) return 0
+      const ratio = (this.targetTotalAmount / state.budget) * 100
       return Math.min(Math.max(ratio, 0), 100)
     },
 
@@ -179,6 +203,8 @@ export const useBudgetStore = defineStore('budget', {
         ...expense,
         amount: toNumber(expense.amount),
         category: expense.category ?? category?.name ?? '기타',
+        categoryImageUrl:
+          expense.categoryImageUrl ?? category?.imageUrl ?? '/images/categories/shopping.png',
         date: expense.date ?? toDateKey(expense.spentAt),
         time: expense.time ?? toTimeKey(expense.spentAt),
         memo: expense.memo ?? '',

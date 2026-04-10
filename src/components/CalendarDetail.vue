@@ -116,7 +116,7 @@ const getCategoryIcon = (category: string) => {
               class="bg-surface-container-low border border-outline-variant p-6 rounded-[2.5rem] relative overflow-hidden"
             >
               <div
-                class="daily-weather absolute -right-1 bottom-1 w-36 h-36 pointer-events-none"
+                class="daily-weather absolute right-4 bottom-4 w-24 h-24 pointer-events-none"
                 :class="weatherClass"
                 role="img"
                 :aria-label="weatherLabel"
@@ -142,7 +142,11 @@ const getCategoryIcon = (category: string) => {
               <div class="relative z-10">
                 <div class="flex flex-col items-start">
                   <p class="text-on-surface-variant text-[13px] font-bold mb-2 font-label">
-                    일평균 생활비를 아껴서
+                    {{
+                      dailyReport.isSaved
+                        ? '일평균 생활비를 아껴서'
+                        : '일평균 생활비보다 많이 써서'
+                    }}
                   </p>
                   <p class="text-[32px] font-extrabold text-secondary font-headline leading-tight">
                     {{ dailyReport.stockName }} {{ dailyReport.securedQuantity }}주
@@ -156,7 +160,9 @@ const getCategoryIcon = (category: string) => {
           </div>
 
           <!-- 총 지출 -->
-          <div class="bg-surface p-5 rounded-2xl mb-10">
+          <div
+            class="bg-surface border border-outline-variant/80 p-5 rounded-2xl mb-10 shadow-[0_10px_28px_rgba(45,41,38,0.06)]"
+          >
             <div class="flex items-center gap-4">
               <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                 <!-- 🔥 수정된 부분 -->
@@ -165,25 +171,31 @@ const getCategoryIcon = (category: string) => {
                 </span>
               </div>
 
-              <div class="flex-1">
-                <p class="text-xs font-bold mb-1">오늘의 총 지출</p>
-                <p class="text-2xl font-extrabold">{{ totalAmount.toLocaleString() }}원</p>
-
-                <p v-if="dailyReport.isSaved" class="text-xs mt-2">
-                  평균보다
-                  <span class="font-bold text-secondary">
-                    {{ dailyReport.savedAmount.toLocaleString() }}원
-                  </span>
-                  더 아꼈어요!
+              <div class="flex-1 min-w-0">
+                <p class="text-xs font-bold text-on-surface-variant mb-0.5 font-label">
+                  오늘의 총 지출
+                </p>
+                <p class="text-2xl font-extrabold text-on-surface font-headline leading-none">
+                  {{ totalAmount.toLocaleString() }}원
                 </p>
 
-                <p v-else class="text-xs mt-2">
-                  평균보다
-                  <span class="font-bold text-error">
-                    {{ dailyReport.savedAmount.toLocaleString() }}원
-                  </span>
-                  더 썼어요 😢
-                </p>
+                <div class="mt-2.5 pt-2.5 border-t border-outline-variant/40">
+                  <p v-if="dailyReport.isSaved" class="text-xs font-semibold text-on-surface-variant">
+                    평균보다
+                    <span class="font-bold text-secondary">
+                      {{ dailyReport.savedAmount.toLocaleString() }}원
+                    </span>
+                    더 아꼈어요!
+                  </p>
+
+                  <p v-else class="text-xs font-semibold text-on-surface-variant">
+                    평균보다
+                    <span class="font-bold text-error">
+                      {{ dailyReport.savedAmount.toLocaleString() }}원
+                    </span>
+                    더 썼어요 😢
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -237,8 +249,19 @@ const getCategoryIcon = (category: string) => {
   transform: translateX(-50%);
 }
 
+.honey-pot-mask {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C8.69 2 6 4.69 6 8v2c-2.21 0-4 1.79-4 4s1.79 4 4 4h12c2.21 0 4-1.79 4-4s-1.79-4-4-4V8c0-3.31-2.69-6-6-6z'/%3E%3C/svg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C8.69 2 6 4.69 6 8v2c-2.21 0-4 1.79-4 4s1.79 4 4 4h12c2.21 0 4-1.79 4-4s-1.79-4-4-4V8c0-3.31-2.69-6-6-6z'/%3E%3C/svg%3E");
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-position: center;
+  -webkit-mask-position: center;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+}
+
 .daily-weather {
-  opacity: 0.2;
+  opacity: 0.44;
   isolation: isolate;
   transition:
     opacity 180ms ease,
@@ -247,17 +270,16 @@ const getCategoryIcon = (category: string) => {
 
 .daily-weather__sun {
   position: absolute;
-  top: 1.95rem;
-  right: 4.3rem;
-  width: 2.85rem;
-  height: 2.85rem;
+  top: 0.25rem;
+  right: 3.35rem;
+  width: 2.35rem;
+  height: 2.35rem;
   border-radius: 9999px;
   background: linear-gradient(145deg, #fff3a8 0%, #ffbc50 78%);
   box-shadow:
-    0 0 0 0.42rem rgba(255, 188, 80, 0.16),
-    0 0.8rem 1.7rem rgba(255, 174, 54, 0.35);
+    0 0 0 0.36rem rgba(255, 188, 80, 0.16),
+    0 0.65rem 1.4rem rgba(255, 174, 54, 0.34);
   opacity: 0;
-  transform: scale(0.78);
   z-index: 1;
   transition:
     opacity 180ms ease,
@@ -267,11 +289,10 @@ const getCategoryIcon = (category: string) => {
 .daily-weather__sun::before {
   content: '';
   position: absolute;
-  inset: -0.52rem;
+  inset: -0.48rem;
   border-radius: inherit;
-  border: 0.22rem solid rgba(255, 188, 80, 0.24);
-  box-shadow: 0 0 1.2rem rgba(255, 188, 80, 0.18);
-  opacity: 1;
+  border: 0.2rem solid rgba(255, 188, 80, 0.24);
+  box-shadow: 0 0 1rem rgba(255, 188, 80, 0.18);
   z-index: -1;
 }
 
@@ -291,14 +312,14 @@ const getCategoryIcon = (category: string) => {
 
 .daily-weather__drop {
   position: absolute;
-  bottom: 1rem;
-  width: 0.68rem;
-  height: 1.05rem;
+  bottom: 0.55rem;
+  width: 0.56rem;
+  height: 0.88rem;
   border-radius: 9999px 9999px 9999px 0.18rem;
   background: linear-gradient(145deg, #a7cff6 0%, #5f91c9 78%);
   box-shadow:
-    0 0 0 0.24rem rgba(95, 145, 201, 0.12),
-    0 0.55rem 1rem rgba(95, 145, 201, 0.24);
+    0 0 0 0.22rem rgba(95, 145, 201, 0.12),
+    0 0.5rem 0.9rem rgba(95, 145, 201, 0.22);
   opacity: 0;
   transform: rotate(38deg) translateY(-0.2rem);
   z-index: 3;
@@ -306,23 +327,22 @@ const getCategoryIcon = (category: string) => {
 }
 
 .daily-weather__drop--1 {
-  right: 2.65rem;
+  right: 1.65rem;
 }
 
 .daily-weather__drop--2 {
-  right: 4.05rem;
-  bottom: 0.55rem;
-  width: 0.72rem;
-  height: 1.16rem;
+  right: 2.8rem;
+  bottom: 0.2rem;
+  width: 0.62rem;
+  height: 1rem;
 }
 
 .daily-weather__drop--3 {
-  right: 5.55rem;
+  right: 4.05rem;
 }
 
 .daily-weather--sunny {
-  opacity: 0.64;
-  transform: translate(-0.45rem, -0.35rem);
+  opacity: 0.72;
 }
 
 .daily-weather--sunny .daily-weather__sun {
@@ -332,17 +352,16 @@ const getCategoryIcon = (category: string) => {
 
 .daily-weather--sunny .daily-weather__cloud {
   background-color: #ffe0a0;
-  transform: translate(0.72rem, 1.35rem) scale(0.82);
+  transform: translate(0.25rem, 0.1rem) scale(0.84);
 }
 
 .daily-weather--rainy {
-  opacity: 0.58;
-  transform: translate(-0.3rem, -0.2rem);
+  opacity: 0.68;
 }
 
 .daily-weather--rainy .daily-weather__cloud {
   background-color: #8794a1;
-  transform: translate(0.35rem, 0.25rem) scale(0.9);
+  transform: translate(0.1rem, -0.35rem) scale(0.92);
 }
 
 .daily-weather--rainy .daily-weather__fill,
@@ -363,14 +382,18 @@ const getCategoryIcon = (category: string) => {
   animation-delay: 0.34s;
 }
 
+.daily-weather--neutral .daily-weather__cloud {
+  transform: translateY(-0.6rem) scale(0.94);
+}
+
 @keyframes weather-rain-fall {
   0%,
   100% {
-    transform: rotate(38deg) translateY(-0.25rem);
+    transform: rotate(38deg) translateY(-0.2rem);
   }
 
   50% {
-    transform: rotate(38deg) translateY(0.36rem);
+    transform: rotate(38deg) translateY(0.28rem);
   }
 }
 

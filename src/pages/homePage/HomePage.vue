@@ -10,196 +10,15 @@ import { storeToRefs } from 'pinia'
 import { useBudgetStore } from '@/stores/useBudgetStore'
 const weekdays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
 
-const calendarAccentMap = {
-  '2024-05-01': 'soft',
-  '2024-05-02': 'warm',
-  '2024-05-03': 'accent',
-  '2024-05-04': 'dark',
-  '2024-05-05': 'soft',
-  '2024-05-06': 'dark',
-  '2024-05-07': 'warm',
-  '2024-05-08': 'soft',
-  '2024-05-09': 'warm',
-  '2024-05-10': 'dark',
-  '2024-05-11': 'soft',
-  '2024-05-13': 'soft',
-  '2024-05-15': 'warm',
-  '2024-05-18': 'dark',
-  '2024-05-19': 'soft',
-  '2024-05-21': 'warm',
-  '2024-05-24': 'dark',
-  '2024-05-28': 'soft',
-  '2024-05-30': 'warm',
-}
+const calendarDotTones = ['soft', 'warm', 'accent', 'dark']
+const INITIAL_HISTORY_COUNT = 3
+const HISTORY_INCREMENT = 10
 
 const currentMonth = ref(dayjs().startOf('month'))
 const selectedDate = ref(dayjs())
 const isCalendarDetailOpen = ref(false)
 const isExpenseInputOpen = ref(false)
 const reopenCalendarDetail = ref(false)
-
-const historyItems = [
-  {
-    id: 1,
-    name: '스타벅스 강남점',
-    meta: '오늘 2:15 • 식비/카페',
-    amount: '-₩5,400',
-    type: 'expense',
-    icon: 'meal',
-  },
-  {
-    id: 2,
-    name: '주식 자동 투자',
-    meta: '오늘 9:00 • 투자',
-    amount: '+₩10,000',
-    type: 'income',
-    icon: 'stock',
-  },
-  {
-    id: 3,
-    name: 'CU 편의점',
-    meta: '어제 • 편의점',
-    amount: '-₩2,100',
-    type: 'expense',
-    icon: 'bag',
-  },
-  {
-    id: 4,
-    name: '마켓컬리',
-    meta: '어제 7:40 • 장보기',
-    amount: '-₩34,800',
-    type: 'expense',
-    icon: 'bag',
-  },
-  {
-    id: 5,
-    name: '네이버페이 환급',
-    meta: '5월 1일 • 적립/환급',
-    amount: '+₩3,200',
-    type: 'income',
-    icon: 'stock',
-  },
-  {
-    id: 6,
-    name: '메가커피',
-    meta: '4월 30일 • 식비/카페',
-    amount: '-₩3,000',
-    type: 'expense',
-    icon: 'meal',
-  },
-  {
-    id: 7,
-    name: '올리브영',
-    meta: '4월 30일 • 자기관리',
-    amount: '-₩18,500',
-    type: 'expense',
-    icon: 'bag',
-  },
-  {
-    id: 8,
-    name: '자동 투자 리워드',
-    meta: '4월 29일 • 투자',
-    amount: '+₩8,000',
-    type: 'income',
-    icon: 'stock',
-  },
-  {
-    id: 9,
-    name: '배달의민족',
-    meta: '4월 29일 • 배달/야식',
-    amount: '-₩22,000',
-    type: 'expense',
-    icon: 'meal',
-  },
-  {
-    id: 10,
-    name: 'GS25',
-    meta: '4월 28일 • 편의점',
-    amount: '-₩4,700',
-    type: 'expense',
-    icon: 'bag',
-  },
-  {
-    id: 11,
-    name: '삼성증권 자동이체',
-    meta: '4월 28일 • 투자',
-    amount: '+₩50,000',
-    type: 'income',
-    icon: 'stock',
-  },
-  {
-    id: 12,
-    name: '지하철',
-    meta: '4월 27일 • 교통',
-    amount: '-₩1,400',
-    type: 'expense',
-    icon: 'bag',
-  },
-  {
-    id: 13,
-    name: '컴포즈커피',
-    meta: '4월 27일 • 식비/카페',
-    amount: '-₩2,800',
-    type: 'expense',
-    icon: 'meal',
-  },
-  {
-    id: 14,
-    name: '쿠팡',
-    meta: '4월 26일 • 쇼핑',
-    amount: '-₩17,900',
-    type: 'expense',
-    icon: 'bag',
-  },
-  {
-    id: 15,
-    name: '토스 환급',
-    meta: '4월 26일 • 적립/환급',
-    amount: '+₩1,500',
-    type: 'income',
-    icon: 'stock',
-  },
-  {
-    id: 16,
-    name: '파리바게뜨',
-    meta: '4월 25일 • 식비/카페',
-    amount: '-₩6,300',
-    type: 'expense',
-    icon: 'meal',
-  },
-  {
-    id: 17,
-    name: '이마트24',
-    meta: '4월 25일 • 편의점',
-    amount: '-₩3,900',
-    type: 'expense',
-    icon: 'bag',
-  },
-  {
-    id: 18,
-    name: '적금 만기 이자',
-    meta: '4월 24일 • 금융',
-    amount: '+₩12,400',
-    type: 'income',
-    icon: 'stock',
-  },
-  {
-    id: 19,
-    name: '올영세일',
-    meta: '4월 24일 • 자기관리',
-    amount: '-₩27,000',
-    type: 'expense',
-    icon: 'bag',
-  },
-  {
-    id: 20,
-    name: '버거킹',
-    meta: '4월 23일 • 식비',
-    amount: '-₩8,900',
-    type: 'expense',
-    icon: 'meal',
-  },
-]
 
 const calendarTitle = computed(
   () => `${currentMonth.value.year()}년 ${currentMonth.value.month() + 1}월`,
@@ -209,8 +28,6 @@ const budgetStore = useBudgetStore()
 // storeToRefs를 써야 반응형이 유지되어서 꿀단지가 부드럽게 움직입니다!
 const {
   expenses,
-  remainingBudget,
-  fillPercentage,
   guidelinePercentage,
   targetStockName,
   targetStockTicker,
@@ -239,14 +56,19 @@ onMounted(async () => {
   }
 })
 
-const visibleHistoryCount = ref(3)
-const recentItems = computed(() => historyItems.slice(0, visibleHistoryCount.value))
-const canLoadMoreHistory = computed(() => visibleHistoryCount.value < historyItems.length)
+const visibleHistoryCount = ref(INITIAL_HISTORY_COUNT)
+const currentMonthKey = computed(() => currentMonth.value.format('YYYY-MM'))
 const selectedDateKey = computed(() => selectedDate.value.format('YYYY-MM-DD'))
 const todayDateKey = computed(() => dayjs().format('YYYY-MM-DD'))
 const expenseDateSet = computed(() => new Set(expenses.value.map((expense) => expense.date)))
 const selectedDayExpenses = computed(() => budgetStore.getExpensesByDate(selectedDateKey.value))
 const calendarDailyReport = computed(() => budgetStore.getDailyReport(selectedDateKey.value))
+const monthlyRemainingBudget = computed(() =>
+  budgetStore.getMonthlyRemainingBudget(currentMonthKey.value),
+)
+const monthlyFillPercentage = computed(() =>
+  budgetStore.getMonthlyFillPercentage(currentMonthKey.value),
+)
 const todayExpenseTotal = computed(() =>
   budgetStore
     .getExpensesByDate(todayDateKey.value)
@@ -254,9 +76,49 @@ const todayExpenseTotal = computed(() =>
 )
 const todayExpenseStockQuantity = computed(() => {
   if (!targetStockPrice.value) return '0.00'
-  const diffFromAverage = budgetStore.dailyAverage - todayExpenseTotal.value
-  return (diffFromAverage / targetStockPrice.value).toFixed(2)
+  return (todayExpenseTotal.value / targetStockPrice.value).toFixed(2)
 })
+const hasTodayExpense = computed(() => todayExpenseTotal.value > 0)
+const recentItems = computed(() =>
+  budgetStore.recentExpenses.slice(0, visibleHistoryCount.value).map((expense) => ({
+    id: expense.id,
+    name: expense.memo || expense.category,
+    meta: formatHistoryMeta(expense),
+    amount: `-${expense.amount.toLocaleString()}원`,
+    type: 'expense',
+    iconUrl: expense.categoryImageUrl || '/images/categories/shopping.png',
+  })),
+)
+const canLoadMoreHistory = computed(
+  () => visibleHistoryCount.value < budgetStore.recentExpenses.length,
+)
+
+function formatHistoryDate(date) {
+  const historyDate = dayjs(date)
+  if (!historyDate.isValid()) return ''
+
+  const today = dayjs()
+  if (historyDate.isSame(today, 'day')) return '오늘'
+  if (historyDate.isSame(today.subtract(1, 'day'), 'day')) return '어제'
+  if (historyDate.isSame(today, 'year')) return historyDate.format('M월 D일')
+  return historyDate.format('YYYY. M. D')
+}
+
+function formatHistoryMeta(expense) {
+  const dateTime = [formatHistoryDate(expense.date), expense.time].filter(Boolean).join(' ')
+  return [dateTime, expense.category].filter(Boolean).join(' • ')
+}
+
+function getCalendarDotTone(date) {
+  const [firstExpense] = budgetStore.getExpensesByDate(date)
+  if (!firstExpense) return null
+
+  const toneSource = Number(firstExpense.categoryId ?? firstExpense.id ?? 1)
+  const toneIndex = Number.isFinite(toneSource)
+    ? Math.abs(toneSource - 1) % calendarDotTones.length
+    : 0
+  return calendarDotTones[toneIndex]
+}
 
 const calendarDays = computed(() => {
   const monthStart = currentMonth.value.startOf('month')
@@ -277,7 +139,7 @@ const calendarDays = computed(() => {
       key: isoDate,
       label: date.date(),
       isoDate,
-      dotTone: expenseDateSet.value.has(isoDate) ? (calendarAccentMap[isoDate] ?? 'warm') : null,
+      dotTone: expenseDateSet.value.has(isoDate) ? getCalendarDotTone(isoDate) : null,
       inCurrentMonth,
       isSelected: date.isSame(selectedDate.value, 'day'),
       isToday: date.isSame(dayjs(), 'day'),
@@ -311,7 +173,10 @@ function handleStockClick() {
 }
 
 function loadMoreHistory() {
-  visibleHistoryCount.value = Math.min(historyItems.length, visibleHistoryCount.value + 10)
+  visibleHistoryCount.value = Math.min(
+    budgetStore.recentExpenses.length,
+    visibleHistoryCount.value + HISTORY_INCREMENT,
+  )
 }
 
 function openCalendarDetail(isoDate) {
@@ -367,17 +232,17 @@ async function handleExpenseSave(payload) {
           <div class="bee-slot" aria-hidden="true">
             <div class="honey-pot-stage">
               <HoneyPot
-                :display-value="Math.floor(fillPercentage)"
-                :fill-percentage="fillPercentage"
+                :display-value="Math.floor(monthlyFillPercentage)"
+                :fill-percentage="monthlyFillPercentage"
                 :guideline-percentage="guidelinePercentage"
               />
             </div>
           </div>
 
           <div class="balance-copy">
-            <p class="balance-label">이번 달 생활비 남음</p>
-            <p class="balance-amount">₩{{ remainingBudget.toLocaleString() }}</p>
-            <p class="balance-hint">빨간 선은 목표 주식 가격</p>
+            <p class="balance-label">이 달 생활비 남음</p>
+            <p class="balance-amount">₩{{ monthlyRemainingBudget.toLocaleString() }}</p>
+            <p class="balance-hint">빨간 선은 목표 주식 총 금액</p>
             <p class="balance-hint">꿀단지는 현재 남은 생활비를 비율을 보여줘요</p>
           </div>
         </section>
@@ -387,11 +252,12 @@ async function handleExpenseSave(payload) {
             {{ targetStockTicker || '주식' }}
           </div>
           <div class="stock-copy">
-            <p class="stock-label">오늘 쓴 돈으로 살 수 있었던 주식</p>
-            <p class="stock-value">
+            <p class="stock-label">오늘 지출 주식 환산</p>
+            <p v-if="hasTodayExpense" class="stock-value">
               {{ targetStockName || '주식' }}
               {{ todayExpenseStockQuantity }}주
             </p>
+            <p v-else class="stock-value stock-value--empty">오늘 지출이 아직 없습니다!</p>
           </div>
         </section>
 
@@ -441,18 +307,12 @@ async function handleExpenseSave(payload) {
             <p>최근 소비 내역</p>
           </div>
 
-          <div class="history-list">
+          <p v-if="recentItems.length === 0" class="history-empty">아직 소비 내역이 없어요</p>
+
+          <div v-else class="history-list">
             <article v-for="item in recentItems" :key="item.id" class="history-card">
               <div class="history-icon">
-                <svg v-if="item.icon === 'meal'" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M7 3v8M10 3v8M7 7h3M15 3v18M18 3c0 3-1 5-3 5" />
-                </svg>
-                <svg v-else-if="item.icon === 'stock'" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M4 16l5-5 4 3 7-7M16 7h4v4" />
-                </svg>
-                <svg v-else viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M6 8h12l-1 11H7L6 8zm3 0V7a3 3 0 016 0v1" />
-                </svg>
+                <img :src="item.iconUrl" :alt="item.name" class="history-icon-image" />
               </div>
 
               <div class="history-copy">
@@ -641,6 +501,14 @@ async function handleExpenseSave(payload) {
   font-size: 1.5rem;
   font-weight: 800;
   letter-spacing: -0.05em;
+}
+
+.stock-value--empty {
+  color: #8a8179;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.35;
 }
 
 .stock-arrow-button {
@@ -841,6 +709,19 @@ async function handleExpenseSave(payload) {
   gap: 1rem;
 }
 
+.history-empty {
+  margin: 1.2rem 0 0;
+  padding: 1.15rem;
+  border-radius: var(--radius-card);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: var(--shadow-card);
+  color: #8a8179;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  text-align: center;
+}
+
 .history-more-button {
   display: block;
   width: fit-content;
@@ -887,14 +768,11 @@ async function handleExpenseSave(payload) {
   box-shadow: var(--shadow-soft);
 }
 
-.history-icon svg {
-  width: 1.9rem;
-  height: 1.9rem;
-  fill: none;
-  stroke: #6f6253;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.8;
+.history-icon-image {
+  width: 2.35rem;
+  height: 2.35rem;
+  object-fit: cover;
+  border-radius: 999px;
 }
 
 .history-copy {
