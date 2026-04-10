@@ -4,11 +4,6 @@
   </header>
 </template>
 
-<script setup>
-
-
-</script>
-
 <style scoped>
 .global-header {
   position: sticky;
@@ -36,19 +31,4 @@
   font-family: "WenQuanYi Zen Hei-Medium", sans-serif;
 }
 
-.close-button {
-  color: #6D6864;
-  background: transparent;
-  border: none;
-  padding: 0.25rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.2s ease;
-}
-
-.close-button:hover {
-  color: #2D2926;
-}
 </style>
