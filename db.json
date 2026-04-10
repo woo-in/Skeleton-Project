@@ -446,6 +446,22 @@
       "memo": "피자",
       "spentAt": "2026-04-04T14:58:00",
       "id": 39
+    },
+    {
+      "memberId": 2,
+      "categoryId": 1,
+      "amount": 4000,
+      "memo": "학식",
+      "spentAt": "2026-04-10T15:27:00",
+      "id": 40
+    },
+    {
+      "memberId": 2,
+      "categoryId": 2,
+      "amount": 1500,
+      "memo": "컴포즈",
+      "spentAt": "2026-04-10T15:27:00",
+      "id": 41
     }
   ],
   "reports": [
