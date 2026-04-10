@@ -628,8 +628,10 @@ const handleSave = () => {
    2. 컨텐츠 & 헤더
    ========================================== */
 .sheet-content {
+  flex: 1; /* 남은 공간을 채움 */
   padding: 0 1.5rem 7rem 1.5rem;
   overflow-y: auto;
+  padding: 0 1.5rem 1.5rem 1.5rem;
 }
 
 .sheet-header {
@@ -1257,8 +1259,8 @@ const handleSave = () => {
    5. 하단 액션 & 트랜지션
    ========================================== */
 .save-area {
-  position: absolute;
-  bottom: 0;
+  /* position: absolute;
+  bottom: 0; */
   left: 0;
   right: 0;
   padding: 1.5rem;
