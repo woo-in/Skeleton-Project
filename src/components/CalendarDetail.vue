@@ -33,7 +33,22 @@ const emit = defineEmits(['close', 'add-expense'])
 // ==========================================
 // 2. Computed & Methods
 // ==========================================
+const WEATHER_THRESHOLD = 5000
 const totalAmount = computed(() => props.dayExpenses.reduce((sum, exp) => sum + exp.amount, 0))
+const savingDelta = computed(() =>
+  props.dailyReport.isSaved ? props.dailyReport.savedAmount : -props.dailyReport.savedAmount,
+)
+const weatherType = computed(() => {
+  if (savingDelta.value > WEATHER_THRESHOLD) return 'sunny'
+  if (savingDelta.value < -WEATHER_THRESHOLD) return 'rainy'
+  return 'neutral'
+})
+const weatherClass = computed(() => `daily-weather--${weatherType.value}`)
+const weatherLabel = computed(() => {
+  if (weatherType.value === 'sunny') return '평균보다 많이 아껴 햇살이 뜬 상태'
+  if (weatherType.value === 'rainy') return '평균보다 많이 써 비오는 구름 상태'
+  return '평균과 비슷해 기본 구름 상태'
+})
 
 const formattedDate = computed(() => {
   if (!props.selectedDate) return ''
@@ -108,12 +123,18 @@ const getCategoryIcon = (category: string) => {
             <div
               class="bg-surface-container-low border border-outline-variant p-6 rounded-[2.5rem] relative overflow-hidden"
             >
-              <div class="absolute -right-4 -bottom-4 w-32 h-32 opacity-20 pointer-events-none">
+              <div
+                class="daily-weather absolute -right-4 -bottom-4 w-32 h-32 pointer-events-none"
+                :class="weatherClass"
+                role="img"
+                :aria-label="weatherLabel"
+              >
+                <span class="daily-weather__sun" aria-hidden="true"></span>
                 <div
-                  class="honey-pot-mask relative w-full h-full bg-outline-variant overflow-hidden"
+                  class="honey-pot-mask daily-weather__cloud relative w-full h-full bg-outline-variant overflow-hidden"
                 >
                   <div
-                    class="absolute bottom-0 left-0 right-0 bg-primary animate-wave origin-bottom"
+                    class="daily-weather__fill absolute bottom-0 left-0 right-0 bg-primary animate-wave origin-bottom"
                     :style="{ height: `${dailyReport.progressRate}%` }"
                   >
                     <div
@@ -121,6 +142,9 @@ const getCategoryIcon = (category: string) => {
                     ></div>
                   </div>
                 </div>
+                <span class="daily-weather__drop daily-weather__drop--1" aria-hidden="true"></span>
+                <span class="daily-weather__drop daily-weather__drop--2" aria-hidden="true"></span>
+                <span class="daily-weather__drop daily-weather__drop--3" aria-hidden="true"></span>
               </div>
 
               <div class="relative z-10">
@@ -279,6 +303,142 @@ const getCategoryIcon = (category: string) => {
   -webkit-mask-size: contain;
   mask-repeat: no-repeat;
   -webkit-mask-repeat: no-repeat;
+}
+
+.daily-weather {
+  opacity: 0.2;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.daily-weather__sun {
+  position: absolute;
+  top: 0.35rem;
+  right: 4.1rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, #fff8c8 0%, #ffd35c 48%, #ffb33d 100%);
+  box-shadow:
+    0 0 0 0.55rem rgba(255, 196, 72, 0.2),
+    0 0 1.8rem rgba(255, 179, 61, 0.55);
+  opacity: 0;
+  transform: scale(0.78);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.daily-weather__sun::before {
+  content: '';
+  position: absolute;
+  inset: -0.9rem;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 196, 72, 0.9) 0deg 10deg,
+    transparent 10deg 28deg
+  );
+  animation: weather-sun-spin 8s linear infinite;
+}
+
+.daily-weather__cloud {
+  position: absolute;
+  inset: 0;
+  transition:
+    background-color 180ms ease,
+    transform 180ms ease;
+}
+
+.daily-weather__fill,
+.daily-weather__fill > div {
+  transition: background-color 180ms ease;
+}
+
+.daily-weather__drop {
+  position: absolute;
+  bottom: 0.45rem;
+  width: 0.28rem;
+  height: 1.35rem;
+  border-radius: 9999px;
+  background: #5f91c9;
+  opacity: 0;
+  transform: rotate(16deg) translateY(-0.2rem);
+  transition: opacity 180ms ease;
+}
+
+.daily-weather__drop--1 {
+  right: 2rem;
+}
+
+.daily-weather__drop--2 {
+  right: 3.45rem;
+  bottom: 0.1rem;
+  height: 1.65rem;
+}
+
+.daily-weather__drop--3 {
+  right: 4.85rem;
+}
+
+.daily-weather--sunny {
+  opacity: 0.38;
+  transform: translate(-0.2rem, -0.15rem);
+}
+
+.daily-weather--sunny .daily-weather__sun {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.daily-weather--sunny .daily-weather__cloud {
+  background-color: #ffe5a4;
+  transform: translate(0.35rem, 1rem) scale(0.88);
+}
+
+.daily-weather--rainy {
+  opacity: 0.32;
+}
+
+.daily-weather--rainy .daily-weather__cloud {
+  background-color: #7d8996;
+  transform: translateY(0.25rem);
+}
+
+.daily-weather--rainy .daily-weather__fill,
+.daily-weather--rainy .daily-weather__fill > div {
+  background-color: #5f7286;
+}
+
+.daily-weather--rainy .daily-weather__drop {
+  opacity: 1;
+  animation: weather-rain-fall 1.15s ease-in-out infinite;
+}
+
+.daily-weather--rainy .daily-weather__drop--2 {
+  animation-delay: 0.18s;
+}
+
+.daily-weather--rainy .daily-weather__drop--3 {
+  animation-delay: 0.34s;
+}
+
+@keyframes weather-sun-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes weather-rain-fall {
+  0%,
+  100% {
+    transform: rotate(16deg) translateY(-0.25rem);
+  }
+
+  50% {
+    transform: rotate(16deg) translateY(0.3rem);
+  }
 }
 
 .category-image-mask {
