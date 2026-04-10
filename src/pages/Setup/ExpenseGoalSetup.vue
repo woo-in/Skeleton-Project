@@ -141,7 +141,7 @@ const handleStartSaving = async () => {
       </button>
     </header>
 
-    <main class="w-full max-w-lg mx-auto px-6 pt-6 pb-32 flex flex-col gap-8">
+    <main class="w-full max-w-lg mx-auto px-6 pt-23 pb-32 flex flex-col gap-8">
       <!-- Hero Section -->
       <Motion :initial="{ opacity: 0, y: 20 }" :animate="{ opacity: 1, y: 0 }" class="space-y-3">
         <h1 class="text-[2.25rem] font-extrabold leading-tight tracking-tight text-[#2D2926]">
