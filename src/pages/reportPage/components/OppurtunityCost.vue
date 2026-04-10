@@ -18,7 +18,7 @@
 
     <p class="op-cost__desc">
       지난달 지출이 가장 높았던 항목들이에요.<br />
-      이 돈들을 주식으로 환산하면 이만큼입니다.
+      지출했던 항목별 주식으로 환산하면 이만큼입니다.
     </p>
 
     <ul class="op-cost__list" v-if="report">
@@ -34,7 +34,7 @@
           :src="category.categoryImageUrl" 
           :alt="category.categoryName" 
           class="op-cost__category-icon"
-          style="width: 24px; height: 24px;" 
+          style="width: 36px; height: 36px;" 
         />
       </div>
       

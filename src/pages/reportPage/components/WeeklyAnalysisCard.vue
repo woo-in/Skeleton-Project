@@ -63,8 +63,8 @@ onMounted(() => {
             backgroundColor: 'rgba(75, 68, 51, 0.9)', // 툴팁 배경색 설정
             padding: 10,
             displayColors: false, // 툴팁 내 컬러 박스 숨김
-            titleFont: { size: 13, family: 'Pretendard Variable' },
-            bodyFont: { size: 14, family: 'Pretendard Variable', weight: 'bold' },
+            titleFont: { size: 13, family: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" },
+            bodyFont: { size: 14, family: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" },
             callbacks: {
               // 툴팁에 표시될 텍스트 커스텀 (예: 15 -> 15만 원)
               label: function(context) {
