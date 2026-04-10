@@ -198,6 +198,7 @@ export const useBudgetStore = defineStore('budget', {
         return {
           securedQuantity: stockQuantity,
           stockName: this.targetStockName || '주식',
+          stockTicker: this.targetStockTicker || this.targetStockName || '주식',
           savedAmount: Math.abs(diffFromAverage),
           isSaved: diffFromAverage >= 0,
           progressRate,
