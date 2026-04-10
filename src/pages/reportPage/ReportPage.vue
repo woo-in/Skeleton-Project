@@ -42,6 +42,7 @@ import axios from 'axios'
 
 // Vite proxy는 '/api' 경로만 프록시하므로 반드시 leading slash가 필요합니다.
 const BASEURI = '/api/reports'
+const STOCK_BASEURI = '/api/stocks'
 
 const reportData = ref(null)
 const isLoading = ref(true)
@@ -53,6 +54,38 @@ function getSessionUser() {
     return JSON.parse(localStorage.getItem('userSession') || 'null')
   } catch {
     return null
+  }
+}
+
+function getReportMonthTime(report) {
+  const targetMonth = report?.targetMonth
+  if (typeof targetMonth !== 'string') return 0
+
+  const monthDate = new Date(`${targetMonth}-01T00:00:00`)
+  return Number.isNaN(monthDate.getTime()) ? 0 : monthDate.getTime()
+}
+
+function selectLatestReport(reports) {
+  if (!Array.isArray(reports) || reports.length === 0) return null
+
+  return [...reports].sort((a, b) => getReportMonthTime(b) - getReportMonthTime(a))[0]
+}
+
+async function appendStockTicker(report) {
+  if (!report?.stockId) return report
+
+  try {
+    const response = await axios.get(`${STOCK_BASEURI}/${report.stockId}`)
+
+    return {
+      ...report,
+      stockTicker: response.data?.ticker ?? report.stockTicker ?? report.stockName,
+    }
+  } catch {
+    return {
+      ...report,
+      stockTicker: report.stockTicker ?? report.stockName,
+    }
   }
 }
 
@@ -71,7 +104,8 @@ onMounted(async () => {
       params: { memberId: currentUser.id },
     })
 
-    reportData.value = response.data?.[0] ?? null
+    const report = selectLatestReport(response.data)
+    reportData.value = await appendStockTicker(report)
     emptyMessage.value = `${currentUser.name ?? '사용자'}님의 리포트가 아직 없습니다.`
   } catch (error) {
     errorMessage.value = 'json-server 상태를 확인한 뒤 다시 시도해주세요.'

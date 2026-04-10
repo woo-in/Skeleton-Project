@@ -214,9 +214,21 @@ const registerUser = async () => {
     });
 
     if (response.ok) {
+      const createdUserData = await response.json();
+      const sessionData = {
+        userId: createdUserData.userId,
+        name: createdUserData.name,
+        monthlyBudget: createdUserData.monthlyBudget,
+        targetStockId: createdUserData.targetStockId,
+        targetQuantity: createdUserData.targetQuantity,
+        ageBand: createdUserData.ageBand,
+        id: createdUserData.id,
+      };
+
+      localStorage.setItem('userSession', JSON.stringify(sessionData));
+      router.push('/setup');
 
       // 성공 시 폼 초기화
-      router.push('/setup');
       userId.value = '';
       name.value = '';
       birthdate.value = '';

@@ -6,6 +6,7 @@ interface Expense {
   id: number
   amount: number
   category: string
+  categoryImageUrl?: string
   date: string
   time: string
   memo: string
@@ -18,6 +19,7 @@ interface Props {
   dailyReport: {
     securedQuantity: number
     stockName: string
+    stockTicker?: string
     savedAmount: number
     progressRate: number
     isSaved: boolean
@@ -46,6 +48,7 @@ const weatherLabel = computed(() => {
   if (weatherType.value === 'rainy') return '평균보다 많이 써 비오는 구름 상태'
   return '평균과 비슷해 기본 구름 상태'
 })
+const stockDisplayName = computed(() => props.dailyReport.stockTicker || props.dailyReport.stockName)
 
 const formattedDate = computed(() => {
   if (!props.selectedDate) return ''
@@ -53,7 +56,7 @@ const formattedDate = computed(() => {
   return `${y}년 ${m}월 ${d}일`
 })
 
-const getCategoryIcon = (category: string) => {
+const getCategoryIcon = (expense: Expense) => {
   const iconMap: Record<string, string> = {
     일반식사: '/images/categories/meal.png',
     '카페/음료': '/images/categories/cafe.png',
@@ -65,7 +68,7 @@ const getCategoryIcon = (category: string) => {
     '뷰티/자기관리': '/images/categories/beauty.png',
     '구독/디지털': '/images/categories/digital.png',
   }
-  return iconMap[category] || '/images/categories/shopping.png'
+  return expense.categoryImageUrl || iconMap[expense.category] || '/images/categories/shopping.png'
 }
 </script>
 
@@ -82,14 +85,14 @@ const getCategoryIcon = (category: string) => {
     <Transition name="slide-up">
       <div
         v-if="isOpen"
-        class="calendar-detail-sheet fixed bottom-0 left-1/2 z-[60] flex h-[85vh] w-full max-w-md flex-col overflow-y-auto rounded-t-[2.5rem] border-t border-outline-variant bg-surface-container-lowest shadow-[0_-12px_60px_rgba(45,41,38,0.15)]"
+        class="calendar-detail-sheet fixed bottom-0 left-1/2 z-[60] flex h-[85vh] flex-col overflow-y-auto rounded-t-[2.1rem] border-t border-outline-variant shadow-[0_-12px_60px_rgba(45,41,38,0.15)]"
       >
         <!-- 핸들 -->
-        <div class="w-full flex justify-center py-4 sticky top-0 bg-surface-container-lowest z-10">
-          <div class="w-10 h-1.5 bg-surface-container-highest rounded-full"></div>
+        <div class="calendar-detail-handle w-full flex justify-center py-4 sticky top-0 z-10">
+          <div class="calendar-detail-handle-bar"></div>
         </div>
 
-        <div class="px-6 pb-32">
+        <div class="calendar-detail-content px-5 pb-32">
           <!-- 헤더 -->
           <div class="flex justify-between items-start mb-6">
             <div>
@@ -113,7 +116,8 @@ const getCategoryIcon = (category: string) => {
           <!-- 주식 확보 카드 -->
           <div class="mb-6">
             <div
-              class="bg-surface-container-low border border-outline-variant p-6 rounded-[2.5rem] relative overflow-hidden"
+              class="daily-stock-card relative overflow-hidden"
+              :class="{ 'daily-stock-card--loss': !dailyReport.isSaved }"
             >
               <div
                 class="daily-weather absolute right-4 bottom-4 w-24 h-24 pointer-events-none"
@@ -149,7 +153,7 @@ const getCategoryIcon = (category: string) => {
                     }}
                   </p>
                   <p class="text-[32px] font-extrabold text-secondary font-headline leading-tight">
-                    {{ dailyReport.stockName }} {{ dailyReport.securedQuantity }}주
+                    {{ stockDisplayName }} {{ dailyReport.securedQuantity }}주
                   </p>
                   <p class="text-lg font-bold text-secondary font-headline">
                     {{ dailyReport.isSaved ? '확보했습니다' : '잃었습니다' }}
@@ -160,15 +164,10 @@ const getCategoryIcon = (category: string) => {
           </div>
 
           <!-- 총 지출 -->
-          <div
-            class="bg-surface border border-outline-variant/80 p-5 rounded-2xl mb-10 shadow-[0_10px_28px_rgba(45,41,38,0.06)]"
-          >
+          <div class="daily-total-card">
             <div class="flex items-center gap-4">
-              <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <!-- 🔥 수정된 부분 -->
-                <span class="category-image-mask">
-                  <img src="/images/action/money.png" class="category-image" />
-                </span>
+              <div class="daily-total-icon">
+                <img src="/images/action/money.png" alt="" class="daily-total-icon-image" />
               </div>
 
               <div class="flex-1 min-w-0">
@@ -201,41 +200,32 @@ const getCategoryIcon = (category: string) => {
           </div>
 
           <!-- 거래 내역 -->
-          <section>
-            <div class="flex items-center gap-2 mb-5">
-              <span class="category-image-mask category-image-mask--sm">
-                <img src="/images/action/list.png" class="category-image" />
-              </span>
-
-              <h4 class="text-[16px] font-extrabold">거래 내역</h4>
+          <section class="daily-history-section">
+            <div class="daily-history-heading">
+              <h4>거래 내역</h4>
             </div>
 
-            <div class="space-y-3">
-              <div
+            <p v-if="dayExpenses.length === 0" class="daily-history-empty">이 날의 소비 내역이 없어요</p>
+
+            <div v-else class="daily-history-list">
+              <article
                 v-for="exp in dayExpenses"
                 :key="exp.id"
-                class="flex items-center gap-4 p-4 bg-surface-container-low rounded-2xl"
+                class="daily-history-card"
               >
-                <div class="w-12 h-12 flex items-center justify-center">
-                  <span class="category-image-mask">
-                    <img :src="getCategoryIcon(exp.category)" class="category-image" />
-                  </span>
+                <div class="daily-history-icon">
+                  <img :src="getCategoryIcon(exp)" :alt="exp.category" class="daily-history-icon-image" />
                 </div>
 
-                <div class="flex-1">
-                  <div class="flex justify-between">
-                    <span class="font-bold">{{ exp.category }}</span>
-                    <span class="font-extrabold text-error">
-                      -₩{{ exp.amount.toLocaleString() }}
-                    </span>
-                  </div>
-
-                  <div class="flex justify-between text-sm">
-                    <span>{{ exp.memo }}</span>
-                    <span>{{ exp.time }}</span>
-                  </div>
+                <div class="daily-history-copy">
+                  <p class="daily-history-name">{{ exp.category }}</p>
+                  <p class="daily-history-meta">
+                    {{ [exp.memo, exp.time].filter(Boolean).join(' • ') }}
+                  </p>
                 </div>
-              </div>
+
+                <p class="daily-history-amount">-₩{{ exp.amount.toLocaleString() }}</p>
+              </article>
             </div>
           </section>
         </div>
@@ -246,7 +236,218 @@ const getCategoryIcon = (category: string) => {
 
 <style scoped>
 .calendar-detail-sheet {
+  width: min(100vw, 430px);
+  max-width: min(100vw, 430px);
+  box-sizing: border-box;
+  background: #f9f8f6;
   transform: translateX(-50%);
+}
+
+.calendar-detail-handle {
+  background: #f9f8f6;
+}
+
+.calendar-detail-handle-bar {
+  width: 2.5rem;
+  height: 0.375rem;
+  border-radius: 9999px;
+  background: #d8cec1;
+}
+
+.calendar-detail-content {
+  box-sizing: border-box;
+}
+
+.daily-stock-card {
+  padding: 1.5rem;
+  border: 1px solid #efe7dc;
+  border-radius: 1.6rem;
+  background: #fff4dd;
+  box-shadow: 0 0.8rem 1.8rem rgba(72, 56, 38, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.daily-stock-card--loss {
+  border-color: #e7e3de;
+  background: #f1f0ed;
+  box-shadow: 0 0.75rem 1.6rem rgba(72, 56, 38, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.66);
+}
+
+.daily-total-card {
+  margin-bottom: 2.5rem;
+  padding: 1.25rem;
+  border: 1px solid #efe7dc;
+  border-radius: 1.1rem;
+  background: #ffffff;
+  box-shadow: 0 0.8rem 1.8rem rgba(72, 56, 38, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.daily-total-icon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.daily-total-icon-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.daily-history-section {
+  width: 100%;
+}
+
+.daily-history-heading {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 1.2rem;
+  padding-left: 0.25rem;
+}
+
+.daily-history-heading h4 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #1d1814;
+}
+
+.daily-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.daily-history-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1rem;
+  border: 1px solid #efe7dc;
+  border-radius: 1.1rem;
+  background: #ffffff;
+  box-shadow: 0 0.8rem 1.8rem rgba(72, 56, 38, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.daily-history-icon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.daily-history-icon-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.daily-history-copy {
+  min-width: 0;
+}
+
+.daily-history-name,
+.daily-history-meta,
+.daily-history-amount {
+  margin: 0;
+}
+
+.daily-history-name {
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #1d1814;
+}
+
+.daily-history-meta {
+  margin-top: 0.25rem;
+  color: #aba29b;
+  font-size: 0.86rem;
+  line-height: 1.35;
+  letter-spacing: -0.03em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.daily-history-amount {
+  color: #191411;
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+.daily-history-empty {
+  margin: 0;
+  padding: 1.15rem;
+  border-radius: 1.1rem;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 0.8rem 1.8rem rgba(72, 56, 38, 0.07);
+  color: #8a8179;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  text-align: center;
+}
+
+.slide-up-enter-active {
+  transition:
+    opacity 0.24s ease,
+    transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.slide-up-leave-active {
+  transition:
+    opacity 0.18s ease,
+    transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(100%);
+}
+
+.slide-up-enter-to,
+.slide-up-leave-from {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.fade-enter-active {
+  transition: opacity 0.15s ease-out;
+}
+
+.fade-leave-active {
+  transition: opacity 0.12s ease-in;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
 }
 
 .honey-pot-mask {
@@ -397,27 +598,14 @@ const getCategoryIcon = (category: string) => {
   }
 }
 
-/* 아이콘 통일 핵심 */
-.category-image-mask {
-  width: 1.9rem;
-  height: 1.9rem;
-  border-radius: 9999px;
-  overflow: hidden;
-  background: rgba(255, 188, 80, 0.16);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+@media (max-width: 430px) {
+  .daily-stock-card {
+    border-radius: 1.35rem;
+    padding: 1.25rem;
+  }
 
-.category-image-mask--sm {
-  width: 1.4rem;
-  height: 1.4rem;
-}
-
-.category-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.1);
+  .daily-history-card {
+    gap: 0.85rem;
+  }
 }
 </style>

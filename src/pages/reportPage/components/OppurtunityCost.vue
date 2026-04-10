@@ -21,35 +21,40 @@
       지출했던 항목들을 주식으로 환산하면 이만큼입니다.
     </p>
 
-    <ul class="op-cost__list" v-if="report">
-      <li
-        v-for="category in report.topCategories"
-        :key="category.categoryId"
-        class="op-cost__card"
-        :class="category.rank === 1 ? 'op-cost__card--tall' : 'op-cost__card--short'"
-      >
-        <div class="op-cost__left">
-          <div class="op-cost__icon-wrap">
-            <img
-              :src="category.categoryImageUrl"
-              :alt="category.categoryName"
-              class="op-cost__category-icon"
-            />
+    <template v-if="report">
+      <ul class="op-cost__list">
+        <li
+          v-for="category in report.topCategories"
+          :key="category.categoryId"
+          class="op-cost__card"
+          :class="category.rank === 1 ? 'op-cost__card--tall' : 'op-cost__card--short'"
+        >
+          <div class="op-cost__left">
+            <div class="op-cost__icon-wrap">
+              <img
+                :src="category.categoryImageUrl"
+                :alt="category.categoryName"
+                class="op-cost__category-icon"
+              />
+            </div>
+
+            <div class="op-cost__text">
+              <span class="op-cost__name">{{ category.categoryName }}</span>
+              <span class="op-cost__sub">지난달 {{ category.amount.toLocaleString() }}원 지출</span>
+            </div>
           </div>
 
-          <div class="op-cost__text">
-            <span class="op-cost__name">{{ category.categoryName }}</span>
-            <span class="op-cost__sub">지난달 {{ category.amount.toLocaleString() }}원 지출</span>
+          <div class="op-cost__right" :class="{ 'op-cost__right--stack': category.rank === 1 }">
+            <span class="op-cost__shares">+{{ category.additionalQuantity }}주</span>
+
+            <span v-if="category.rank === 1" class="op-cost__badge">절약 집중 항목</span>
           </div>
-        </div>
-
-        <div class="op-cost__right" :class="{ 'op-cost__right--stack': category.rank === 1 }">
-          <span class="op-cost__shares">+{{ category.additionalQuantity }}주</span>
-
-          <span v-if="category.rank === 1" class="op-cost__badge">절약 집중 항목</span>
-        </div>
-      </li>
-    </ul>
+        </li>
+      </ul>
+      <p v-if="report.summaryComment" class="op-cost__summary">
+        {{ report.summaryComment }}
+      </p>
+    </template>
     <div v-else>데이터 로딩 중...</div>
   </section>
 </template>
@@ -249,5 +254,20 @@ defineProps({
   line-height: 15px;
   color: #ea580c;
   white-space: nowrap;
+}
+
+.op-cost__summary {
+  margin: 0;
+  padding: 15px 16px;
+  border-radius: 18px;
+  background-color: #fff7ed;
+  border: 1px solid #ffbc5033;
+  font-family: 'Pretendard Variable', Pretendard, Helvetica, system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.65;
+  letter-spacing: -0.2px;
+  color: #7a4f1b;
+  word-break: keep-all;
 }
 </style>

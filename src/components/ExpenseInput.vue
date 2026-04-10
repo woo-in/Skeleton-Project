@@ -586,9 +586,9 @@ const handleSave = () => {
   left: 50%;
   width: min(100vw, 430px);
   height: min(100vh, 932px);
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(44, 36, 28, 0.28);
   z-index: 80;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(3px);
   transform: translateX(-50%);
 }
 
@@ -599,12 +599,13 @@ const handleSave = () => {
   transform: translateX(-50%);
   width: min(100vw, 430px);
   z-index: 90;
-  background-color: #ffffff;
-  border-top-left-radius: 2rem;
-  border-top-right-radius: 2rem;
+  background-color: #f9f8f6;
+  border-top: 1px solid #efe7dc;
+  border-top-left-radius: 2.1rem;
+  border-top-right-radius: 2.1rem;
   box-shadow:
-    0 -10px 25px -5px rgba(0, 0, 0, 0.1),
-    0 -8px 10px -6px rgba(0, 0, 0, 0.1);
+    0 -1.1rem 2.6rem rgba(72, 56, 38, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68);
   display: flex;
   flex-direction: column;
   max-height: 90vh;
@@ -620,7 +621,7 @@ const handleSave = () => {
 .handle {
   width: 3rem;
   height: 0.375rem;
-  background-color: var(--color-surface-container-highest);
+  background-color: #d8cec1;
   border-radius: 9999px;
 }
 
@@ -629,51 +630,66 @@ const handleSave = () => {
    ========================================== */
 .sheet-content {
   flex: 1; /* 남은 공간을 채움 */
-  padding: 0 1.5rem 7rem 1.5rem;
   overflow-y: auto;
-  padding: 0 1.5rem 1.5rem 1.5rem;
+  padding: 0 1.2rem 1.5rem;
 }
 
 .sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 1rem;
-  text-align: center;
+  text-align: left;
   position: relative;
 }
 
 .sheet-title {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--color-secondary);
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #1d1814;
 }
 
 .close-button {
-  position: absolute;
-  right: 0;
-  top: 0;
-  padding: 0.25rem;
-  color: var(--color-on-surface-variant);
-  border-radius: 9999px;
-  transition: background-color 0.2s;
+  width: 2.55rem;
+  height: 2.55rem;
+  padding: 0;
+  color: #5b4939;
+  background: #ffffff;
+  border: 1px solid #efe7dc;
+  border-radius: 0.85rem;
+  box-shadow: 0 0.45rem 1rem rgba(72, 56, 38, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62);
+  transition:
+    transform 0.14s ease,
+    background-color 0.14s ease;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .close-button:hover {
-  background-color: var(--color-surface-container);
+  background-color: #fff4dd;
+}
+
+.close-button:active {
+  transform: scale(0.96);
 }
 
 .selected-date-chip {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 1.5rem;
-  padding: 0.5rem 0.875rem;
-  background-color: rgba(255, 188, 80, 0.16);
-  color: var(--color-secondary);
+  margin: 0 0 1.25rem;
+  padding: 0.5rem 0.9rem;
+  background-color: #fff4dd;
+  border: 1px solid #f3dfbd;
+  color: #5b4939;
   border-radius: 9999px;
   font-size: 0.8125rem;
   font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 /* ==========================================
@@ -681,15 +697,22 @@ const handleSave = () => {
    ========================================== */
 .amount-section {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.2rem;
+  padding: 1.35rem 1.25rem;
+  border: 1px solid #e7e3de;
+  border-radius: 1.35rem;
+  background: #f1f0ed;
+  box-shadow: 0 0.75rem 1.6rem rgba(72, 56, 38, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.66);
 }
 
 .amount-label {
   display: block;
   font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--color-on-surface-variant);
+  font-weight: 800;
+  color: #8a8179;
   margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
 }
 
 .amount-input-wrapper {
@@ -702,7 +725,7 @@ const handleSave = () => {
 .amount-input {
   font-size: 2.25rem;
   font-weight: 800;
-  color: var(--color-secondary);
+  color: #1d1814;
   background: transparent;
   border: none;
   text-align: center;
@@ -714,14 +737,14 @@ const handleSave = () => {
 .amount-currency {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-on-surface-variant);
+  color: #8a8179;
 }
 
 .amount-underline {
   margin-top: 1rem;
   width: 100%;
-  height: 0.25rem;
-  background-color: rgba(255, 188, 80, 0.2);
+  height: 0.2rem;
+  background-color: rgba(75, 68, 51, 0.16);
   border-radius: 9999px;
 }
 
@@ -749,14 +772,26 @@ const handleSave = () => {
   justify-content: space-between;
   min-width: 0;
   padding: 1rem;
-  background-color: var(--color-surface-container-low);
-  border-radius: 1rem;
-  transition: transform 0.1s;
+  background-color: #ffffff;
+  border: 1px solid #efe7dc;
+  border-radius: 1.1rem;
+  box-shadow: 0 0.8rem 1.8rem rgba(72, 56, 38, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  transition:
+    transform 0.14s ease,
+    background-color 0.14s ease,
+    border-color 0.14s ease;
 }
 
 .field-button:hover,
 .field-row:hover {
-  background-color: var(--color-surface-container-low);
+  background-color: #fffdf8;
+  border-color: #f3dfbd;
+}
+
+.field-button:active,
+.field-row:active {
+  transform: scale(0.99);
 }
 
 .field-row--picker {
@@ -776,16 +811,16 @@ const handleSave = () => {
 }
 
 .field-icon {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 0.75rem;
-  background-color: #ffffff;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #fff4dd;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-secondary);
   transition: transform 0.2s;
+  flex-shrink: 0;
 }
 
 .field-button:hover .field-icon,
@@ -795,7 +830,7 @@ const handleSave = () => {
 
 .field-label {
   font-weight: 700;
-  color: var(--color-secondary);
+  color: #1d1814;
 }
 
 .field-right {
@@ -805,12 +840,13 @@ const handleSave = () => {
   align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
-  color: var(--color-on-surface-variant);
+  color: #8a8179;
 }
 
 .field-value {
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
+  color: #5b4939;
 }
 
 .chevron {
@@ -827,11 +863,9 @@ const handleSave = () => {
   right: 0;
   margin-top: 0.5rem;
   background-color: #ffffff;
-  border-radius: 1rem;
-  box-shadow:
-    0 10px 25px -5px rgba(0, 0, 0, 0.1),
-    0 8px 10px -6px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--color-surface-container-highest);
+  border-radius: 1.1rem;
+  box-shadow: 0 1rem 2rem rgba(72, 56, 38, 0.1);
+  border: 1px solid #efe7dc;
   z-index: 20;
   overflow: hidden;
 }
@@ -850,31 +884,34 @@ const handleSave = () => {
   padding: 1rem 1.5rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--color-secondary);
+  color: #1d1814;
   transition: background-color 0.2s;
   text-align: left;
 }
 
 .dropdown-item:hover {
-  background-color: rgba(255, 188, 80, 0.1);
+  background-color: #fff4dd;
 }
 
 .dropdown-icon {
-  color: var(--color-on-surface-variant);
-  background-color: var(--color-surface-container-low);
-  padding: 0.5rem;
-  border-radius: 0.5rem;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #fff4dd;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .category-image-mask {
-  width: 1.9rem;
-  height: 1.9rem;
+  width: 100%;
+  height: 100%;
   border-radius: 9999px;
   overflow: hidden;
-  background: rgba(255, 188, 80, 0.16);
+  background: #fff4dd;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -882,23 +919,22 @@ const handleSave = () => {
 }
 
 .category-image-mask--sm {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 100%;
+  height: 100%;
 }
 
 .category-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.12);
 }
 
 .action-image-mask {
-  width: 1.9rem;
-  height: 1.9rem;
+  width: 100%;
+  height: 100%;
   border-radius: 9999px;
   overflow: hidden;
-  background: rgba(255, 188, 80, 0.16);
+  background: #fff4dd;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -909,16 +945,14 @@ const handleSave = () => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.08);
 }
 
 .picker-panel {
-  border: 1px solid rgba(209, 198, 184, 0.7);
+  border: 1px solid #efe7dc;
   background: #fffdf8;
-  border-radius: 1rem;
-  box-shadow:
-    0 14px 28px -18px rgba(42, 34, 24, 0.28),
-    0 8px 12px -10px rgba(42, 34, 24, 0.16);
+  border-radius: 1.1rem;
+  box-shadow: 0 0.8rem 1.8rem rgba(72, 56, 38, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
   padding: 0.9rem;
 }
 
@@ -932,7 +966,7 @@ const handleSave = () => {
 
 .picker-panel-title {
   margin: 0;
-  color: var(--color-secondary);
+  color: #1d1814;
   font-size: 0.95rem;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -945,15 +979,15 @@ const handleSave = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-secondary);
-  background: rgba(255, 188, 80, 0.14);
+  color: #5b4939;
+  background: #fff4dd;
   transition:
     transform 0.15s ease,
     background-color 0.15s ease;
 }
 
 .picker-nav-button:hover {
-  background: rgba(255, 188, 80, 0.22);
+  background: #ffedc7;
 }
 
 .picker-nav-button:active {
@@ -971,7 +1005,7 @@ const handleSave = () => {
   text-align: center;
   font-size: 0.68rem;
   font-weight: 700;
-  color: var(--color-on-surface-variant);
+  color: #b7b0aa;
 }
 
 .calendar-grid {
@@ -982,10 +1016,10 @@ const handleSave = () => {
 
 .calendar-day-button {
   aspect-ratio: 1;
-  border-radius: 0.9rem;
+  border-radius: 0.85rem;
   font-size: 0.86rem;
   font-weight: 700;
-  color: var(--color-secondary);
+  color: #30241a;
   background: transparent;
   transition:
     transform 0.15s ease,
@@ -994,16 +1028,18 @@ const handleSave = () => {
 }
 
 .calendar-day-button.is-muted {
-  color: rgba(112, 99, 84, 0.42);
+  color: #ded8d1;
 }
 
 .calendar-day-button.is-today {
-  box-shadow: inset 0 0 0 1px rgba(255, 188, 80, 0.5);
+  background: rgba(255, 191, 56, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 
 .calendar-day-button.is-selected {
-  background: var(--color-primary);
-  color: var(--color-secondary);
+  background: #ffbf38;
+  color: #30241a;
+  box-shadow: 0 0.45rem 0.9rem rgba(255, 191, 56, 0.28);
 }
 
 .calendar-day-button:active {
@@ -1016,12 +1052,13 @@ const handleSave = () => {
   justify-content: flex-end;
   max-width: min(100%, 9.5rem);
   min-width: 0;
-  background-color: #ffffff;
+  background-color: #fff4dd;
   padding: 0.5rem 1rem;
   border-radius: 0.75rem;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
+  color: #5b4939;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1046,14 +1083,14 @@ const handleSave = () => {
   margin: 0;
   font-size: 0.72rem;
   font-weight: 700;
-  color: var(--color-on-surface-variant);
+  color: #8a8179;
 }
 
 .time-wheel-value {
   margin: 0.25rem 0 0;
   font-size: 1.05rem;
   font-weight: 800;
-  color: var(--color-secondary);
+  color: #1d1814;
   letter-spacing: -0.03em;
   white-space: nowrap;
   overflow: hidden;
@@ -1065,8 +1102,8 @@ const handleSave = () => {
   height: 2rem;
   padding: 0 0.85rem;
   border-radius: 9999px;
-  background: rgba(255, 188, 80, 0.18);
-  color: var(--color-secondary);
+  background: #fff4dd;
+  color: #5b4939;
   font-size: 0.78rem;
   font-weight: 800;
   transition:
@@ -1089,7 +1126,7 @@ const handleSave = () => {
 .time-wheel-column {
   position: relative;
   border-radius: 1rem;
-  background: rgba(255, 188, 80, 0.08);
+  background: #fff4dd;
   padding: 0.65rem 0.55rem;
   min-width: 0;
   overflow: hidden;
@@ -1109,7 +1146,7 @@ const handleSave = () => {
   transform: translateY(-50%);
   border-radius: 0.9rem;
   background: rgba(255, 255, 255, 0.78);
-  border: 1px solid rgba(209, 198, 184, 0.55);
+  border: 1px solid #efe7dc;
   pointer-events: none;
 }
 
@@ -1119,7 +1156,7 @@ const handleSave = () => {
   padding-left: 0.35rem;
   font-size: 0.72rem;
   font-weight: 700;
-  color: var(--color-on-surface-variant);
+  color: #8a8179;
 }
 
 .time-wheel-list {
@@ -1162,7 +1199,7 @@ const handleSave = () => {
 }
 
 .wheel-option.is-selected {
-  color: var(--color-secondary);
+  color: #1d1814;
   font-size: 1.08rem;
   font-weight: 800;
 }
@@ -1182,7 +1219,12 @@ const handleSave = () => {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  padding-top: 0.5rem;
+  padding: 1rem;
+  border: 1px solid #efe7dc;
+  border-radius: 1.1rem;
+  background: #ffffff;
+  box-shadow: 0 0.8rem 1.8rem rgba(72, 56, 38, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 .memo-header {
@@ -1193,28 +1235,28 @@ const handleSave = () => {
 }
 
 .memo-icon {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 0.75rem;
-  background-color: #ffffff;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #fff4dd;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-secondary);
+  flex-shrink: 0;
 }
 
 .memo-input {
   width: 100%;
-  background-color: var(--color-surface-container-low);
-  border: none;
+  background-color: #fffdf8;
+  border: 1px solid #efe7dc;
   border-radius: 1rem;
   padding: 1.25rem;
   font-size: 0.875rem;
   font-weight: 500;
   min-height: 6.25rem;
   resize: none;
-  color: var(--color-secondary);
+  color: #1d1814;
   transition: all 0.2s;
   outline: none;
 }
@@ -1224,21 +1266,21 @@ const handleSave = () => {
 }
 
 .memo-input::placeholder {
-  color: rgba(74, 68, 63, 0.3);
+  color: #aba29b;
 }
 
 .notice-box {
-  margin-top: 2rem;
+  margin-top: 1.2rem;
   padding: 1rem;
-  background-color: rgba(255, 188, 80, 0.1);
-  border-radius: 0.75rem;
-  border: 1px solid rgba(255, 188, 80, 0.2);
+  background-color: #fff4dd;
+  border-radius: 1rem;
+  border: 1px solid #f3dfbd;
   display: flex;
   gap: 0.75rem;
 }
 
 .notice-icon {
-  color: var(--color-secondary);
+  color: #5b4939;
   flex-shrink: 0;
   display: flex;
   align-items: flex-start;
@@ -1246,12 +1288,13 @@ const handleSave = () => {
 
 .notice-text {
   font-size: 0.8125rem;
-  color: var(--color-on-surface-variant);
+  color: #7b736d;
   line-height: 1.6;
+  margin: 0;
 }
 
 .notice-highlight {
-  color: var(--color-secondary);
+  color: #5b4939;
   font-weight: 700;
 }
 
@@ -1263,8 +1306,9 @@ const handleSave = () => {
   bottom: 0; */
   left: 0;
   right: 0;
-  padding: 1.5rem;
-  background-color: rgba(255, 255, 255, 0.9);
+  padding: 1rem 1.2rem 1.35rem;
+  background-color: rgba(249, 248, 246, 0.92);
+  border-top: 1px solid #efe7dc;
   backdrop-filter: blur(12px);
 }
 
@@ -1279,15 +1323,20 @@ const handleSave = () => {
 .save-button {
   width: 100%;
   height: 3.5rem;
-  background-color: var(--color-primary);
-  color: var(--color-secondary);
-  border-radius: 0.5rem;
+  background-color: #5b4939;
+  color: #ffc341;
+  border-radius: 1.1rem;
   font-weight: 800;
   font-size: 1.125rem;
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  transition: transform 0.1s;
+  box-shadow: 0 0.9rem 1.8rem rgba(45, 35, 24, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transition:
+    transform 0.14s ease,
+    background-color 0.14s ease;
+}
+
+.save-button:hover {
+  background-color: #524131;
 }
 
 .save-button:active {

@@ -15,8 +15,8 @@ const props = withDefaults(
   },
 )
 
-const animatedDisplayValue = ref(props.displayValue)
-const animatedFillPercent = ref(props.fillPercentage)
+const animatedDisplayValue = ref(0)
+const animatedFillPercent = ref(0)
 
 // 중앙 숫자 애니메이션
 watch(
@@ -145,7 +145,7 @@ const fillHeight = computed(() => `${Math.min(Math.max(animatedFillPercent.value
       <!-- Guideline Exclamation Icon (Outside overflow-hidden to overlap border) -->
       <div class="absolute top-2 left-0 w-full h-full pointer-events-none z-30">
         <div
-          class="absolute left-[-32px] flex items-center justify-center w-7 h-7 bg-[#ff3b30] text-white font-black text-sm rounded-full border-[2.5px] border-white shadow-sm transition-all duration-500"
+          class="absolute left-[-32px] flex items-center justify-center w-7 h-7 bg-[#ff3b30] text-white font-black text-sm rounded-full border-[2.5px] border-white shadow-sm"
           :style="{ bottom: `calc(${guidelinePercentage}% - 14px)` }"
         >
           !
@@ -182,7 +182,7 @@ const fillHeight = computed(() => `${Math.min(Math.max(animatedFillPercent.value
 
         <!-- Guideline Dashed Line (z-5: Above honey, below text) -->
         <div
-          class="absolute left-0 w-full border-t-[3px] border-dashed border-[#ff3b30] transition-all duration-500 z-[5]"
+          class="absolute left-0 w-full border-t-[3px] border-dashed border-[#ff3b30] z-[5]"
           :style="{ bottom: `${guidelinePercentage}%` }"
         ></div>
 

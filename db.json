@@ -5,9 +5,9 @@
       "name": "진승환",
       "birthdate": "20020918",
       "password": "abcd1234!",
-      "monthlyBudget": 0,
-      "targetStockId": null,
-      "targetQuantity": 0,
+      "monthlyBudget": 1000000,
+      "targetStockId": 2,
+      "targetQuantity": 2,
       "ageBand": "TWENTIES",
       "id": 1
     },
@@ -446,6 +446,254 @@
       "memo": "피자",
       "spentAt": "2026-04-04T14:58:00",
       "id": 39
+    },
+    {
+      "memberId": 2,
+      "categoryId": 1,
+      "amount": 4000,
+      "memo": "학식",
+      "spentAt": "2026-04-10T15:27:00",
+      "id": 40
+    },
+    {
+      "memberId": 2,
+      "categoryId": 2,
+      "amount": 1500,
+      "memo": "컴포즈",
+      "spentAt": "2026-04-10T15:27:00",
+      "id": 41
+    },
+    {
+      "id": 42,
+      "memberId": 1,
+      "categoryId": 2,
+      "amount": 8500,
+      "memo": "출근길 라떼",
+      "spentAt": "2026-03-02T08:35:00"
+    },
+    {
+      "id": 43,
+      "memberId": 1,
+      "categoryId": 3,
+      "amount": 29000,
+      "memo": "야식 피자 배달",
+      "spentAt": "2026-03-02T22:40:00"
+    },
+    {
+      "id": 44,
+      "memberId": 1,
+      "categoryId": 4,
+      "amount": 45000,
+      "memo": "세일 알림 충동구매",
+      "spentAt": "2026-03-03T21:10:00"
+    },
+    {
+      "id": 45,
+      "memberId": 1,
+      "categoryId": 1,
+      "amount": 14000,
+      "memo": "점심 외식",
+      "spentAt": "2026-03-04T12:20:00"
+    },
+    {
+      "id": 46,
+      "memberId": 1,
+      "categoryId": 4,
+      "amount": 78000,
+      "memo": "새벽 한정판 후드티",
+      "spentAt": "2026-03-05T23:10:00"
+    },
+    {
+      "id": 47,
+      "memberId": 1,
+      "categoryId": 3,
+      "amount": 32000,
+      "memo": "퇴근 후 치킨",
+      "spentAt": "2026-03-06T20:30:00"
+    },
+    {
+      "id": 48,
+      "memberId": 1,
+      "categoryId": 5,
+      "amount": 44000,
+      "memo": "즉흥 방탈출",
+      "spentAt": "2026-03-07T15:00:00"
+    },
+    {
+      "id": 49,
+      "memberId": 1,
+      "categoryId": 2,
+      "amount": 12000,
+      "memo": "디저트 카페",
+      "spentAt": "2026-03-08T16:30:00"
+    },
+    {
+      "id": 50,
+      "memberId": 1,
+      "categoryId": 3,
+      "amount": 31000,
+      "memo": "마라탕 배달",
+      "spentAt": "2026-03-09T23:20:00"
+    },
+    {
+      "id": 51,
+      "memberId": 1,
+      "categoryId": 8,
+      "amount": 42000,
+      "memo": "헤어 시술 예약",
+      "spentAt": "2026-03-10T20:50:00"
+    },
+    {
+      "id": 52,
+      "memberId": 1,
+      "categoryId": 4,
+      "amount": 69000,
+      "memo": "라이브커머스 즉시 결제",
+      "spentAt": "2026-03-11T22:30:00"
+    },
+    {
+      "id": 53,
+      "memberId": 1,
+      "categoryId": 6,
+      "amount": 16000,
+      "memo": "편의점 야식 묶음",
+      "spentAt": "2026-03-12T01:15:00"
+    },
+    {
+      "id": 54,
+      "memberId": 1,
+      "categoryId": 3,
+      "amount": 38000,
+      "memo": "친구 따라 배달",
+      "spentAt": "2026-03-13T21:40:00"
+    },
+    {
+      "id": 55,
+      "memberId": 1,
+      "categoryId": 5,
+      "amount": 35000,
+      "memo": "주말 영화 굿즈",
+      "spentAt": "2026-03-14T14:20:00"
+    },
+    {
+      "id": 56,
+      "memberId": 1,
+      "categoryId": 9,
+      "amount": 19900,
+      "memo": "게임 패스 자동결제",
+      "spentAt": "2026-03-15T02:10:00"
+    },
+    {
+      "id": 57,
+      "memberId": 1,
+      "categoryId": 1,
+      "amount": 18000,
+      "memo": "혼밥 대신 프랜차이즈",
+      "spentAt": "2026-03-16T19:45:00"
+    },
+    {
+      "id": 58,
+      "memberId": 1,
+      "categoryId": 3,
+      "amount": 33000,
+      "memo": "늦은 밤 족발 배달",
+      "spentAt": "2026-03-18T23:40:00"
+    },
+    {
+      "id": 59,
+      "memberId": 1,
+      "categoryId": 4,
+      "amount": 77000,
+      "memo": "운동화 충동구매",
+      "spentAt": "2026-03-19T21:10:00"
+    },
+    {
+      "id": 60,
+      "memberId": 1,
+      "categoryId": 7,
+      "amount": 28000,
+      "memo": "심야 택시",
+      "spentAt": "2026-03-20T00:30:00"
+    },
+    {
+      "id": 61,
+      "memberId": 1,
+      "categoryId": 3,
+      "amount": 34000,
+      "memo": "주말 떡볶이 세트",
+      "spentAt": "2026-03-22T19:45:00"
+    },
+    {
+      "id": 62,
+      "memberId": 1,
+      "categoryId": 4,
+      "amount": 48000,
+      "memo": "추천템 바로구매",
+      "spentAt": "2026-03-24T22:00:00"
+    },
+    {
+      "id": 63,
+      "memberId": 1,
+      "categoryId": 2,
+      "amount": 10500,
+      "memo": "프라페와 케이크",
+      "spentAt": "2026-03-26T15:30:00"
+    },
+    {
+      "id": 64,
+      "memberId": 1,
+      "categoryId": 5,
+      "amount": 37000,
+      "memo": "즉흥 보드게임 모임",
+      "spentAt": "2026-03-28T17:50:00"
+    },
+    {
+      "id": 65,
+      "memberId": 1,
+      "categoryId": 3,
+      "amount": 20000,
+      "memo": "월말 야식",
+      "spentAt": "2026-03-31T23:10:00"
+    },
+    {
+      "id": 66,
+      "memberId": 1,
+      "categoryId": 3,
+      "amount": 36000,
+      "memo": "새달 첫 야식",
+      "spentAt": "2026-04-01T22:10:00"
+    },
+    {
+      "id": 67,
+      "memberId": 1,
+      "categoryId": 4,
+      "amount": 128000,
+      "memo": "한정판 운동화",
+      "spentAt": "2026-04-03T19:00:00"
+    },
+    {
+      "id": 68,
+      "memberId": 1,
+      "categoryId": 2,
+      "amount": 9500,
+      "memo": "디저트 카페",
+      "spentAt": "2026-04-05T16:20:00"
+    },
+    {
+      "id": 69,
+      "memberId": 1,
+      "categoryId": 5,
+      "amount": 62000,
+      "memo": "게임 아이템 결제",
+      "spentAt": "2026-04-07T23:05:00"
+    },
+    {
+      "id": 70,
+      "memberId": 1,
+      "categoryId": 3,
+      "amount": 28000,
+      "memo": "퇴근 후 치킨",
+      "spentAt": "2026-04-10T21:15:00"
     }
   ],
   "reports": [
@@ -522,6 +770,82 @@
           "categoryImageUrl": "/images/categories/delivery.png",
           "amount": 76000,
           "additionalQuantity": 1.73
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "memberId": 1,
+      "targetMonth": "2026-03",
+      "dailyExpenses": [
+        {
+          "day": "월",
+          "amount": 86500
+        },
+        {
+          "day": "화",
+          "amount": 155000
+        },
+        {
+          "day": "수",
+          "amount": 116000
+        },
+        {
+          "day": "목",
+          "amount": 181500
+        },
+        {
+          "day": "금",
+          "amount": 98000
+        },
+        {
+          "day": "토",
+          "amount": 116000
+        },
+        {
+          "day": "일",
+          "amount": 65900
+        }
+      ],
+      "memberName": "진승환",
+      "ageBand": "TWENTIES",
+      "stockId": 2,
+      "stockName": "삼성전자",
+      "stockPriceSnapshot": 210500,
+      "monthlyBudget": 1000000,
+      "monthlyExpenseTotal": 818900,
+      "savedAmount": 181100,
+      "securedQuantity": 0.86,
+      "targetQuantity": 2,
+      "progressRate": 43,
+      "peerPercentile": 18,
+      "successCount": 7,
+      "summaryComment": "3월에는 온라인 쇼핑과 배달, 즉흥 취미 결제가 반복되면서 삼성전자 2주 목표에 필요한 절약액을 채우지 못했어요.",
+      "opportunityMessage": "이번 달 아낀 금액으로 삼성전자 0.86주 확보에 그쳐 2주 목표에 도달하지 못했어요.",
+      "topCategories": [
+        {
+          "rank": 1,
+          "categoryId": 4,
+          "categoryName": "쇼핑",
+          "categoryImageUrl": "/images/categories/shopping.png",
+          "amount": 317000,
+          "additionalQuantity": 1.51
+        },
+        {
+          "rank": 2,
+          "categoryId": 3,
+          "categoryName": "배달/야식",
+          "categoryImageUrl": "/images/categories/delivery.png",
+          "amount": 217000,
+          "additionalQuantity": 1.03
+        },
+        {
+          "rank": 3,
+          "categoryId": 5,
+          "categoryName": "취미/여가",
+          "categoryImageUrl": "/images/categories/hobby.png",
+          "amount": 116000,
+          "additionalQuantity": 0.55
         }
       ]
     }

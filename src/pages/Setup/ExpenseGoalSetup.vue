@@ -34,6 +34,13 @@ const isStockListOpen = ref(false)
 const showErrors = ref(false)
 
 const popularStocks = computed(() => budgetStore.stockOptions)
+const monthlyBudgetAmount = computed(() => Number(lastMonthExpense.value) || 0)
+const targetQuantityAmount = computed(() => Number(targetQuantity.value) || 0)
+const isMonthlyBudgetValid = computed(() => monthlyBudgetAmount.value > 0)
+const isTargetQuantityValid = computed(() => targetQuantityAmount.value > 0)
+const isGoalSetupValid = computed(
+  () => isMonthlyBudgetValid.value && Boolean(selectedStock.value) && isTargetQuantityValid.value,
+)
 
 const getUserId = () => {
   const sessionStr = localStorage.getItem('userSession')
@@ -46,6 +53,25 @@ const getUserId = () => {
     }
   }
   return null
+}
+
+const syncGoalSetupSession = (member) => {
+  try {
+    const session = JSON.parse(localStorage.getItem('userSession') || 'null')
+    if (!session || String(session.id) !== String(member?.id)) return
+
+    localStorage.setItem(
+      'userSession',
+      JSON.stringify({
+        ...session,
+        monthlyBudget: member.monthlyBudget,
+        targetStockId: member.targetStockId,
+        targetQuantity: member.targetQuantity,
+      }),
+    )
+  } catch (error) {
+    console.error('Failed to sync user session goal setup:', error)
+  }
 }
 
 const userId = getUserId()
@@ -112,16 +138,18 @@ const goToSetting = () => {
 const handleStartSaving = async () => {
   showErrors.value = true
 
-  if (!lastMonthExpense.value || !selectedStock.value || !targetQuantity.value) {
+  if (!isGoalSetupValid.value) {
     return
   }
 
   try {
-    await budgetStore.updateGoalSetup({
-      monthlyBudget: Number(lastMonthExpense.value),
+    const member = await budgetStore.updateGoalSetup({
+      monthlyBudget: monthlyBudgetAmount.value,
       targetStockId: selectedStock.value.id,
-      targetQuantity: Number(targetQuantity.value),
+      targetQuantity: targetQuantityAmount.value,
     })
+
+    syncGoalSetupSession(member)
 
     alert('설정이 저장되었습니다!')
     router.push('/home')
@@ -178,12 +206,12 @@ const handleStartSaving = async () => {
           </div>
 
           <Motion
-            v-if="showErrors && !lastMonthExpense"
+            v-if="showErrors && !isMonthlyBudgetValid"
             :initial="{ opacity: 0, y: -10 }"
             :animate="{ opacity: 1, y: 0 }"
             class="text-red-500 text-sm font-bold px-1"
           >
-            생활비를 입력하세요.
+            생활비는 1원 이상 입력하세요.
           </Motion>
 
           <div class="flex items-start gap-2 px-1">
@@ -314,12 +342,12 @@ const handleStartSaving = async () => {
           </div>
 
           <Motion
-            v-if="showErrors && !targetQuantity"
+            v-if="showErrors && !isTargetQuantityValid"
             :initial="{ opacity: 0, y: -10 }"
             :animate="{ opacity: 1, y: 0 }"
             class="text-red-500 text-sm font-bold px-1"
           >
-            목표 수량을 입력하세요.
+            목표 수량은 0보다 크게 입력하세요.
           </Motion>
 
           <div class="flex items-start gap-2 px-1">
@@ -412,17 +440,20 @@ const handleStartSaving = async () => {
 
 <style scoped>
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: var(--scrollbar-size, 8px);
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--scrollbar-track, transparent);
+  border-radius: var(--scrollbar-radius, 999px);
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #d6d2ce;
-  border-radius: 10px;
+  background-color: var(--scrollbar-thumb, #d8c8ad);
+  border: var(--scrollbar-border, 2px solid transparent);
+  border-radius: var(--scrollbar-radius, 999px);
+  background-clip: padding-box;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #6d6864;
+  background-color: var(--scrollbar-thumb-hover, #c5ad86);
 }
 
 .start-button-area {

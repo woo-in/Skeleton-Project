@@ -25,7 +25,7 @@
             <div class="text-wrapper-4">아껴서</div>
           </div>
           <div class="heading-2">
-            <div class="text-wrapper-6">+{{ report.stockName }} {{ report.securedQuantity }}</div>
+            <div class="text-wrapper-6">+{{ stockLabel }} {{ report.securedQuantity }}</div>
             <div class="text-wrapper-7">주 확보</div>
           </div>
         </div>
@@ -36,7 +36,7 @@
                 <span class="img" aria-hidden="true">🎯</span>
               </div>
               <div class="container-8">
-                <div class="text-wrapper-8">{{ report.stockName }} {{ report.targetQuantity }}주 채우기 목표</div>
+                <div class="text-wrapper-8">{{ stockLabel }} {{ report.targetQuantity }}주 채우기 목표</div>
               </div>
             </div>
             <div class="container-7"><div class="text-wrapper-9">{{ report.progressRate }}%</div></div>
@@ -68,9 +68,10 @@ const isGoalAchieved = computed(() => {
   return props.report.securedQuantity >= props.report.targetQuantity || props.report.progressRate >= 100
 })
 
+const stockLabel = computed(() => props.report?.stockTicker ?? props.report?.stockName ?? '주식')
 const goalTitleLine1 = computed(() => '절약 목표를')
-const goalTitleLine2 = computed(() => (isGoalAchieved.value ? '달성했어요! 👏' : '미달성했어요 😢'))
-const goalStatusLabel = computed(() => (isGoalAchieved.value ? 'ACHIEVED' : 'IN PROGRESS'))
+const goalTitleLine2 = computed(() => (isGoalAchieved.value ? '달성했어요!👏' : '미달성했어요😢'))
+const goalStatusLabel = computed(() => (isGoalAchieved.value ? 'ACHIEVED' : 'FAILED'))
 
 onMounted(() => {
   setTimeout(() => {
