@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Plus } from 'lucide-vue-next'
+import { Cloud, CloudRain, Plus, Sun } from 'lucide-vue-next'
 
 interface Expense {
   id: number
@@ -116,12 +116,11 @@ const getCategoryIcon = (category: string) => {
               class="bg-surface-container-low border border-outline-variant p-6 rounded-[2.5rem] relative overflow-hidden"
             >
               <div
-                class="daily-weather absolute -right-1 bottom-1 w-36 h-36 pointer-events-none"
+                class="daily-weather absolute right-4 bottom-4 w-24 h-24 pointer-events-none"
                 :class="weatherClass"
                 role="img"
                 :aria-label="weatherLabel"
               >
-                <span class="daily-weather__sun" aria-hidden="true"></span>
                 <div
                   class="honey-pot-mask daily-weather__cloud relative w-full h-full bg-outline-variant overflow-hidden"
                 >
@@ -134,9 +133,15 @@ const getCategoryIcon = (category: string) => {
                     ></div>
                   </div>
                 </div>
-                <span class="daily-weather__drop daily-weather__drop--1" aria-hidden="true"></span>
-                <span class="daily-weather__drop daily-weather__drop--2" aria-hidden="true"></span>
-                <span class="daily-weather__drop daily-weather__drop--3" aria-hidden="true"></span>
+                <span
+                  class="daily-weather__badge"
+                  :class="`daily-weather__badge--${weatherType}`"
+                  aria-hidden="true"
+                >
+                  <Sun v-if="weatherType === 'sunny'" :size="34" :stroke-width="2.4" />
+                  <CloudRain v-else-if="weatherType === 'rainy'" :size="34" :stroke-width="2.4" />
+                  <Cloud v-else :size="34" :stroke-width="2.4" />
+                </span>
               </div>
 
               <div class="relative z-10">
@@ -238,50 +243,53 @@ const getCategoryIcon = (category: string) => {
 }
 
 .daily-weather {
-  opacity: 0.2;
+  opacity: 0.46;
   isolation: isolate;
   transition:
     opacity 180ms ease,
     transform 180ms ease;
 }
 
-.daily-weather__sun {
-  position: absolute;
-  top: 1.95rem;
-  right: 4.3rem;
-  width: 2.85rem;
-  height: 2.85rem;
-  border-radius: 9999px;
-  background: linear-gradient(145deg, #fff3a8 0%, #ffbc50 78%);
-  box-shadow:
-    0 0 0 0.42rem rgba(255, 188, 80, 0.16),
-    0 0.8rem 1.7rem rgba(255, 174, 54, 0.35);
-  opacity: 0;
-  transform: scale(0.78);
-  z-index: 1;
-  transition:
-    opacity 180ms ease,
-    transform 180ms ease;
-}
-
-.daily-weather__sun::before {
-  content: '';
-  position: absolute;
-  inset: -0.52rem;
-  border-radius: inherit;
-  border: 0.22rem solid rgba(255, 188, 80, 0.24);
-  box-shadow: 0 0 1.2rem rgba(255, 188, 80, 0.18);
-  opacity: 1;
-  z-index: -1;
-}
-
 .daily-weather__cloud {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 1;
   transition:
     background-color 180ms ease,
     transform 180ms ease;
+}
+
+.daily-weather__badge {
+  position: absolute;
+  top: 0.1rem;
+  right: 0.1rem;
+  display: grid;
+  place-items: center;
+  width: 2.65rem;
+  height: 2.65rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow:
+    0 0.55rem 1rem rgba(72, 56, 38, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  z-index: 3;
+  transition:
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.daily-weather__badge--sunny {
+  color: #d98a12;
+  background: rgba(255, 244, 201, 0.92);
+}
+
+.daily-weather__badge--rainy {
+  color: #4f79aa;
+  background: rgba(229, 239, 249, 0.92);
+}
+
+.daily-weather__badge--neutral {
+  color: #7a838d;
 }
 
 .daily-weather__fill,
@@ -289,60 +297,26 @@ const getCategoryIcon = (category: string) => {
   transition: background-color 180ms ease;
 }
 
-.daily-weather__drop {
-  position: absolute;
-  bottom: 1rem;
-  width: 0.68rem;
-  height: 1.05rem;
-  border-radius: 9999px 9999px 9999px 0.18rem;
-  background: linear-gradient(145deg, #a7cff6 0%, #5f91c9 78%);
-  box-shadow:
-    0 0 0 0.24rem rgba(95, 145, 201, 0.12),
-    0 0.55rem 1rem rgba(95, 145, 201, 0.24);
-  opacity: 0;
-  transform: rotate(38deg) translateY(-0.2rem);
-  z-index: 3;
-  transition: opacity 180ms ease;
-}
-
-.daily-weather__drop--1 {
-  right: 2.65rem;
-}
-
-.daily-weather__drop--2 {
-  right: 4.05rem;
-  bottom: 0.55rem;
-  width: 0.72rem;
-  height: 1.16rem;
-}
-
-.daily-weather__drop--3 {
-  right: 5.55rem;
-}
-
 .daily-weather--sunny {
-  opacity: 0.64;
-  transform: translate(-0.45rem, -0.35rem);
-}
-
-.daily-weather--sunny .daily-weather__sun {
-  opacity: 1;
-  transform: scale(1);
+  opacity: 0.72;
 }
 
 .daily-weather--sunny .daily-weather__cloud {
   background-color: #ffe0a0;
-  transform: translate(0.72rem, 1.35rem) scale(0.82);
+  transform: translate(0.25rem, 0.55rem) scale(0.82);
+}
+
+.daily-weather--sunny .daily-weather__badge {
+  transform: translate(-0.15rem, -0.1rem);
 }
 
 .daily-weather--rainy {
-  opacity: 0.58;
-  transform: translate(-0.3rem, -0.2rem);
+  opacity: 0.68;
 }
 
 .daily-weather--rainy .daily-weather__cloud {
   background-color: #8794a1;
-  transform: translate(0.35rem, 0.25rem) scale(0.9);
+  transform: translate(0.1rem, 0.25rem) scale(0.86);
 }
 
 .daily-weather--rainy .daily-weather__fill,
@@ -350,28 +324,8 @@ const getCategoryIcon = (category: string) => {
   background-color: #5f7286;
 }
 
-.daily-weather--rainy .daily-weather__drop {
-  opacity: 1;
-  animation: weather-rain-fall 1.15s ease-in-out infinite;
-}
-
-.daily-weather--rainy .daily-weather__drop--2 {
-  animation-delay: 0.18s;
-}
-
-.daily-weather--rainy .daily-weather__drop--3 {
-  animation-delay: 0.34s;
-}
-
-@keyframes weather-rain-fall {
-  0%,
-  100% {
-    transform: rotate(38deg) translateY(-0.25rem);
-  }
-
-  50% {
-    transform: rotate(38deg) translateY(0.36rem);
-  }
+.daily-weather--neutral .daily-weather__cloud {
+  transform: scale(0.88);
 }
 
 /* 아이콘 통일 핵심 */

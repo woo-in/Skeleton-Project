@@ -76,8 +76,7 @@ const todayExpenseTotal = computed(() =>
 )
 const todayExpenseStockQuantity = computed(() => {
   if (!targetStockPrice.value) return '0.00'
-  const diffFromAverage = budgetStore.dailyAverage - todayExpenseTotal.value
-  return (diffFromAverage / targetStockPrice.value).toFixed(2)
+  return (todayExpenseTotal.value / targetStockPrice.value).toFixed(2)
 })
 const recentItems = computed(() =>
   budgetStore.recentExpenses.slice(0, visibleHistoryCount.value).map((expense) => ({
@@ -252,7 +251,7 @@ async function handleExpenseSave(payload) {
             {{ targetStockTicker || '주식' }}
           </div>
           <div class="stock-copy">
-            <p class="stock-label">일평균 대비 오늘의 주식 환산</p>
+            <p class="stock-label">오늘 지출 주식 환산</p>
             <p class="stock-value">
               {{ targetStockName || '주식' }}
               {{ todayExpenseStockQuantity }}주
