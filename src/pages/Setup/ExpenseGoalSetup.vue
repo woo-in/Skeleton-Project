@@ -13,9 +13,10 @@ import {
   Coins,
 } from 'lucide-vue-next'
 import { Motion } from '@motionone/vue'
+import { useRouter } from 'vue-router'
 
 const lastMonthExpense = ref('')
-
+const router = useRouter()
 const onExpenseInput = (e) => {
   const value = e.target.value.replace(/[^0-9]/g, '')
   lastMonthExpense.value = value
@@ -51,26 +52,46 @@ const getUserId = () => {
   return null
 }
 
-const userId = getUserId()
+const userId = getUserId() || 'testUser' // Hardcoded for testing
 
 // Load data on mount
-onMounted(() => {
+onMounted(async () => {
   if (userId) {
-    const savedData = localStorage.getItem(`user_setup_${userId}`)
-    if (savedData) {
-      try {
-        const data = JSON.parse(savedData)
-        lastMonthExpense.value = data.lastMonthExpense || ''
-        targetQuantity.value = data.targetQuantity || '500'
-        if (data.selectedStockTicker) {
-          const stock = popularStocks.find((s) => s.ticker === data.selectedStockTicker)
+    try {
+      // Fetch user data from json-server
+      const response = await fetch(`/members/${userId}`)
+      if (response.ok) {
+        const data = await response.json()
+        lastMonthExpense.value = data.monthlyBudget ? data.monthlyBudget.toString() : ''
+        targetQuantity.value = data.targetQuantity ? data.targetQuantity.toString() : ''
+        if (data.targetStockId) {
+          const stock = popularStocks.find((s) => s.ticker === data.targetStockId)
           if (stock) {
             selectedStock.value = stock
             targetStock.value = stock.name
           }
         }
-      } catch (e) {
-        console.error('Failed to parse saved data', e)
+      }
+    } catch (e) {
+      console.error('Failed to fetch user data from server', e)
+
+      // Fallback to localStorage if server fails
+      const savedData = localStorage.getItem(`user_setup_${userId}`)
+      if (savedData) {
+        try {
+          const data = JSON.parse(savedData)
+          lastMonthExpense.value = data.lastMonthExpense || ''
+          targetQuantity.value = data.targetQuantity || ''
+          if (data.selectedStockTicker) {
+            const stock = popularStocks.find((s) => s.ticker === data.selectedStockTicker)
+            if (stock) {
+              selectedStock.value = stock
+              targetStock.value = stock.name
+            }
+          }
+        } catch (err) {
+          console.error('Failed to parse saved data', err)
+        }
       }
     }
   }
@@ -116,24 +137,52 @@ const setTargetStock = (stock) => {
   isStockListOpen.value = false
 }
 
-const handleStartSaving = () => {
+const handleStartSaving = async () => {
   showErrors.value = true
 
   if (!lastMonthExpense.value || !selectedStock.value || !targetQuantity.value) {
     return
   }
 
+  /*
   if (!userId) {
     alert('로그인이 필요합니다.')
     return
   }
-  const dataToSave = {
-    lastMonthExpense: lastMonthExpense.value,
-    targetQuantity: targetQuantity.value,
-    selectedStockTicker: selectedStock.value?.ticker,
+  */
+
+  try {
+    // 1. Save to json-server
+    const response = await fetch(`/members/${userId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        monthlyBudget: parseInt(lastMonthExpense.value),
+        targetStockId: selectedStock.value.ticker,
+        targetQuantity: parseFloat(targetQuantity.value),
+      }),
+    })
+
+    if (response.ok) {
+      // 2. Also save to localStorage as backup
+      const dataToSave = {
+        lastMonthExpense: lastMonthExpense.value,
+        targetQuantity: targetQuantity.value,
+        selectedStockTicker: selectedStock.value?.ticker,
+      }
+      localStorage.setItem(`user_setup_${userId}`, JSON.stringify(dataToSave))
+
+      alert('설정이 저장되었습니다!')
+      router.push('/home')
+    } else {
+      alert('설정 저장 중 오류가 발생했습니다.')
+    }
+  } catch (error) {
+    console.error('Failed to save settings to server:', error)
+    alert('서버와 통신하는 중 문제가 발생했습니다. json-server가 켜져 있는지 확인해주세요.')
   }
-  localStorage.setItem(`user_setup_${userId}`, JSON.stringify(dataToSave))
-  alert('설정이 저장되었습니다!')
 }
 </script>
 
@@ -153,8 +202,7 @@ const handleStartSaving = () => {
       <!-- Hero Section -->
       <Motion :initial="{ opacity: 0, y: 20 }" :animate="{ opacity: 1, y: 0 }" class="space-y-3">
         <h1 class="text-[2.25rem] font-extrabold leading-tight tracking-tight text-[#2D2926]">
-          낭비왕인 당신!! <br />
-          정보를 입력하세요
+          당신의 정보를 입력하세요
         </h1>
         <p class="text-[#6D6864] text-lg font-medium">
           아낀 돈이 어떤 주식으로 바뀌는지 확인해보세요
