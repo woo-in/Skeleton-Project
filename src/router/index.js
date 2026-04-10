@@ -25,7 +25,7 @@ const router = createRouter({
       path: '/home',
       name: 'home',
       component: () => import('@/pages/homePage/HomePage.vue'),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, showTopBar: true, showBottomNav: true },
     },
 
     {
@@ -46,7 +46,7 @@ const router = createRouter({
       path: '/setting',
       name: 'setting',
       component: () => import('@/pages/settingPage/SettingPage.vue'),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, showTopBar: true, showBottomNav: true },
     },
     {
       path: '/setup',
@@ -57,6 +57,7 @@ const router = createRouter({
       path: '/report',
       name: 'report',
       component: () => import('@/pages/reportPage/ReportPage.vue'),
+      meta: { showTopBar: true, showBottomNav: true },
     }
   ],
 })
