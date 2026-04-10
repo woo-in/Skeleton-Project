@@ -59,7 +59,6 @@
 <script setup>
 import {ref, onMounted} from 'vue';
 
-
 const props = defineProps({
   report: Object
 });
@@ -76,8 +75,14 @@ onMounted(() => {
 
 </script>
 
-
 <style scoped>
+/* 통일된 폰트 적용: Pretendard를 최우선으로 하고, 
+  애플 기본 고딕(Apple SD Gothic Neo)과 안드로이드/일반 기본 고딕(Noto Sans KR)을 폴백으로 설정합니다.
+*/
+.hero-goal-section * {
+  font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+}
+
 .hero-goal-section {
   display: flex;
   flex-direction: column;
@@ -151,10 +156,8 @@ onMounted(() => {
   position: relative;
   display: flex;
   align-items: center;
-  
   margin-top: -1.00px;
-  font-family: "Pretendard Variable-Regular", Helvetica;
-  font-weight: 400;
+  font-weight: 500; /* 약간 도톰하게 변경 */
   color: #4b4433;
   font-size: 14px;
   letter-spacing: 0;
@@ -178,8 +181,7 @@ onMounted(() => {
   width: 191.17px;
   height: 64px;
   margin-top: -1.00px;
-  font-family: "Pretendard Variable-Regular", Helvetica;
-  font-weight: 400;
+  font-weight: 700; /* 제목 굵기 강조 */
   color: #4b4433;
   font-size: 24px;
   letter-spacing: -0.60px;
@@ -207,8 +209,7 @@ onMounted(() => {
   align-items: center;
   width: 57.91px;
   height: 15px;
-  font-family: "Pretendard Variable-Regular", Helvetica;
-  font-weight: 400;
+  font-weight: 700;
   color: #4b4433;
   font-size: 10px;
   letter-spacing: 1.00px;
@@ -244,11 +245,10 @@ onMounted(() => {
   width: 39.81px;
   height: 20px;
   margin-top: -1.00px;
-  font-family: "Pretendard Variable-Regular", Helvetica;
-  font-weight: 400;
+  font-weight: 500;
   color: #4b4433;
   font-size: 14px;
-  letter-spacing: 0;
+  letter-spacing: -0.3px;
   line-height: 20px;
   white-space: nowrap;
 }
@@ -270,8 +270,8 @@ onMounted(() => {
   height: 20px;
   display: flex;
   align-items: center;
-  font-family: "Pretendard Variable-Regular", Helvetica;
-  font-weight: 400;
+  justify-content: center; /* 가운데 정렬 추가 */
+  font-weight: 700; /* 금액 강조 */
   color: #4b4433;
   font-size: 14px;
   letter-spacing: 0;
@@ -281,15 +281,13 @@ onMounted(() => {
 
 .hero-goal-section .heading-2 {
   display: flex;
-  align-items: baseline; /* 큰 글자와 작은 글자의 아래쪽 선을 딱 맞춰줍니다 */
-  gap: 8px; /* 🚨 두 글자 사이의 간격입니다. 너무 붙어있으면 숫자를 늘리세요! */
+  align-items: baseline;
+  gap: 6px;
   width: 100%;
 }
 
 .hero-goal-section .text-wrapper-6 {
-  
-  font-family: "Manrope-ExtraBold", Helvetica;
-  font-weight: 800;
+  font-weight: 800; /* 핵심 수치 강조 */
   font-size: 36px;
   letter-spacing: -0.90px;
   line-height: 45px;
@@ -300,15 +298,13 @@ onMounted(() => {
 }
 
 .hero-goal-section .text-wrapper-7 {
-  
   display: flex;
   align-items: center;
   opacity: 0.8;
-  font-family: "WenQuanYi Zen Hei-Medium", Helvetica;
-  font-weight: 500;
+  font-weight: 600; /* 기존 중국어 폰트 제거 및 굵기 조정 */
   color: #4b4433;
   font-size: 20px;
-  letter-spacing: -0.90px;
+  letter-spacing: -0.50px;
   line-height: 28px;
   white-space: nowrap;
 }
@@ -381,13 +377,12 @@ onMounted(() => {
 
 .hero-goal-section .text-wrapper-8 {
   position: relative;
-  width: 95.5px;
+  width: max-content; /* 글자 잘림 방지 */
   height: 16px;
   margin-top: -1.00px;
-  font-family: "Pretendard Variable-Regular", Helvetica;
-  font-weight: 400;
-  font-size: 12px;
-  letter-spacing: -0.60px;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: -0.40px;
   line-height: 16px;
   display: flex;
   align-items: center;
@@ -399,11 +394,9 @@ onMounted(() => {
   position: relative;
   display: flex;
   align-items: center;
-  width: 38.3px;
   height: 28px;
   margin-top: -1.00px;
-  font-family: "Manrope-ExtraBold", Helvetica;
-  font-weight: 800;
+  font-weight: 700;
   color: #4b4433;
   font-size: 18px;
   letter-spacing: 0;
@@ -423,12 +416,12 @@ onMounted(() => {
 
 .hero-goal-section .background-shadow {
   position: relative;
-  
   height: calc(100% - 1px);
   top: 1px;
   background-color: #4b4433;
   border-radius: 9999px;
   box-shadow: 0px 0px 8px #4b443333;
+  transition: width 1s cubic-bezier(0.25, 0.8, 0.25, 1); /* 애니메이션 부드럽게 추가 */
 }
 
 .hero-goal-section .container-9 {
@@ -447,18 +440,15 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 196.47px;
   height: 17px;
   margin-top: -1.00px;
-  font-family: "Pretendard Variable-Regular", Helvetica;
-  font-weight: 400;
+  font-weight: 500;
   color: #4b4433;
-  font-size: 11px;
+  font-size: 12px;
   text-align: center;
-  letter-spacing: 0;
+  letter-spacing: -0.3px;
   line-height: 16.5px;
   white-space: nowrap;
 }
-
 </style>
 
