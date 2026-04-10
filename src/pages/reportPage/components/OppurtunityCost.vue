@@ -18,7 +18,7 @@
 
     <p class="op-cost__desc">
       지난달 지출이 가장 높았던 항목들이에요.<br />
-      지출했던 항목별 주식으로 환산하면 이만큼입니다.
+      지출했던 항목들을 주식으로 환산하면 이만큼입니다.
     </p>
 
     <ul class="op-cost__list" v-if="report">
@@ -34,7 +34,6 @@
           :src="category.categoryImageUrl" 
           :alt="category.categoryName" 
           class="op-cost__category-icon"
-          style="width: 36px; height: 36px;" 
         />
       </div>
       
@@ -163,13 +162,14 @@ defineProps({
 }
 
 .op-cost__icon-wrap {
-  width: 48px;
-  height: 48px;
-  border-radius: 16px;
+  width: 56px; /* 기존 48px에서 크기 증가 */
+  height: 56px; /* 기존 48px에서 크기 증가 */
+  border-radius: 50%; /* 16px에서 50%로 변경하여 완전한 원형으로 만듦 */
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  overflow: hidden; /* 내부 이미지가 동그라미 밖으로 삐져나오지 않도록 방지 */
 }
 
 .op-cost__icon-wrap--delivery {
@@ -185,8 +185,9 @@ defineProps({
 }
 
 .op-cost__category-icon {
-  width: 24px;
-  height: 24px;
+  width: 100%; /* 동그라미 영역을 꽉 채우도록 변경 */
+  height: 100%;
+  object-fit: cover; /* 이미지가 찌그러지지 않고 꽉 차게 렌더링 */
   display: block;
 }
 
