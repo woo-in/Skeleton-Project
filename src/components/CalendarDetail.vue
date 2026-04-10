@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Cloud, CloudRain, Plus, Sun } from 'lucide-vue-next'
+import { Plus } from 'lucide-vue-next'
 
 interface Expense {
   id: number
@@ -121,6 +121,7 @@ const getCategoryIcon = (category: string) => {
                 role="img"
                 :aria-label="weatherLabel"
               >
+                <span class="daily-weather__sun" aria-hidden="true"></span>
                 <div
                   class="honey-pot-mask daily-weather__cloud relative w-full h-full bg-outline-variant overflow-hidden"
                 >
@@ -133,15 +134,9 @@ const getCategoryIcon = (category: string) => {
                     ></div>
                   </div>
                 </div>
-                <span
-                  class="daily-weather__badge"
-                  :class="`daily-weather__badge--${weatherType}`"
-                  aria-hidden="true"
-                >
-                  <Sun v-if="weatherType === 'sunny'" :size="34" :stroke-width="2.4" />
-                  <CloudRain v-else-if="weatherType === 'rainy'" :size="34" :stroke-width="2.4" />
-                  <Cloud v-else :size="34" :stroke-width="2.4" />
-                </span>
+                <span class="daily-weather__drop daily-weather__drop--1" aria-hidden="true"></span>
+                <span class="daily-weather__drop daily-weather__drop--2" aria-hidden="true"></span>
+                <span class="daily-weather__drop daily-weather__drop--3" aria-hidden="true"></span>
               </div>
 
               <div class="relative z-10">
@@ -165,7 +160,9 @@ const getCategoryIcon = (category: string) => {
           </div>
 
           <!-- 총 지출 -->
-          <div class="bg-surface p-5 rounded-2xl mb-10">
+          <div
+            class="bg-surface border border-outline-variant/80 p-5 rounded-2xl mb-10 shadow-[0_10px_28px_rgba(45,41,38,0.06)]"
+          >
             <div class="flex items-center gap-4">
               <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                 <!-- 🔥 수정된 부분 -->
@@ -174,25 +171,31 @@ const getCategoryIcon = (category: string) => {
                 </span>
               </div>
 
-              <div class="flex-1">
-                <p class="text-xs font-bold mb-1">오늘의 총 지출</p>
-                <p class="text-2xl font-extrabold">{{ totalAmount.toLocaleString() }}원</p>
-
-                <p v-if="dailyReport.isSaved" class="text-xs mt-2">
-                  평균보다
-                  <span class="font-bold text-secondary">
-                    {{ dailyReport.savedAmount.toLocaleString() }}원
-                  </span>
-                  더 아꼈어요!
+              <div class="flex-1 min-w-0">
+                <p class="text-xs font-bold text-on-surface-variant mb-0.5 font-label">
+                  오늘의 총 지출
+                </p>
+                <p class="text-2xl font-extrabold text-on-surface font-headline leading-none">
+                  {{ totalAmount.toLocaleString() }}원
                 </p>
 
-                <p v-else class="text-xs mt-2">
-                  평균보다
-                  <span class="font-bold text-error">
-                    {{ dailyReport.savedAmount.toLocaleString() }}원
-                  </span>
-                  더 썼어요 😢
-                </p>
+                <div class="mt-2.5 pt-2.5 border-t border-outline-variant/40">
+                  <p v-if="dailyReport.isSaved" class="text-xs font-semibold text-on-surface-variant">
+                    평균보다
+                    <span class="font-bold text-secondary">
+                      {{ dailyReport.savedAmount.toLocaleString() }}원
+                    </span>
+                    더 아꼈어요!
+                  </p>
+
+                  <p v-else class="text-xs font-semibold text-on-surface-variant">
+                    평균보다
+                    <span class="font-bold text-error">
+                      {{ dailyReport.savedAmount.toLocaleString() }}원
+                    </span>
+                    더 썼어요 😢
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -246,54 +249,60 @@ const getCategoryIcon = (category: string) => {
   transform: translateX(-50%);
 }
 
+.honey-pot-mask {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C8.69 2 6 4.69 6 8v2c-2.21 0-4 1.79-4 4s1.79 4 4 4h12c2.21 0 4-1.79 4-4s-1.79-4-4-4V8c0-3.31-2.69-6-6-6z'/%3E%3C/svg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C8.69 2 6 4.69 6 8v2c-2.21 0-4 1.79-4 4s1.79 4 4 4h12c2.21 0 4-1.79 4-4s-1.79-4-4-4V8c0-3.31-2.69-6-6-6z'/%3E%3C/svg%3E");
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-position: center;
+  -webkit-mask-position: center;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+}
+
 .daily-weather {
-  opacity: 0.46;
+  opacity: 0.44;
   isolation: isolate;
   transition:
     opacity 180ms ease,
     transform 180ms ease;
 }
 
+.daily-weather__sun {
+  position: absolute;
+  top: 0.25rem;
+  right: 3.35rem;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 9999px;
+  background: linear-gradient(145deg, #fff3a8 0%, #ffbc50 78%);
+  box-shadow:
+    0 0 0 0.36rem rgba(255, 188, 80, 0.16),
+    0 0.65rem 1.4rem rgba(255, 174, 54, 0.34);
+  opacity: 0;
+  z-index: 1;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.daily-weather__sun::before {
+  content: '';
+  position: absolute;
+  inset: -0.48rem;
+  border-radius: inherit;
+  border: 0.2rem solid rgba(255, 188, 80, 0.24);
+  box-shadow: 0 0 1rem rgba(255, 188, 80, 0.18);
+  z-index: -1;
+}
+
 .daily-weather__cloud {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 2;
   transition:
     background-color 180ms ease,
     transform 180ms ease;
-}
-
-.daily-weather__badge {
-  position: absolute;
-  top: 0.1rem;
-  right: 0.1rem;
-  display: grid;
-  place-items: center;
-  width: 2.65rem;
-  height: 2.65rem;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.86);
-  box-shadow:
-    0 0.55rem 1rem rgba(72, 56, 38, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.72);
-  z-index: 3;
-  transition:
-    color 180ms ease,
-    transform 180ms ease;
-}
-
-.daily-weather__badge--sunny {
-  color: #d98a12;
-  background: rgba(255, 244, 201, 0.92);
-}
-
-.daily-weather__badge--rainy {
-  color: #4f79aa;
-  background: rgba(229, 239, 249, 0.92);
-}
-
-.daily-weather__badge--neutral {
-  color: #7a838d;
 }
 
 .daily-weather__fill,
@@ -301,17 +310,49 @@ const getCategoryIcon = (category: string) => {
   transition: background-color 180ms ease;
 }
 
+.daily-weather__drop {
+  position: absolute;
+  bottom: 0.55rem;
+  width: 0.56rem;
+  height: 0.88rem;
+  border-radius: 9999px 9999px 9999px 0.18rem;
+  background: linear-gradient(145deg, #a7cff6 0%, #5f91c9 78%);
+  box-shadow:
+    0 0 0 0.22rem rgba(95, 145, 201, 0.12),
+    0 0.5rem 0.9rem rgba(95, 145, 201, 0.22);
+  opacity: 0;
+  transform: rotate(38deg) translateY(-0.2rem);
+  z-index: 3;
+  transition: opacity 180ms ease;
+}
+
+.daily-weather__drop--1 {
+  right: 1.65rem;
+}
+
+.daily-weather__drop--2 {
+  right: 2.8rem;
+  bottom: 0.2rem;
+  width: 0.62rem;
+  height: 1rem;
+}
+
+.daily-weather__drop--3 {
+  right: 4.05rem;
+}
+
 .daily-weather--sunny {
   opacity: 0.72;
 }
 
-.daily-weather--sunny .daily-weather__cloud {
-  background-color: #ffe0a0;
-  transform: translate(0.25rem, 0.55rem) scale(0.82);
+.daily-weather--sunny .daily-weather__sun {
+  opacity: 1;
+  transform: scale(1);
 }
 
-.daily-weather--sunny .daily-weather__badge {
-  transform: translate(-0.15rem, -0.1rem);
+.daily-weather--sunny .daily-weather__cloud {
+  background-color: #ffe0a0;
+  transform: translate(0.25rem, 0.1rem) scale(0.84);
 }
 
 .daily-weather--rainy {
@@ -320,7 +361,7 @@ const getCategoryIcon = (category: string) => {
 
 .daily-weather--rainy .daily-weather__cloud {
   background-color: #8794a1;
-  transform: translate(0.1rem, 0.25rem) scale(0.86);
+  transform: translate(0.1rem, -0.35rem) scale(0.92);
 }
 
 .daily-weather--rainy .daily-weather__fill,
@@ -328,8 +369,32 @@ const getCategoryIcon = (category: string) => {
   background-color: #5f7286;
 }
 
+.daily-weather--rainy .daily-weather__drop {
+  opacity: 1;
+  animation: weather-rain-fall 1.15s ease-in-out infinite;
+}
+
+.daily-weather--rainy .daily-weather__drop--2 {
+  animation-delay: 0.18s;
+}
+
+.daily-weather--rainy .daily-weather__drop--3 {
+  animation-delay: 0.34s;
+}
+
 .daily-weather--neutral .daily-weather__cloud {
-  transform: scale(0.88);
+  transform: translateY(-0.6rem) scale(0.94);
+}
+
+@keyframes weather-rain-fall {
+  0%,
+  100% {
+    transform: rotate(38deg) translateY(-0.2rem);
+  }
+
+  50% {
+    transform: rotate(38deg) translateY(0.28rem);
+  }
 }
 
 /* 아이콘 통일 핵심 */
