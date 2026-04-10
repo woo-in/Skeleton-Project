@@ -382,7 +382,7 @@ async function handleExpenseSave(payload) {
 
         <section class="stock-card">
           <div class="stock-badge">
-            {{ targetStockName ? targetStockName.substring(0, 2) : '주식' }}
+            {{ targetStockName ? targetStockName.substring(0, 3) : '주식' }}
           </div>
           <div class="stock-copy">
             <p class="stock-label">오늘 쓴 돈으로 살 수 있었던 주식</p>
@@ -391,16 +391,6 @@ async function handleExpenseSave(payload) {
               {{ todayExpenseStockQuantity }}주
             </p>
           </div>
-          <button
-            class="stock-arrow-button"
-            type="button"
-            aria-label="주식 카드 보기"
-            @click="handleStockClick"
-          >
-            <svg class="stock-arrow" viewBox="0 0 16 16" aria-hidden="true">
-              <path d="M6 3.5L10.5 8L6 12.5" />
-            </svg>
-          </button>
         </section>
 
         <section class="calendar-card">
@@ -624,7 +614,7 @@ async function handleExpenseSave(payload) {
   height: 3.75rem;
   border-radius: var(--radius-accent);
   background: #fff8e8;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 800;
   letter-spacing: -0.05em;
 }
