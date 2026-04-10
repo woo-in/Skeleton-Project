@@ -119,8 +119,8 @@ export const useBudgetStore = defineStore('budget', {
     },
 
     guidelinePercentage(state) {
-      if (state.budget <= 0 || this.targetStockPrice <= 0) return 0
-      const ratio = (this.targetStockPrice / state.budget) * 100
+      if (state.budget <= 0 || this.targetTotalAmount <= 0) return 0
+      const ratio = (this.targetTotalAmount / state.budget) * 100
       return Math.min(Math.max(ratio, 0), 100)
     },
 
@@ -179,6 +179,8 @@ export const useBudgetStore = defineStore('budget', {
         ...expense,
         amount: toNumber(expense.amount),
         category: expense.category ?? category?.name ?? '기타',
+        categoryImageUrl:
+          expense.categoryImageUrl ?? category?.imageUrl ?? '/images/categories/shopping.png',
         date: expense.date ?? toDateKey(expense.spentAt),
         time: expense.time ?? toTimeKey(expense.spentAt),
         memo: expense.memo ?? '',
