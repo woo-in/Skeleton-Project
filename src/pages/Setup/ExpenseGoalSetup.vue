@@ -19,8 +19,9 @@ import { Motion } from '@motionone/vue'
 const router = useRouter()
 const budgetStore = useBudgetStore() // 스토어 인스턴스 생성
 
-const lastMonthExpense = ref('')
 
+const lastMonthExpense = ref('')
+const router = useRouter()
 const onExpenseInput = (e) => {
   const value = e.target.value.replace(/[^0-9]/g, '')
   lastMonthExpense.value = value
@@ -56,7 +57,7 @@ const getUserId = () => {
   return null
 }
 
-const userId = getUserId()
+const userId = getUserId() || 'testUser' // Hardcoded for testing
 
 // 화면 로드 시 Pinia에 저장된 값이 있다면 불러오기 (localStorage 대체)
 onMounted(() => {
@@ -111,24 +112,59 @@ const setTargetStock = (stock) => {
   selectedStock.value = stock
   isStockListOpen.value = false
 }
-// 🚀 핵심 로직: Pinia에 데이터 저장 후 홈 화면으로 이동
-const handleStartSaving = () => {
-  showErrors.value = true
 
+// 🚀 핵심 로직: Pinia에 데이터 저장 후 홈 화면으로 이동
+const handleStartSaving = async () => {
+ 
+  showErrors.value = true
+ 
   if (!lastMonthExpense.value || !selectedStock.value || !targetQuantity.value) {
     return
   }
 
-  // Pinia Store의 Action 호출 (예산, 주식명, 주식가격, 수량)
-  budgetStore.setGoalSetup(
-    Number(lastMonthExpense.value),
-    selectedStock.value.name,
-    selectedStock.value.price,
-    Number(targetQuantity.value),
-  )
 
-  // 설정 완료 후 메인 홈 화면(/home)으로 이동
-  router.push('/home')
+  /*
+  if (!userId) {
+    alert('로그인이 필요합니다.')
+    return
+  }
+  */
+
+  try {
+    // 1. Save to json-server
+    const response = await fetch(`/members/${userId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        monthlyBudget: parseInt(lastMonthExpense.value),
+        targetStockId: selectedStock.value.ticker,
+        targetQuantity: parseFloat(targetQuantity.value),
+      }),
+    })
+    // 3. 서버 저장 성공 시에만 다음 단계 진행
+    if (response.ok) {
+      // Pinia Store 업데이트
+      budgetStore.setGoalSetup(
+        Number(lastMonthExpense.value),
+        selectedStock.value.name,
+        selectedStock.value.price,
+        Number(targetQuantity.value),
+      )
+
+      alert('설정이 저장되었습니다!')
+      
+      // 4. 모든 저장이 완료된 후 메인 홈 화면으로 이동
+      router.push('/home')
+    } else {
+      alert('서버 저장 중 오류가 발생했습니다.')
+    }
+   
+  } catch (error) {
+    console.error('Failed to save settings to server:', error)
+    alert('서버와 통신하는 중 문제가 발생했습니다. json-server가 켜져 있는지 확인해주세요.')
+  }
 }
 </script>
 
@@ -148,8 +184,7 @@ const handleStartSaving = () => {
       <!-- Hero Section -->
       <Motion :initial="{ opacity: 0, y: 20 }" :animate="{ opacity: 1, y: 0 }" class="space-y-3">
         <h1 class="text-[2.25rem] font-extrabold leading-tight tracking-tight text-[#2D2926]">
-          낭비왕인 당신!! <br />
-          정보를 입력하세요
+          당신의 정보를 입력하세요
         </h1>
         <p class="text-[#6D6864] text-lg font-medium">
           아낀 돈이 어떤 주식으로 바뀌는지 확인해보세요

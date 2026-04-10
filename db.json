@@ -1,7 +1,6 @@
 {
   "members": [
     {
-
       "userId": "jinsh",
       "name": "진승환",
       "birthdate": "20020918",
@@ -13,7 +12,6 @@
       "id": 1
     },
     {
-
       "userId": "ming0409",
       "name": "강민지",
       "birthdate": "19990606",
@@ -22,10 +20,9 @@
       "targetStockId": 1,
       "targetQuantity": 10,
       "ageBand": "TWENTIES",
-      "id": "G7HJF8xE0TY"
+      "id": 2
     }
   ],
-  
   "categories": [
     {
       "id": 1,
@@ -130,7 +127,7 @@
   "expenses": [
     {
       "id": 1,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 2,
       "amount": 4800,
       "memo": "출근 전 아메리카노",
@@ -138,7 +135,7 @@
     },
     {
       "id": 2,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 1,
       "amount": 11000,
       "memo": "점심 식사",
@@ -146,7 +143,7 @@
     },
     {
       "id": 3,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 7,
       "amount": 1450,
       "memo": "버스",
@@ -154,7 +151,7 @@
     },
     {
       "id": 4,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 1,
       "amount": 13000,
       "memo": "저녁 식사",
@@ -162,7 +159,7 @@
     },
     {
       "id": 5,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 2,
       "amount": 5600,
       "memo": "카페 라떼",
@@ -170,7 +167,7 @@
     },
     {
       "id": 6,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 4,
       "amount": 42000,
       "memo": "봄 셔츠 구매",
@@ -178,7 +175,7 @@
     },
     {
       "id": 7,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 1,
       "amount": 9500,
       "memo": "김밥",
@@ -186,7 +183,7 @@
     },
     {
       "id": 8,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 5,
       "amount": 18000,
       "memo": "영화 관람",
@@ -194,7 +191,7 @@
     },
     {
       "id": 9,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 7,
       "amount": 1250,
       "memo": "지하철",
@@ -202,7 +199,7 @@
     },
     {
       "id": 10,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 3,
       "amount": 14500,
       "memo": "늦은 밤 치킨 배달",
@@ -210,7 +207,7 @@
     },
     {
       "id": 11,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 2,
       "amount": 4900,
       "memo": "콜드브루",
@@ -218,7 +215,7 @@
     },
     {
       "id": 12,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 6,
       "amount": 6800,
       "memo": "편의점 간식",
@@ -226,7 +223,7 @@
     },
     {
       "id": 13,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 1,
       "amount": 12000,
       "memo": "점심 도시락",
@@ -234,7 +231,7 @@
     },
     {
       "id": 14,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 7,
       "amount": 1450,
       "memo": "버스 환승",
@@ -242,7 +239,7 @@
     },
     {
       "id": 15,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 4,
       "amount": 58000,
       "memo": "운동화",
@@ -250,7 +247,7 @@
     },
     {
       "id": 16,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 1,
       "amount": 10500,
       "memo": "햄버거 세트",
@@ -258,7 +255,7 @@
     },
     {
       "id": 17,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 5,
       "amount": 24000,
       "memo": "전시회 티켓",
@@ -266,7 +263,7 @@
     },
     {
       "id": 18,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 2,
       "amount": 5300,
       "memo": "아이스티",
@@ -274,7 +271,7 @@
     },
     {
       "id": 19,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 3,
       "amount": 17000,
       "memo": "주말 야식 배달",
@@ -282,7 +279,7 @@
     },
     {
       "id": 20,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 7,
       "amount": 1250,
       "memo": "지하철",
@@ -290,7 +287,7 @@
     },
     {
       "id": 21,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 1,
       "amount": 12500,
       "memo": "회사 앞 백반",
@@ -298,7 +295,7 @@
     },
     {
       "id": 22,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 8,
       "amount": 27000,
       "memo": "네일 케어",
@@ -306,7 +303,7 @@
     },
     {
       "id": 23,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 2,
       "amount": 4700,
       "memo": "테이크아웃 커피",
@@ -314,7 +311,7 @@
     },
     {
       "id": 24,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 3,
       "amount": 15500,
       "memo": "마라탕 배달",
@@ -322,7 +319,7 @@
     },
     {
       "id": 25,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 6,
       "amount": 8300,
       "memo": "다이소 + 간식",
@@ -330,7 +327,7 @@
     },
     {
       "id": 26,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 9,
       "amount": 9900,
       "memo": "음악 스트리밍 결제",
@@ -338,7 +335,7 @@
     },
     {
       "id": 36,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 4,
       "amount": 60000,
       "memo": "온라인 쇼핑 추가 결제",
@@ -346,7 +343,7 @@
     },
     {
       "id": 37,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 5,
       "amount": 36000,
       "memo": "주말 공연 관람",
@@ -354,7 +351,7 @@
     },
     {
       "id": 38,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 3,
       "amount": 29000,
       "memo": "주말 야식 배달 추가 주문",
@@ -362,7 +359,7 @@
     },
     {
       "id": 27,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 2,
       "amount": 4500,
       "memo": "아메리카노",
@@ -370,7 +367,7 @@
     },
     {
       "id": 28,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 1,
       "amount": 12000,
       "memo": "점심 식사",
@@ -378,7 +375,7 @@
     },
     {
       "id": 29,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 7,
       "amount": 1400,
       "memo": "버스",
@@ -386,7 +383,7 @@
     },
     {
       "id": 30,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 4,
       "amount": 39000,
       "memo": "무선 마우스",
@@ -394,7 +391,7 @@
     },
     {
       "id": 31,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 1,
       "amount": 13500,
       "memo": "저녁 식사",
@@ -402,7 +399,7 @@
     },
     {
       "id": 32,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 2,
       "amount": 5800,
       "memo": "카페 라떼",
@@ -410,7 +407,7 @@
     },
     {
       "id": 33,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 5,
       "amount": 22000,
       "memo": "영화",
@@ -418,7 +415,7 @@
     },
     {
       "id": 34,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 6,
       "amount": 8900,
       "memo": "편의점 야식",
@@ -426,7 +423,7 @@
     },
     {
       "id": 35,
-      "memberId": 1,
+      "memberId": 2,
       "categoryId": 7,
       "amount": 1250,
       "memo": "지하철",
@@ -436,18 +433,39 @@
   "reports": [
     {
       "id": 1,
-      "memberId": 1,
+      "memberId": 2,
       "targetMonth": "2026-03",
       "dailyExpenses": [
-        { "day": "월", "amount": 25000 },
-        { "day": "화", "amount": 40000 },
-        { "day": "수", "amount": 12000},
-        { "day": "목", "amount": 20000 },
-        { "day": "금", "amount": 80000 },
-        { "day": "토", "amount": 30000 },
-        { "day": "일", "amount": 100000 }
+        {
+          "day": "월",
+          "amount": 74150
+        },
+        {
+          "day": "화",
+          "amount": 61950
+        },
+        {
+          "day": "수",
+          "amount": 50500
+        },
+        {
+          "day": "목",
+          "amount": 73500
+        },
+        {
+          "day": "금",
+          "amount": 77500
+        },
+        {
+          "day": "토",
+          "amount": 80800
+        },
+        {
+          "day": "일",
+          "amount": 46800
+        }
       ],
-      "memberName": "정우인",
+      "memberName": "강민지",
       "ageBand": "TWENTIES",
       "stockId": 1,
       "stockName": "카카오",
