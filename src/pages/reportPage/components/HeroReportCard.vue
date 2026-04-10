@@ -10,10 +10,10 @@
           <div class="container-2">
             <div class="div-wrapper"><div class="text-wrapper">지난달 투자 리포트</div></div>
             <div class="heading">
-              <div class="text-wrapper-2">절약 목표를 <br>달성했어요! 👏</div>
+              <div class="text-wrapper-2">{{ goalTitleLine1 }} <br>{{ goalTitleLine2 }}</div>
             </div>
           </div>
-          <div class="overlay-border"><div class="text-wrapper-3">ACHIEVED</div></div>
+          <div class="overlay-border"><div class="text-wrapper-3">{{ goalStatusLabel }}</div></div>
         </div>
         <div class="container-3">
           <div class="container-4">
@@ -57,13 +57,22 @@
 </template>
 
 <script setup>
-import {ref, onMounted} from 'vue';
+import { computed, ref, onMounted } from 'vue';
 
 const props = defineProps({
   report: Object
 });
 
 const currentWidth = ref(0);
+
+const isGoalAchieved = computed(() => {
+  if (!props.report) return false
+  return props.report.securedQuantity >= props.report.targetQuantity || props.report.progressRate >= 100
+})
+
+const goalTitleLine1 = computed(() => (isGoalAchieved.value ? '절약 목표를' : '절약 목표에'))
+const goalTitleLine2 = computed(() => (isGoalAchieved.value ? '달성했어요! 👏' : '다가가고 있어요'))
+const goalStatusLabel = computed(() => (isGoalAchieved.value ? 'ACHIEVED' : 'IN PROGRESS'))
 
 onMounted(() => {
   // 화면이 뜨고 아주 살짝(0.1초) 뒤에 목표치로 숫자를 바꿔줍니다.
@@ -451,4 +460,3 @@ onMounted(() => {
   white-space: nowrap;
 }
 </style>
-
