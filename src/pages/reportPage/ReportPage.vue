@@ -4,10 +4,30 @@
     <div class="container-deco"><div class="dark-blur"></div></div>
 
     <main class="main">
-      <HeroReportCard :report="reportData" />
-      <PeerComparisonCard :report="reportData" />
-      <OppurtunityCost :report="reportData" />
-      <WeeklyAnalysisCard :report="reportData" />
+      <section v-if="isLoading" class="report-state" aria-live="polite">
+        <p class="report-state__eyebrow">REPORT</p>
+        <h1 class="report-state__title">리포트를 불러오고 있어요</h1>
+        <p class="report-state__description">로그인한 사용자 기준으로 지난달 리포트를 확인 중입니다.</p>
+      </section>
+
+      <section v-else-if="errorMessage" class="report-state report-state--error" aria-live="polite">
+        <p class="report-state__eyebrow">ERROR</p>
+        <h1 class="report-state__title">리포트를 불러오지 못했어요</h1>
+        <p class="report-state__description">{{ errorMessage }}</p>
+      </section>
+
+      <template v-else-if="reportData">
+        <HeroReportCard :report="reportData" />
+        <PeerComparisonCard :report="reportData" />
+        <OppurtunityCost :report="reportData" />
+        <WeeklyAnalysisCard :report="reportData" />
+      </template>
+
+      <section v-else class="report-state" aria-live="polite">
+        <p class="report-state__eyebrow">NO REPORT</p>
+        <h1 class="report-state__title">아직 보여줄 리포트가 없어요</h1>
+        <p class="report-state__description">{{ emptyMessage }}</p>
+      </section>
     </main>
   </div>
 </template>
@@ -24,62 +44,39 @@ import axios from 'axios'
 const BASEURI = '/api/reports'
 
 const reportData = ref(null)
+const isLoading = ref(true)
+const errorMessage = ref('')
+const emptyMessage = ref('로그인 후 리포트 데이터를 확인할 수 있습니다.')
 
-// const currentUser = {
-//   id: "S0U5oduKb5A", // 테스트하고 싶은 memberId
-//   name: "정우인"
-// };
-
-// onMounted(async () => {
-//   // 1. 가장 먼저 로그인 세션 확인
-//   const sessionStr = localStorage.getItem('userSession');
-
-//   // 2. 비로그인 상태 방어 (Early Return)
-//   if (!sessionStr) {
-//     console.log("로그인 안된 상태! 리포트 데이터를 불러오지 않습니다.");
-//     reportData.value = null;
-//     return; // 더 이상 아래 코드를 실행하지 않고 여기서 종료
-//   }
-
-//   // 3. 로그인 상태라면 유저 정보 파싱
-//   const currentUser = JSON.parse(sessionStr);
-//   console.log("현재 로그인한 유저: ", currentUser.name);
-
-//   // 4. API 통신
-//   try {
-//     // 이제 currentUser가 확실히 존재하므로 안전하게 .id에 접근 가능
-//     const response = await axios.get(`${BASEURI}?memberId=${currentUser.id}`);
-
-//     // 필터링 결과 처리
-//     if (response.data && response.data.length > 0) {
-//       reportData.value = response.data[0];
-//     } else {
-//       console.log("해당 유저의 리포트가 없습니다.");
-//       reportData.value = null;
-//     }
-//   } catch (error) {
-//     console.error("API 통신 중 에러가 발생했습니다:", error);
-//   }
-// });
-onMounted(async () => {
+function getSessionUser() {
   try {
-    // 무조건 id가 1인 유저의 리포트를 가져오도록 하드코딩
-    const targetId = 2
-    console.log(`테스트 모드: memberId=${targetId}의 리포트를 요청합니다.`)
+    return JSON.parse(localStorage.getItem('userSession') || 'null')
+  } catch {
+    return null
+  }
+}
 
-    // API 통신 (currentUser.id 대신 targetId 사용)
-    const response = await axios.get(`${BASEURI}?memberId=${targetId}`)
+onMounted(async () => {
+  const currentUser = getSessionUser()
 
-    // 필터링 결과 처리
-    if (response.data && response.data.length > 0) {
-      reportData.value = response.data[0]
-      console.log('리포트 데이터 로드 성공:', reportData.value)
-    } else {
-      console.log('해당 유저의 리포트가 없습니다.')
-      reportData.value = null
-    }
+  if (!currentUser?.id) {
+    reportData.value = null
+    isLoading.value = false
+    emptyMessage.value = '로그인 정보가 없어 리포트를 불러오지 않았습니다.'
+    return
+  }
+
+  try {
+    const response = await axios.get(BASEURI, {
+      params: { memberId: currentUser.id },
+    })
+
+    reportData.value = response.data?.[0] ?? null
+    emptyMessage.value = `${currentUser.name ?? '사용자'}님의 리포트가 아직 없습니다.`
   } catch (error) {
-    console.error('API 통신 중 에러가 발생했습니다:', error)
+    errorMessage.value = 'json-server 상태를 확인한 뒤 다시 시도해주세요.'
+  } finally {
+    isLoading.value = false
   }
 })
 </script>
@@ -93,20 +90,19 @@ onMounted(async () => {
   width: 100%;
   padding: 0px 0px 128px;
   position: relative;
-  background-color: #fdfcfb; /* 💡 회원가입 페이지와 동일한 배경색으로 변경 */
+  background-color: #fdfcfb;
   box-sizing: border-box;
-  overflow: hidden; /* 💡 블러 효과가 화면 밖으로 삐져나가는 것 방지 */
+  overflow: hidden;
 }
 
-/* ✨ 회원가입 페이지에서 가져온 배경 그라데이션 CSS 시작 */
 .background-deco, .container-deco {
   display: flex;
   flex-direction: column;
   width: 156px;
   height: 482px;
   position: absolute;
-  opacity: 0.3;
-  z-index: 0; /* 배경이 카드를 가리지 않게 맨 뒤로 보냄 */
+  opacity: 0.16;
+  z-index: 0;
 }
 
 .background-deco { 
@@ -133,22 +129,62 @@ onMounted(async () => {
   filter: blur(60px);
   background: linear-gradient(79deg, rgba(75, 66, 55, 0.2) 0%, rgba(75, 66, 55, 0) 100%);
 }
-/* ✨ 배경 CSS 끝 */
 
 .div-wrapper .main {
   display: flex;
   flex-direction: column;
-  max-width: 100%;
+  max-width: 390px;
   align-items: stretch;
-  gap: 24px;
-  /* 🚨 범인 검거 완료! padding top을 96px -> 24px로 확 줄였습니다 */
-  padding: 24px 24px 0px; 
+  gap: 18px;
+  padding: 18px 18px 0px;
   position: relative;
   width: 100%;
   flex: 0 0 auto;
   margin: 0 auto;
   box-sizing: border-box;
-  z-index: 1; /* 카드들이 그라데이션 배경보다 위에 보이도록 설정 */
+  z-index: 1;
+}
+
+.report-state {
+  width: 100%;
+  max-width: 342px;
+  align-self: center;
+  box-sizing: border-box;
+  padding: 32px 24px;
+  background-color: #ffffff;
+  border: 1px solid #e6e8eb;
+  border-radius: 24px;
+  text-align: center;
+  box-shadow: 0 18px 36px rgba(75, 68, 51, 0.08);
+}
+
+.report-state--error {
+  border-color: #ffbc5033;
+}
+
+.report-state__eyebrow {
+  margin: 0 0 8px;
+  color: #d79524;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.report-state__title {
+  margin: 0;
+  color: #4b4433;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.35;
+}
+
+.report-state__description {
+  margin: 12px 0 0;
+  color: #7d7569;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.6;
 }
 </style>
 
@@ -1456,4 +1492,3 @@ onMounted(async () => {
   line-height: 15px;
   white-space: nowrap;
 } */
-

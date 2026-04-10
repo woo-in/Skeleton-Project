@@ -253,8 +253,9 @@ const todayExpenseTotal = computed(() =>
     .reduce((sum, expense) => sum + expense.amount, 0),
 )
 const todayExpenseStockQuantity = computed(() => {
-  if (!targetStockPrice.value) return '0.0'
-  return (todayExpenseTotal.value / targetStockPrice.value).toFixed(1)
+  if (!targetStockPrice.value) return '0.00'
+  const diffFromAverage = budgetStore.dailyAverage - todayExpenseTotal.value
+  return (diffFromAverage / targetStockPrice.value).toFixed(2)
 })
 
 const calendarDays = computed(() => {
@@ -504,6 +505,8 @@ async function handleExpenseSave(payload) {
   --radius-card: 1.1rem;
   --radius-control: 0.85rem;
   --radius-accent: 0.95rem;
+  --shadow-card: 0 0.8rem 1.8rem rgba(72, 56, 38, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  --shadow-soft: 0 0.45rem 1rem rgba(72, 56, 38, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.62);
   min-height: 100%;
   overflow-x: hidden;
   background: linear-gradient(180deg, #fcf3df 0%, #f5e7cf 58%, #ebd8bf 100%);
@@ -591,6 +594,7 @@ async function handleExpenseSave(payload) {
 .calendar-card,
 .history-card {
   border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
 }
 
 .calendar-card,
@@ -615,6 +619,7 @@ async function handleExpenseSave(payload) {
   height: 3.75rem;
   border-radius: var(--radius-accent);
   background: #fff8e8;
+  box-shadow: var(--shadow-soft);
   font-size: 1rem;
   font-weight: 800;
   letter-spacing: -0.05em;
@@ -779,10 +784,12 @@ async function handleExpenseSave(payload) {
 
 .calendar-day-button.is-selected .calendar-day {
   background: #ffbf38;
+  box-shadow: 0 0.45rem 0.9rem rgba(255, 191, 56, 0.28);
 }
 
 .calendar-day-button.is-today:not(.is-selected) .calendar-day {
   background: rgba(255, 191, 56, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 
 .calendar-dot {
@@ -877,6 +884,7 @@ async function handleExpenseSave(payload) {
   height: 4.1rem;
   border-radius: 0.95rem;
   background: #f5ead8;
+  box-shadow: var(--shadow-soft);
 }
 
 .history-icon svg {
@@ -938,6 +946,7 @@ async function handleExpenseSave(payload) {
   border: 0;
   border-radius: 1.35rem;
   background: #5b4939;
+  box-shadow: 0 0.9rem 1.8rem rgba(45, 35, 24, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   color: #ffc341;
   font-size: 3rem;
   line-height: 1;

@@ -1,6 +1,5 @@
 <template>
-  <div v-if="report">
-    
+  <div v-if="report" class="hero-report">
     <div class="hero-goal-section">
       <div class="icon" aria-hidden="true">
         <span class="icon-emoji">✨</span>
@@ -10,10 +9,12 @@
           <div class="container-2">
             <div class="div-wrapper"><div class="text-wrapper">지난달 투자 리포트</div></div>
             <div class="heading">
-              <div class="text-wrapper-2">절약 목표를 <br>달성했어요! 👏</div>
+              <div class="text-wrapper-2">{{ goalTitleLine1 }} <br>{{ goalTitleLine2 }}</div>
             </div>
           </div>
-          <div class="overlay-border"><div class="text-wrapper-3">ACHIEVED</div></div>
+          <div class="overlay-border">
+            <div class="text-wrapper-3">{{ goalStatusLabel }}</div>
+          </div>
         </div>
         <div class="container-3">
           <div class="container-4">
@@ -41,11 +42,8 @@
             <div class="container-7"><div class="text-wrapper-9">{{ report.progressRate }}%</div></div>
           </div>
           <div class="overlay">
-    <div 
-      class="background-shadow" 
-      :style="{ width: currentWidth + '%' }"
-    ></div>
-  </div>
+            <div class="background-shadow" :style="{ width: currentWidth + '%' }"></div>
+          </div>
           <div class="container-9">
             <p class="p">{{ report.successCount }}명이 함께 이 목표를 향해 달리고 있어요</p>
           </div>
@@ -57,41 +55,52 @@
 </template>
 
 <script setup>
-import {ref, onMounted} from 'vue';
+import { computed, ref, onMounted } from 'vue'
 
 const props = defineProps({
-  report: Object
-});
+  report: Object,
+})
 
-const currentWidth = ref(0);
+const currentWidth = ref(0)
+
+const isGoalAchieved = computed(() => {
+  if (!props.report) return false
+  return props.report.securedQuantity >= props.report.targetQuantity || props.report.progressRate >= 100
+})
+
+const goalTitleLine1 = computed(() => '절약 목표를')
+const goalTitleLine2 = computed(() => (isGoalAchieved.value ? '달성했어요! 👏' : '미달성했어요 😢'))
+const goalStatusLabel = computed(() => (isGoalAchieved.value ? 'ACHIEVED' : 'IN PROGRESS'))
 
 onMounted(() => {
-  // 화면이 뜨고 아주 살짝(0.1초) 뒤에 목표치로 숫자를 바꿔줍니다.
-  // 이렇게 해야 브라우저가 '0에서 시작해서 커졌네!' 하고 애니메이션을 작동시킵니다.
   setTimeout(() => {
-    currentWidth.value = props.report.progressRate;
-  }, 100);
-});
+    currentWidth.value = Math.min(Math.max(props.report.progressRate, 0), 100)
+  }, 100)
+})
 
 </script>
 
 <style scoped>
-/* 통일된 폰트 적용: Pretendard를 최우선으로 하고, 
-  애플 기본 고딕(Apple SD Gothic Neo)과 안드로이드/일반 기본 고딕(Noto Sans KR)을 폴백으로 설정합니다.
-*/
+.hero-report {
+  width: 100%;
+}
+
 .hero-goal-section * {
   font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  box-sizing: border-box;
 }
 
 .hero-goal-section {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 32px;
+  width: 100%;
+  padding: 26px 22px;
   position: relative;
   background-color: #ffbc50;
-  border-radius: 32px;
+  border-radius: 28px;
   overflow: hidden;
+  box-shadow: 0 18px 34px rgba(178, 91, 24, 0.22);
 }
 
 .hero-goal-section .icon {
@@ -126,6 +135,7 @@ onMounted(() => {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  gap: 12px;
   align-self: stretch;
   width: 100%;
   position: relative;
@@ -133,12 +143,13 @@ onMounted(() => {
 }
 
 .hero-goal-section .container-2 {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 4px;
   position: relative;
-  flex: 0 0 auto;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .hero-goal-section .div-wrapper {
@@ -178,14 +189,15 @@ onMounted(() => {
 
 .hero-goal-section .text-wrapper-2 {
   position: relative;
-  width: 191.17px;
-  height: 64px;
+  width: 100%;
+  height: auto;
   margin-top: -1.00px;
-  font-weight: 700; /* 제목 굵기 강조 */
+  font-weight: 800;
   color: #4b4433;
-  font-size: 24px;
+  font-size: clamp(24px, 7vw, 30px);
   letter-spacing: -0.60px;
-  line-height: 32px;
+  line-height: 1.18;
+  word-break: keep-all;
 }
 
 .hero-goal-section .overlay-border {
@@ -207,8 +219,8 @@ onMounted(() => {
   position: relative;
   display: flex;
   align-items: center;
-  width: 57.91px;
-  height: 15px;
+  width: auto;
+  height: auto;
   font-weight: 700;
   color: #4b4433;
   font-size: 10px;
@@ -231,6 +243,8 @@ onMounted(() => {
 .hero-goal-section .container-4 {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
   align-self: stretch;
   width: 100%;
   opacity: 0.9;
@@ -242,8 +256,8 @@ onMounted(() => {
   position: relative;
   display: flex;
   align-items: center;
-  width: 39.81px;
-  height: 20px;
+  width: auto;
+  height: auto;
   margin-top: -1.00px;
   font-weight: 500;
   color: #4b4433;
@@ -255,19 +269,18 @@ onMounted(() => {
 
 .hero-goal-section .horizontal-border {
   position: relative;
-  width: 67.56px;
-  height: 17px;
+  width: auto;
+  min-width: max-content;
+  height: auto;
   border-bottom-width: 1px;
   border-bottom-style: solid;
   border-color: #4b443366;
 }
 
 .hero-goal-section .text-wrapper-5 {
-  position: absolute;
-  top: -2px;
-  left: 0;
-  width: 68px;
-  height: 20px;
+  position: static;
+  width: auto;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: center; /* 가운데 정렬 추가 */
@@ -282,19 +295,22 @@ onMounted(() => {
 .hero-goal-section .heading-2 {
   display: flex;
   align-items: baseline;
+  flex-wrap: wrap;
   gap: 6px;
   width: 100%;
 }
 
 .hero-goal-section .text-wrapper-6 {
-  font-weight: 800; /* 핵심 수치 강조 */
-  font-size: 36px;
+  min-width: 0;
+  font-weight: 900;
+  font-size: clamp(30px, 9vw, 38px);
   letter-spacing: -0.90px;
-  line-height: 45px;
+  line-height: 1.12;
   display: flex;
   align-items: center;
   color: #4b4433;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .hero-goal-section .text-wrapper-7 {
@@ -314,10 +330,10 @@ onMounted(() => {
   flex-direction: column;
   align-items: flex-start;
   gap: 11px;
-  padding: 28px 20px 20px;
+  padding: 20px 18px;
   position: relative;
   align-self: center;
-  width: calc(100% - 24px);
+  width: 100%;
   max-width: 100%;
   flex: 0 0 auto;
   background-color: #ffffff4c;
@@ -333,6 +349,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   align-self: stretch;
   width: 100%;
   position: relative;
@@ -340,11 +357,12 @@ onMounted(() => {
 }
 
 .hero-goal-section .container-6 {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 8px;
   position: relative;
-  flex: 0 0 auto;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .hero-goal-section .container-7 {
@@ -367,18 +385,19 @@ onMounted(() => {
 }
 
 .hero-goal-section .container-8 {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   align-items: flex-start;
   opacity: 0.8;
   position: relative;
-  flex: 0 0 auto;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .hero-goal-section .text-wrapper-8 {
   position: relative;
-  width: max-content; /* 글자 잘림 방지 */
-  height: 16px;
+  width: 100%;
+  height: auto;
   margin-top: -1.00px;
   font-weight: 600;
   font-size: 13px;
@@ -387,7 +406,8 @@ onMounted(() => {
   display: flex;
   align-items: center;
   color: #4b4433;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: keep-all;
 }
 
 .hero-goal-section .text-wrapper-9 {
@@ -440,7 +460,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 17px;
+  min-height: 17px;
   margin-top: -1.00px;
   font-weight: 500;
   color: #4b4433;
@@ -448,7 +468,7 @@ onMounted(() => {
   text-align: center;
   letter-spacing: -0.3px;
   line-height: 16.5px;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: keep-all;
 }
 </style>
-

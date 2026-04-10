@@ -10,99 +10,155 @@
 
     <div class="overlay">
       <div class="background-border">
-        <span class="icon" aria-hidden="true">📈</span> 
+        <span class="icon" aria-hidden="true">📈</span>
       </div>
       <div class="container-4">
-        <p class="p">
-          <span>지난달 </span> 
-          <strong>수요일 지출이 가장 적었네요.</strong>
+        <p v-if="hasDailyExpenses" class="p">
+          <span>지난달 </span>
+          <strong>{{ lowestExpenseDay }}요일 지출이 가장 적었네요.</strong>
         </p>
-        <p class="element">
-          <span>평소보다 </span> 
-          <strong>42% 더</strong> 
+        <p v-if="hasDailyExpenses" class="element">
+          <span>평소보다 </span>
+          <strong>{{ savingPercent }}% 더</strong>
           <span>아꼈습니다!<br />칭찬해요 👏</span>
         </p>
+        <p v-else class="p">요일별 지출 데이터를 준비 중입니다.</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import Chart from 'chart.js/auto';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import Chart from 'chart.js/auto'
 
-// canvas 엘리먼트를 참조하기 위한 ref
-const chartCanvas = ref(null);
+const props = defineProps({
+  report: {
+    type: Object,
+    default: null,
+  },
+})
 
-onMounted(() => {
-  if (chartCanvas.value) {
-    new Chart(chartCanvas.value, {
-      type: 'line',
-      data: {
-        labels: ['월', '화', '수', '목', '금', '토', '일'],
-        datasets: [{
+const chartCanvas = ref(null)
+let chartInstance = null
+
+const dailyExpenses = computed(() =>
+  Array.isArray(props.report?.dailyExpenses) ? props.report.dailyExpenses : [],
+)
+
+const hasDailyExpenses = computed(() => dailyExpenses.value.length > 0)
+const chartLabels = computed(() => dailyExpenses.value.map((expense) => expense.day))
+const chartAmounts = computed(() => dailyExpenses.value.map((expense) => expense.amount))
+
+const lowestExpense = computed(() =>
+  dailyExpenses.value.reduce((lowest, expense) => {
+    if (!lowest || expense.amount < lowest.amount) return expense
+    return lowest
+  }, null),
+)
+
+const lowestExpenseDay = computed(() => lowestExpense.value?.day ?? '')
+const savingPercent = computed(() => {
+  if (!hasDailyExpenses.value || !lowestExpense.value) return 0
+
+  const total = chartAmounts.value.reduce((sum, amount) => sum + amount, 0)
+  const average = total / chartAmounts.value.length
+
+  if (average <= 0) return 0
+  return Math.max(0, Math.round(((average - lowestExpense.value.amount) / average) * 100))
+})
+
+function renderChart() {
+  if (!chartCanvas.value || !hasDailyExpenses.value) return
+
+  chartInstance?.destroy()
+  chartInstance = new Chart(chartCanvas.value, {
+    type: 'line',
+    data: {
+      labels: chartLabels.value,
+      datasets: [
+        {
           label: '지출',
-          // 수요일(15)이 가장 낮도록 목업 데이터 구성
-          data: [60, 45, 15, 35, 40, 75, 90], 
-          borderColor: '#7a1e1e', // 짙은 붉은색 라인
+          data: chartAmounts.value,
+          borderColor: '#7a1e1e',
           backgroundColor: '#7a1e1e',
           borderWidth: 2,
           pointBackgroundColor: '#7a1e1e',
           pointRadius: 4,
           pointHoverRadius: 6,
-          tension: 0 // 0으로 설정하여 선을 직선으로 꺾이게 함
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false }, // 상단 범례 숨김
-          tooltip: { 
-            enabled: true, // 💡 툴팁 활성화
-            backgroundColor: 'rgba(75, 68, 51, 0.9)', // 툴팁 배경색 설정
-            padding: 10,
-            displayColors: false, // 툴팁 내 컬러 박스 숨김
-            titleFont: { size: 13, family: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" },
-            bodyFont: { size: 14, family: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" },
-            callbacks: {
-              // 툴팁에 표시될 텍스트 커스텀 (예: 15 -> 15만 원)
-              label: function(context) {
-                return context.parsed.y + '만 원'; 
-              }
-            }
-          }
+          tension: 0,
         },
-        // 점에 마우스를 올리기 쉽게 호버 영역을 넓혀줍니다
-        interaction: {
-          mode: 'nearest',
-          axis: 'x',
-          intersect: false
-        },
-        scales: {
-          x: {
-            grid: {
-              display: false, // x축 배경 세로선 숨김
-              drawBorder: false
-            },
-            ticks: {
-              color: '#7d7569',
-              font: { size: 12 }
-            }
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          enabled: true,
+          backgroundColor: 'rgba(75, 68, 51, 0.9)',
+          padding: 10,
+          displayColors: false,
+          titleFont: {
+            size: 13,
+            family:
+              "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
           },
-          y: {
-            display: false, // y축 숫자와 가로선 모두 숨김
-            min: 0,
-            max: 100 // 차트 상하 여백 확보
-          }
+          bodyFont: {
+            size: 14,
+            family:
+              "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          },
+          callbacks: {
+            label(context) {
+              return `${context.parsed.y.toLocaleString()}원`
+            },
+          },
         },
-        layout: {
-          padding: { left: 10, right: 10, top: 10, bottom: 0 }
-        }
-      }
-    });
-  }
-});
+      },
+      interaction: {
+        mode: 'nearest',
+        axis: 'x',
+        intersect: false,
+      },
+      scales: {
+        x: {
+          grid: {
+            display: false,
+            drawBorder: false,
+          },
+          ticks: {
+            color: '#7d7569',
+            font: { size: 12 },
+          },
+        },
+        y: {
+          display: false,
+          min: 0,
+          suggestedMax: Math.max(...chartAmounts.value) * 1.15,
+        },
+      },
+      layout: {
+        padding: { left: 10, right: 10, top: 10, bottom: 0 },
+      },
+    },
+  })
+}
+
+onMounted(() => {
+  renderChart()
+})
+
+watch(
+  () => props.report?.dailyExpenses,
+  () => nextTick(renderChart),
+  { deep: true },
+)
+
+onBeforeUnmount(() => {
+  chartInstance?.destroy()
+})
 </script>
 
 <style scoped>
@@ -110,13 +166,15 @@ onMounted(() => {
 .section-weekly {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 24px 20px;
+  gap: 20px;
+  padding: 22px 20px;
   background-color: #ffffff;
-  border-radius: 24px;
-  border: 1px solid #e6e8eb;
+  border-radius: 22px;
+  border: 1px solid #efe7dc;
   font-family: "Pretendard Variable", Pretendard, -apple-system, sans-serif;
-  max-width: 360px; /* 화면 비율에 맞게 조절하세요 */
+  box-sizing: border-box;
+  max-width: 100%;
+  box-shadow: 0 10px 24px rgba(75, 68, 51, 0.05);
 }
 
 /* 제목 */
@@ -124,7 +182,7 @@ onMounted(() => {
   margin: 0;
   color: #1a1a1a;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 800;
   letter-spacing: -0.45px;
 }
 
@@ -139,9 +197,9 @@ onMounted(() => {
 .overlay {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
-  padding: 20px;
-  background-color: #fff8f0; /* 부드러운 살구색 배경 */
+  gap: 12px;
+  padding: 16px;
+  background-color: #fff8f0;
   border-radius: 16px;
 }
 
@@ -165,6 +223,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
 }
 
 .container-4 p {
@@ -172,6 +231,7 @@ onMounted(() => {
   color: #4b4433;
   font-size: 14px;
   line-height: 1.5;
+  word-break: keep-all;
 }
 
 .container-4 strong {

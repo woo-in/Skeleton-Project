@@ -151,15 +151,21 @@ export const useBudgetStore = defineStore('budget', {
       return (date) => {
         const dayExpenses = this.getExpensesByDate(date)
         const totalSpent = dayExpenses.reduce((sum, expense) => sum + expense.amount, 0)
-        const stockPrice = this.targetStockPrice || 1
+        const stockPrice = this.targetStockPrice
         const diffFromAverage = this.dailyAverage - totalSpent
+        const stockQuantity =
+          stockPrice > 0 ? Number((diffFromAverage / stockPrice).toFixed(2)) : 0
+        const progressRate =
+          stockPrice > 0
+            ? Math.min(Math.max(Math.round((diffFromAverage / stockPrice) * 100), 0), 100)
+            : 0
 
         return {
-          securedQuantity: Number((totalSpent / stockPrice).toFixed(2)),
+          securedQuantity: stockQuantity,
           stockName: this.targetStockName || '주식',
           savedAmount: Math.abs(diffFromAverage),
           isSaved: diffFromAverage >= 0,
-          progressRate: Math.min(100, Math.round((totalSpent / stockPrice) * 100)),
+          progressRate,
         }
       }
     },

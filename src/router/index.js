@@ -57,7 +57,7 @@ const router = createRouter({
       path: '/report',
       name: 'report',
       component: () => import('@/pages/reportPage/ReportPage.vue'),
-      meta: { showTopBar: true, showBottomNav: true },
+      meta: { requiresAuth: true, showTopBar: true, showBottomNav: true },
     }
   ],
 })
