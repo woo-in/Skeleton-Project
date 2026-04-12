@@ -1,70 +1,211 @@
-# Git 규칙 논의
+# 내 주식 어디갔어?
 
-1. **타입 예시**
+23회차 2조 주식 연계 소비관리 서비스입니다.
 
-| **타입** | **언제 사용하는가?** |
-| --- | --- |
-| **feat** | 새로운 기능 추가 (Vue 컴포넌트 추가, API 연동 등) |
-| **fix** | 버그 수정 |
-| **design** | UI 디자인 변경 (CSS, 레이아웃 조정) |
-| **style** | 코드 포맷팅 (세미콜론, 들여쓰기 등 - 로직 변경 없음) |
-| **refactor** | 코드 리팩토링 (기능은 같은데 코드만 깔끔하게) |
-| **docs** | README.md 등 문서 수정 |
-| **chore** | 빌드 설정, 패키지 설치 (`npm install` 등) |
-| **comment** | 주석 추가 및 변경 |
+**내 주식 어디갔어?**는 생활비를 기록하고 남은 예산을 목표 주식 기준으로 환산해 보여주는 서비스입니다. 단순히 “얼마를 썼는지”를 남기는 데서 끝나지 않고, 오늘의 소비가 투자 관점에서 어떤 의미였는지 체감할 수 있도록 설계했습니다.
 
----
+## 배포 링크
 
-**1. 브랜치** 
+- 공유용 주소: http://내주식어디갔어.kro.kr
+- Vercel 직접 주소: https://skeleton-project-tau.vercel.app
 
-main : 항상 실행 가능한 상태 유지 브랜치 
+공유용 주소는 웹 포워딩 방식으로 Vercel 배포 주소에 연결되어 있습니다. 접속 후 주소창이 Vercel 주소로 바뀔 수 있습니다.
 
-feat/이슈번호-기능명 : 신규 기능 추가(이슈번호 연결) 
+## 테스트 계정
 
-fix/이슈번호 - 수정내용 : 버그 수정 (이슈번호 연결) 
+| 유형 | ID | PW | 설명 |
+| --- | --- | --- | --- |
+| 계획형 사용자 | `ming0409` | `qwer1234!` | 생활비를 기준으로 꾸준히 소비를 관리하며 목표 주식을 모아가는 사용자 |
+| 소비 관리가 부족한 사용자 | `jinsh` | `abcd1234!` | 예산 초과 지출이나 무리한 목표 설정 검증을 확인하기 좋은 사용자 |
 
-docs/이슈번호 - 설명 : 문서 수정 (이슈번호 연결) 
+## 주요 기능
 
-- 브랜치명은 영어 , 숫자 , 하이픈
+- 이번 달 남은 생활비 확인
+- 생활비 사용 비율 시각화
+- 오늘의 소비를 목표 주식 기준으로 환산
+- 캘린더 기반 지출 확인
+- 리포트를 통한 소비 패턴 분석
+- 예산 초과 지출 및 비현실적 목표 입력 방지
 
----
+## 현재 버전 안내
 
-1. **커밋 메시지** 
+현재 배포 버전은 목업 데이터 기반 시연 버전입니다.
 
-**커밋 메시지 규칙**
+실시간 주식 시세 API와 영구 저장 기능은 API Key 노출 및 운영 안정성 이슈를 고려해 프론트 배포 범위에서는 제외했습니다. 추후 백엔드 서버와 연동해 실시간 시세, 인증/인가, 영구 저장 기능을 확장할 예정입니다.
 
-1. 타입(feat, fix 등)은 소문자로 쓰고 뒤에 콜론(`:`)을 붙인다.
-2. 제목 끝에 이슈번호를 적는다. `(#번호)`
-3. 한글로 간결하게 작성한다.
+Vercel 배포 버전의 mock API는 시연 중 사용자 입력 흐름을 확인하기 위해 임시 데이터를 다룹니다. 함수 인스턴스가 재시작되거나 재배포되면 입력한 데이터가 초기화될 수 있습니다.
 
-**예시:**
+## 기술 스택
 
-- `feat: 회원가입 폼 유효성 검사 추가 (#5)`
-- `design: 메인 페이지 버튼 색상 변경 (#10)`
-- `fix: 로그아웃 시 세션 안 끊기는 버그 수정 (#21)`
+- Vue 3
+- Vite
+- Pinia
+- Vue Router
+- Tailwind CSS
+- FullCalendar
+- ApexCharts / Chart.js
+- Axios / Fetch API
+- json-server
+- Vercel Functions mock API
 
----
+## 로컬 실행
 
-1. **Issue**
+```bash
+npm install
+npm run dev
+```
 
-| **예시 타입** | **이슈 제목 예시** |
-| --- | --- |
-| **[FEAT]** | `[FEAT] 로그인 페이지 UI 구현 및 유효성 검사` |
-| **[FIX]** | `[FIX] 모바일 환경에서 헤더 깨짐 현상 수정` |
-| **[DOCS]** | `[DOCS] API 명세서 및 README 업데이트` |
-| **[REFACTOR]** | `[REFACTOR] 중복되는 버튼 컴포넌트 공통화` |
-| **[DESIGN]** | `[DESIGN] 메인 배너 이미지 및 컬러 에셋 적용` |
-- 번호는 자동으로 부여 됨
+로컬 개발 환경에서는 Vite와 json-server가 함께 실행됩니다.
 
----
+```text
+Frontend: http://localhost:5173
+Mock API: http://localhost:3000
+```
 
-1. **PR** 
+빌드 및 검증 명령어:
 
-| **PR 제목 예시** | **설명** |
-| --- | --- |
-| **feat: 로그인 기능 구현 (#12)** | 12번 이슈를 해결한 기능 추가 PR |
-| **fix: API 호출 에러 핸들링 추가 (#15)** | 15번 이슈인 버그를 수정한 PR |
-| **chore: 의존성 패키지(Pinia) 설치 (#3)** | 초기 세팅 관련 PR |
-- 커밋 메시지와 동일하게 할 것
+```bash
+npm run build
+npm run test:unit
+npm run validate:db
+```
 
-[템플릿 등록방법 (프로젝트 만들때)](https://www.notion.so/33b0d32f56d8816c9facdf0be913362b?pvs=21)
+## 프로젝트 구조
+
+```text
+src/
+  App.vue
+  main.js
+  router/
+    index.js
+  stores/
+    useBudgetStore.js
+  utils/
+    budgetValidation.js
+    budgetValidation.test.js
+  components/
+    TopBar.vue
+    BottomNav.vue
+    HoneyPot.vue
+    CalendarDetail.vue
+    ExpenseInput.vue
+  pages/
+    loginPage/
+      LoginPage.vue
+    signupPage/
+      SignupPage.vue
+    homePage/
+      HomePage.vue
+    Setup/
+      ExpenseGoalSetup.vue
+    reportPage/
+      ReportPage.vue
+      components/
+        HeroReportCard.vue
+        PeerComparisonCard.vue
+        OppurtunityCost.vue
+        WeeklyAnalysisCard.vue
+    settingPage/
+      SettingPage.vue
+```
+
+## 컴포넌트 트리
+
+> 이미지 추가 예정: AI로 생성한 컴포넌트 트리 다이어그램을 이 위치에 삽입합니다.
+> 권장 파일 경로: `docs/images/component-tree.png`
+
+```text
+App
+├─ TopBar
+├─ RouterView
+│  ├─ LoginPage
+│  ├─ SignupPage
+│  ├─ HomePage
+│  │  ├─ HoneyPot
+│  │  ├─ CalendarDetail
+│  │  └─ ExpenseInput
+│  ├─ ExpenseGoalSetup
+│  ├─ ReportPage
+│  │  ├─ HeroReportCard
+│  │  ├─ PeerComparisonCard
+│  │  ├─ OppurtunityCost
+│  │  └─ WeeklyAnalysisCard
+│  └─ SettingPage
+└─ BottomNav
+```
+
+라우터 메타 정보에 따라 `TopBar`와 `BottomNav`가 필요한 화면에만 표시됩니다.
+
+## DB 구조
+
+목업 데이터는 루트의 `db.json`에 저장되어 있습니다.
+
+> 이미지 추가 예정: AI로 생성한 DB 구조 다이어그램을 이 위치에 삽입합니다.
+> 권장 파일 경로: `docs/images/db-structure.png`
+
+```text
+db.json
+├─ members      사용자, 예산, 목표 주식 설정
+├─ categories   지출 카테고리 및 이미지 경로
+├─ stocks       목표 주식 후보와 종목 코드
+├─ prices       주식별 가격 스냅샷
+├─ expenses     사용자별 지출 내역
+└─ reports      월간 리포트, 소비 패턴, 주식 환산 결과
+```
+
+현재 데이터 수:
+
+| key | count | 주요 필드 |
+| --- | ---: | --- |
+| `members` | 2 | `userId`, `name`, `password`, `monthlyBudget`, `targetStockId`, `targetQuantity`, `ageBand`, `id` |
+| `categories` | 9 | `id`, `name`, `imageUrl` |
+| `stocks` | 5 | `id`, `name`, `ticker`, `realTicker` |
+| `prices` | 5 | `id`, `stockId`, `recordedAt`, `price` |
+| `expenses` | 70 | `id`, `memberId`, `categoryId`, `amount`, `memo`, `spentAt` |
+| `reports` | 2 | `id`, `memberId`, `targetMonth`, `dailyExpenses`, `topCategories`, `summaryComment`, `opportunityMessage` |
+
+## API 메모
+
+로컬 개발에서는 `json-server`가 `db.json`을 읽어 REST 형태로 제공합니다.
+
+```text
+GET /members
+GET /stocks
+GET /reports?memberId=2
+POST /expenses
+PATCH /members/:id
+```
+
+Vercel 배포 브랜치인 `deploy/vercel`에서는 json-server를 실행하지 않고, Vercel Functions 기반 mock API로 같은 목업 데이터를 응답합니다. 이 API는 시연용이며 영구 저장을 보장하지 않습니다.
+
+## 브랜치 메모
+
+- `main`: 기본 개발 브랜치
+- `deploy/vercel`: Vercel 배포용 브랜치
+- 문서/기능 작업은 목적에 맞는 별도 브랜치를 만든 뒤 PR로 병합합니다.
+
+## 커밋 컨벤션
+
+커밋 메시지는 아래 형식을 권장합니다.
+
+```text
+type: summary
+```
+
+주요 type:
+
+- `feat`: 기능 추가
+- `fix`: 버그 수정
+- `design`: UI/CSS 변경
+- `refactor`: 리팩터링
+- `docs`: 문서 변경
+- `chore`: 빌드, 설정, 패키지 작업
+- `test`: 테스트 추가 또는 수정
+
+예시:
+
+```text
+feat: add expense input validation
+fix: route vercel mock api queries
+docs: update project readme
+```
