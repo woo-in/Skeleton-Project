@@ -89,7 +89,8 @@ const loginUser = async () => {
   try {
     // 1. API에 아이디와 비밀번호가 일치하는 데이터가 있는지 질의 (쿼리 스트링 사용)
     const params = new URLSearchParams({ userId: userId.value, password: password.value });
-    const response = await fetch(`/api/members?${params.toString()}`);
+    params.set('__resource', 'members');
+    const response = await fetch(`/api/mock-data?${params.toString()}`);
     const users = await response.json();
 
     // 2. 일치하는 데이터가 배열 형태로 반환됨. 길이가 1 이상이면 로그인 성공

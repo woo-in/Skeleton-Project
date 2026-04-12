@@ -182,7 +182,8 @@ const registerUser = async () => {
   try {
     // 3. 아이디 중복 검사 (id가 아닌 userId로 조회하도록 수정)
     const checkParams = new URLSearchParams({ userId: userId.value });
-    const checkResponse = await fetch(`/api/members?${checkParams.toString()}`);
+    checkParams.set('__resource', 'members');
+    const checkResponse = await fetch(`/api/mock-data?${checkParams.toString()}`);
     const existingUsers = await checkResponse.json();
 
     if (existingUsers.length > 0) {
@@ -206,7 +207,7 @@ const registerUser = async () => {
     };
 
     // 6. DB에 POST 요청
-    const response = await fetch('/api/members', {
+    const response = await fetch('/api/mock-data?__resource=members', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

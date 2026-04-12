@@ -41,8 +41,8 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
 // Vite proxy는 '/api' 경로만 프록시하므로 반드시 leading slash가 필요합니다.
-const BASEURI = '/api/reports'
-const STOCK_BASEURI = '/api/stocks'
+const BASEURI = '/api/mock-data?__resource=reports'
+const STOCK_BASEURI = '/api/mock-data?__resource=stocks'
 
 const reportData = ref(null)
 const isLoading = ref(true)
@@ -75,7 +75,9 @@ async function appendStockTicker(report) {
   if (!report?.stockId) return report
 
   try {
-    const response = await axios.get(`${STOCK_BASEURI}/${report.stockId}`)
+    const response = await axios.get(STOCK_BASEURI, {
+      params: { __id: report.stockId },
+    })
 
     return {
       ...report,

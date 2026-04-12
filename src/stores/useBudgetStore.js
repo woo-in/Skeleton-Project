@@ -6,8 +6,24 @@ import {
 
 const API_BASE = '/api'
 
+function createApiUrl(path) {
+  const [resourcePath, queryString = ''] = path.split('?')
+  const [resourceName, id] = resourcePath.split('/').filter(Boolean)
+  const params = new URLSearchParams(queryString)
+
+  if (resourceName) {
+    params.set('__resource', resourceName)
+  }
+
+  if (id) {
+    params.set('__id', id)
+  }
+
+  return `${API_BASE}/mock-data?${params.toString()}`
+}
+
 async function requestJson(path, options) {
-  const response = await fetch(`${API_BASE}${path}`, {
+  const response = await fetch(createApiUrl(path), {
     headers: {
       'Content-Type': 'application/json',
       ...options?.headers,

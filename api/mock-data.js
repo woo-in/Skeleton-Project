@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 
-const RESERVED_QUERY_KEYS = new Set(['__resource', '__id'])
+const RESERVED_QUERY_KEYS = new Set(['__resource', '__id', 'resource'])
 let dbCache = null
 
 async function readDb() {
