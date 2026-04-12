@@ -11,6 +11,15 @@
 
 공유용 주소는 웹 포워딩 방식으로 Vercel 배포 주소에 연결되어 있습니다. 접속 후 주소창이 Vercel 주소로 바뀔 수 있습니다.
 
+## 시연 GIF
+
+> GIF 추가 예정: 로그인, 홈 화면, 지출 입력, 리포트 확인 흐름을 짧게 녹화한 시연 GIF를 이 위치에 삽입합니다.
+> 권장 파일 경로: `public/images/readme/demo.gif`
+
+<!--
+![서비스 시연 GIF](public/images/readme/demo.gif)
+-->
+
 ## 테스트 계정
 
 | 유형 | ID | PW | 설명 |
