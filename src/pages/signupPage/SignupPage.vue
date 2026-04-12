@@ -181,7 +181,8 @@ const registerUser = async () => {
 
   try {
     // 3. 아이디 중복 검사 (id가 아닌 userId로 조회하도록 수정)
-    const checkResponse = await fetch(`http://localhost:3000/members?userId=${userId.value}`);
+    const checkParams = new URLSearchParams({ userId: userId.value });
+    const checkResponse = await fetch(`/api/members?${checkParams.toString()}`);
     const existingUsers = await checkResponse.json();
 
     if (existingUsers.length > 0) {
@@ -192,7 +193,7 @@ const registerUser = async () => {
     // 4. 나이대(AgeBand) 계산
     const ageBand = calculateAgeBand(birthdate.value);
 
-    // 5. json-server로 보낼 페이로드 구성 ('id' 대신 'userId' 필드 사용)
+    // 5. API로 보낼 페이로드 구성 ('id' 대신 'userId' 필드 사용)
     const userData = {
       userId: userId.value, // 수정된 부분!
       name: name.value,
@@ -205,7 +206,7 @@ const registerUser = async () => {
     };
 
     // 6. DB에 POST 요청
-    const response = await fetch('http://localhost:3000/members', {
+    const response = await fetch('/api/members', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -239,7 +240,7 @@ const registerUser = async () => {
     }
   } catch (error) {
     console.error('회원가입 요청 에러:', error);
-    alert('서버와 통신하는 중 문제가 발생했습니다. json-server가 켜져 있는지 확인해주세요.');
+    alert('서버와 통신하는 중 문제가 발생했습니다. API 상태를 확인해주세요.');
   }
 };
 

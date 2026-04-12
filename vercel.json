@@ -1,0 +1,18 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/mock-data.js": {
+      "includeFiles": "db.json"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/:resource/:id",
+      "destination": "/api/mock-data?__resource=:resource&__id=:id"
+    },
+    {
+      "source": "/api/:resource",
+      "destination": "/api/mock-data?__resource=:resource"
+    }
+  ]
+}

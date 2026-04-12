@@ -176,7 +176,7 @@ const handleStartSaving = async () => {
       alert(error.message)
       return
     }
-    alert('서버와 통신하는 중 문제가 발생했습니다. json-server가 켜져 있는지 확인해주세요.')
+    alert('서버와 통신하는 중 문제가 발생했습니다. API 상태를 확인해주세요.')
   }
 }
 </script>

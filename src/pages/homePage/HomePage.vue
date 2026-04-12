@@ -222,7 +222,7 @@ async function handleExpenseSave(payload) {
       })
       return
     }
-    toast.error('지출 저장에 실패했어요. json-server 상태를 확인해주세요.', {
+    toast.error('지출 저장에 실패했어요. API 상태를 확인해주세요.', {
       autoClose: 2200,
     })
   }

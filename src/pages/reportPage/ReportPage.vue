@@ -108,7 +108,7 @@ onMounted(async () => {
     reportData.value = await appendStockTicker(report)
     emptyMessage.value = `${currentUser.name ?? '사용자'}님의 리포트가 아직 없습니다.`
   } catch (error) {
-    errorMessage.value = 'json-server 상태를 확인한 뒤 다시 시도해주세요.'
+    errorMessage.value = 'API 상태를 확인한 뒤 다시 시도해주세요.'
   } finally {
     isLoading.value = false
   }
