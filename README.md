@@ -111,8 +111,7 @@ src/
 
 ## 컴포넌트 트리
 
-> 이미지 추가 예정: AI로 생성한 컴포넌트 트리 다이어그램을 이 위치에 삽입합니다.
-> 권장 파일 경로: `docs/images/component-tree.png`
+![컴포넌트 트리](public/images/readme/tree.png)
 
 ```text
 App
@@ -140,8 +139,7 @@ App
 
 목업 데이터는 루트의 `db.json`에 저장되어 있습니다.
 
-> 이미지 추가 예정: AI로 생성한 DB 구조 다이어그램을 이 위치에 삽입합니다.
-> 권장 파일 경로: `docs/images/db-structure.png`
+![DB 구조](public/images/readme/db.png)
 
 ```text
 db.json
