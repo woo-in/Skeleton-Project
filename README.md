@@ -13,12 +13,7 @@
 
 ## 시연 GIF
 
-> GIF 추가 예정: 로그인, 홈 화면, 지출 입력, 리포트 확인 흐름을 짧게 녹화한 시연 GIF를 이 위치에 삽입합니다.
-> 권장 파일 경로: `public/images/readme/demo.gif`
-
-<!--
 ![서비스 시연 GIF](public/images/readme/demo.gif)
--->
 
 ## 테스트 계정
 
