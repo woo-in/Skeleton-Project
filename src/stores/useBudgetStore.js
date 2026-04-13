@@ -5,6 +5,7 @@ import {
 } from '../utils/budgetValidation'
 
 const API_BASE = '/api'
+const LOCAL_EXPENSES_STORAGE_KEY = 'kb-local-expenses'
 
 function createApiUrl(path) {
   const [resourcePath, queryString = ''] = path.split('?')
@@ -36,6 +37,57 @@ async function requestJson(path, options) {
   }
 
   return response.json()
+}
+
+function readJsonStorage(key, fallback) {
+  if (typeof localStorage === 'undefined') return fallback
+
+  try {
+    const storedValue = localStorage.getItem(key)
+    return storedValue ? JSON.parse(storedValue) : fallback
+  } catch {
+    return fallback
+  }
+}
+
+function writeJsonStorage(key, value) {
+  if (typeof localStorage === 'undefined') return
+
+  try {
+    localStorage.setItem(key, JSON.stringify(value))
+  } catch {
+    // Ignore storage quota/private mode errors; the API response still updates Pinia state.
+  }
+}
+
+function readLocalExpenses() {
+  const expenses = readJsonStorage(LOCAL_EXPENSES_STORAGE_KEY, [])
+  return Array.isArray(expenses) ? expenses : []
+}
+
+function mergeRecordsById(primaryRecords, overrideRecords = []) {
+  const recordMap = new Map()
+
+  for (const record of primaryRecords) {
+    if (record?.id === undefined || record?.id === null) continue
+    recordMap.set(String(record.id), record)
+  }
+
+  for (const record of overrideRecords) {
+    if (record?.id === undefined || record?.id === null) continue
+    recordMap.set(String(record.id), record)
+  }
+
+  return Array.from(recordMap.values())
+}
+
+function saveLocalExpense(expense) {
+  writeJsonStorage(LOCAL_EXPENSES_STORAGE_KEY, mergeRecordsById(readLocalExpenses(), [expense]))
+}
+
+function createLocalId(prefix) {
+  const randomPart = Math.random().toString(36).slice(2, 10)
+  return `${prefix}-${Date.now()}-${randomPart}`
 }
 
 function toNumber(value, fallback = 0) {
@@ -277,8 +329,15 @@ export const useBudgetStore = defineStore('budget', {
     },
 
     async loadExpenses(memberId = this.memberId) {
-      const expenses = await requestJson('/expenses')
-      this.expenses = expenses
+      let expenses = []
+
+      try {
+        expenses = await requestJson('/expenses')
+      } catch {
+        expenses = []
+      }
+
+      this.expenses = mergeRecordsById(expenses, readLocalExpenses())
         .filter((expense) => String(expense.memberId) === String(memberId))
         .map((expense) => this.normalizeExpense(expense))
         .sort((a, b) => new Date(b.spentAt) - new Date(a.spentAt))
@@ -400,19 +459,32 @@ export const useBudgetStore = defineStore('budget', {
         message: '지출 금액은 생활비를 초과할 수 없습니다.',
       })
 
-      const expense = await requestJson('/expenses', {
-        method: 'POST',
-        body: JSON.stringify({
-          memberId: this.memberId,
-          categoryId: category?.id ?? payload.categoryId ?? null,
-          amount,
-          memo: payload.memo || '직접 입력',
-          spentAt,
-        }),
-      })
+      const expensePayload = {
+        id: payload.id ?? createLocalId('expense'),
+        memberId: this.memberId,
+        categoryId: category?.id ?? payload.categoryId ?? null,
+        amount,
+        memo: payload.memo || '직접 입력',
+        spentAt,
+      }
+
+      let expense = expensePayload
+
+      try {
+        expense = await requestJson('/expenses', {
+          method: 'POST',
+          body: JSON.stringify(expensePayload),
+        })
+      } catch {
+        expense = expensePayload
+      }
 
       const normalizedExpense = this.normalizeExpense(expense)
-      this.expenses.unshift(normalizedExpense)
+      saveLocalExpense(expense)
+      this.expenses = [
+        normalizedExpense,
+        ...this.expenses.filter((item) => String(item.id) !== String(normalizedExpense.id)),
+      ]
       return normalizedExpense
     },
   },
